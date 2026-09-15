@@ -106,6 +106,14 @@
   #stage3d { position:relative; width:100%; height:520px; background:
       radial-gradient(120% 100% at 50% 0%, #101014 0%, #09090b 70%); }
   #stage3d canvas { display:block; cursor:grab; }
+  /* Las etiquetas de capa cerca del borde no deben ensanchar la página en pantallas estrechas */
+  #labels3d { overflow:hidden; }
+  /* Cabecera en teléfono: el glosario, el selector de destino y el dictamen deben caber en 375 px */
+  @media (max-width: 479px) {
+    #btnGlosario { padding-left:6px; padding-right:6px; }
+    #targetSegments .seg { padding-left:7px; padding-right:7px; }
+    #verdictPill { padding:4px 6px; font-size:10px; line-height:1.15; max-width:96px; }
+  }
   #stage3d canvas:active { cursor:grabbing; }
   .lbl3d {
     position:absolute; transform:translate(-50%,-50%); pointer-events:none; white-space:nowrap;
@@ -203,8 +211,8 @@
       <span class="hero-accent">Studio</span>
     </h1>
     <p class="mt-5 max-w-3xl text-[15px] md:text-[17px] text-zinc-400 leading-relaxed">
-      Control de calidad de arte final para <b class="text-zinc-200">offset de empaque</b>,
-      <b class="text-zinc-200">estampado textil</b> y <b class="text-zinc-200">publicación digital</b>.
+      Control de calidad de arte final para <b class="text-zinc-200">impresión offset</b>,
+      <b class="text-zinc-200">estampado textil</b> y <b class="text-zinc-200">gran formato</b>.
       Lectura real de cabeceras, cajas de página y perfiles ICC —
       <span class="text-sky-300">todo en tu equipo, sin subir el archivo a ningún servidor</span>.
     </p>
@@ -432,12 +440,14 @@
                 <button data-tacmode="over"    class="tacmode px-2 py-0.5 hover:bg-zinc-800">Sobre el límite</button>
                 <button data-tacmode="density" class="tacmode px-2 py-0.5 hover:bg-zinc-800">Densidad</button>
                 <button data-tacmode="plates"  class="tacmode px-2 py-0.5 hover:bg-zinc-800">Separaciones</button>
+                <button data-tacmode="spots"   class="tacmode px-2 py-0.5 hover:bg-zinc-800">Tintas planas</button>
               </div>
               <button class="help text-zinc-500 hover:text-sky-400" data-help="tac">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/></svg>
               </button>
             </div>
-            <div class="px-3 py-3">
+            <div id="spotPanel" class="hidden px-3 py-3"></div>
+            <div id="tacBody" class="px-3 py-3">
               <div class="flex items-center gap-3">
                 <label class="text-[11px] text-zinc-400 whitespace-nowrap">Límite TAC</label>
                 <input id="tacSlider" type="range" min="160" max="400" step="5" value="330" class="flex-1">
@@ -554,7 +564,33 @@
 
       <div id="procPanel-offset" role="tabpanel" aria-labelledby="proctab-offset" class="p-4 md:p-5">
         <div id="procHead-offset"></div>
-        <div id="procSpec-offset" class="mb-5"></div>
+        <div id="procSpec-offset" class="mb-6"></div>
+
+        <!-- ============================= PREFLIGHT DE OFFSET POR SUSTRATO ============================= -->
+        <section id="offsetpre" class="pt-5 border-t border-zinc-800 scroll-mt-16">
+          <div class="mb-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="h-px w-6 bg-sky-500"></span>
+              <span class="text-[10px] uppercase tracking-[0.28em] text-sky-400 font-bold">Clasificación y normalización de la salida</span>
+            </div>
+            <h3 class="text-[20px] font-black tracking-tight text-zinc-100">Preflight de offset por sustrato</h3>
+            <p class="text-[12.5px] text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+              Clasifica el soporte por tipo y acabado y normaliza la salida: resolución de entrada de las imágenes, lineatura de trama y resolución del CTP.
+              El Preflight verifica el arte con esta clase de sustrato, y el checklist acompaña el trabajo desde la preimpresión hasta la tirada.
+            </p>
+          </div>
+          <div id="offConfig" class="border border-zinc-800 bg-zinc-950 p-4 mb-4"></div>
+          <div id="offTriad" class="mb-4"></div>
+          <div class="border border-zinc-800">
+            <div class="overflow-x-auto border-b border-zinc-800 bg-zinc-900/40">
+              <div id="offTabs" role="tablist" aria-label="Preflight de offset" class="flex min-w-max"></div>
+            </div>
+            <div id="offPanel-verif" role="tabpanel" aria-labelledby="offtab-verif" class="p-4 md:p-5"></div>
+            <div id="offPanel-sustratos" role="tabpanel" aria-labelledby="offtab-sustratos" class="p-4 md:p-5" hidden></div>
+            <div id="offPanel-salida" role="tabpanel" aria-labelledby="offtab-salida" class="p-4 md:p-5" hidden></div>
+            <div id="offPanel-produccion" role="tabpanel" aria-labelledby="offtab-produccion" class="p-4 md:p-5" hidden></div>
+            <div id="offPanel-papeles" role="tabpanel" aria-labelledby="offtab-papeles" class="p-4 md:p-5" hidden>
+              <div id="offPapelesNote"></div>
     <div class="border border-zinc-800 bg-zinc-900/40">
       <h3 class="px-4 py-2.5 border-b border-zinc-800 text-[11px] uppercase tracking-widest text-zinc-400 font-bold flex items-center justify-between">
         <span>Resolución de entrada (ppi), salida digital (dpi) y lineatura (lpi) por sustrato</span>
@@ -579,6 +615,9 @@
         La calificación por sustrato se calcula con la resolución efectiva al tamaño de reproducción declarado en el panel 2.
       </p>
     </div>
+            </div>
+          </div>
+        </section>
 
       </div>
 
@@ -1097,9 +1136,13 @@ const GLOSSARY = {
     '<p>En <b>sublimación</b> el color se tiñe sobre poliéster &ge; 80 % blanco: no existe tinta blanca, el blanco es el propio tejido.</p>' +
     '<p>En <b>serigrafía</b> se emiten positivos con densidad &ge; 4,0 D, líneas &ge; 0,5 pt y texto &ge; 6 pt para que la emulsión resuelva el detalle.</p>'],
 
-  spot: ['Tintas planas (Pantone+ Solid Coated)',
-    '<p>Una tinta plana es un color premezclado con su propia plancha o pantalla. En PDF aparece como espacio <b>/Separation</b> o <b>/DeviceN</b>.</p>' +
-    '<p>Errores frecuentes: nombres duplicados con distinta grafía (<span class="font-mono">PANTONE 485 C</span> vs <span class="font-mono">Pantone 485C</span>) generan planchas extra; usar la biblioteca <b>Pantone+ Solid Coated</b> en todo el flujo.</p>'],
+  spot: ['Tintas planas: tinta directa y especial',
+    '<p>Una tinta plana —directa o especial— es un color premezclado que se imprime con su propia plancha o pantalla, en lugar de construirse con cian, magenta, amarillo y negro. En PDF aparece como espacio <b>/Separation</b> o <b>/DeviceN</b>; un JPEG o un PNG no pueden llevarla.</p>' +
+    '<ul class="list-disc pl-5 text-zinc-400"><li><b>De color</b>: guías Pantone (C para estucado, U para no estucado), metálicas, fluorescentes, otras guías o fórmulas propias.</li>' +
+    '<li><b>Técnicas y acabados</b>: troquel o corte, barniz selectivo, relieve o blanco de base. Van en sobreimpresión y no son color del diseño.</li>' +
+    '<li><b>Registro</b> (/All): se imprime en todas las planchas; sólo para marcas.</li></ul>' +
+    '<p>Errores frecuentes: la misma tinta con dos grafías (<span class="font-mono">PANTONE 485 C</span> y <span class="font-mono">Pantone 485C</span>) genera dos planchas; una tinta de proceso definida como plana duplica su plancha; Pantone CP / UP es la versión en cuatricromía, no una tinta directa.</p>' +
+    '<p class="text-zinc-500">El modo «Tintas planas» del mapa lee la lista del archivo y sitúa cada tinta por su color equivalente: la ubicación es una estimación.</p>'],
 
   joboptions: ['Preajustes .joboptions de Adobe',
     '<p>Un <b>.joboptions</b> es el archivo de preajuste que Acrobat Distiller, InDesign e Illustrator usan para generar el PDF. ' +
@@ -1226,6 +1269,28 @@ const GLOSSARY = {
     '<li><b>Pantallas LED (DOOH)</b>: sin impresión física; RGB y píxeles exactos de la pantalla.</li></ul>' +
     '<p>Todos los impresos: CMYK obligatorio, Coated FOGRA39 / ISO Coated v2, TAC ≤ 320 % en estucados (300 % en papel offset), PDF/X-1a:2001 o TIFF / EPS sin compresión, sangrado de 3–5 mm y margen de seguridad amplio frente a marcos, ojales y doblados.</p>'],
 
+  offsust: ['Sustratos de offset: tipo y acabado',
+    '<ul class="list-disc pl-5 text-zinc-400">' +
+    '<li><b>Estucado / couché</b> (brillo o mate): alta retención de tinta. 300 ppi · CTP 2400–2540 dpi · 150–200 lpi · FOGRA39 / FOGRA51.</li>' +
+    '<li><b>No estucado</b> (offset, woodfree, bond): poroso y absorbente, más ganancia de punto. 300 ppi · 2400–2540 dpi · 120–150 lpi · FOGRA47 / FOGRA52.</li>' +
+    '<li><b>Papel prensa</b> (coldset): fibra corta, muy absorbente. 150–200 ppi · 1200–2400 dpi · 85–100 lpi · ISO 12647-3.</li>' +
+    '<li><b>Cartulina y cartón</b> (SBS, folding, reciclado; C1S o C2S): 300 ppi · 2400–2540 dpi · 150–175 lpi · FOGRA39 / FOGRA51.</li>' +
+    '<li><b>Sintéticos</b> (polipropileno, acetato): no porosos; tintas de oxidación o UV. 300 ppi · 2400–2540 dpi · 133–150 lpi.</li></ul>'],
+
+  offres: ['PPI, LPI y DPI en offset',
+    '<ul class="list-disc pl-5 text-zinc-400">' +
+    '<li><b>Entrada (PPI)</b>: se calcula a la escala final (1:1) y, como regla general, vale entre 1,5 y 2 veces la lineatura.</li>' +
+    '<li><b>Lineatura (LPI)</b>: más alta en estucados y más abierta en soportes absorbentes, donde una trama cerrada une los puntos y cierra las sombras.</li>' +
+    '<li><b>Salida CTP (DPI)</b>: para 256 niveles de gris por canal, DPI ≥ LPI × 16. Una trama de 150 lpi se graba a 2400 dpi.</li></ul>' +
+    '<p>El RIP lee la resolución de un JPEG con prioridad <b>8BIM &gt; JFIF</b>. Si no está bien incrustada —por ejemplo, guardada sin unidades en pulgadas—, muchos RIP colapsan la imagen a 72 ppi y cambian su tamaño físico.</p>'],
+
+  offprod: ['Control en prensa y durante la tirada',
+    '<ul class="list-disc pl-5 text-zinc-400">' +
+    '<li><b>Prueba de contrato</b> certificada, validada bajo iluminante D50 antes de bajar planchas.</li>' +
+    '<li><b>Temperatura</b>: +5 °C reducen la viscosidad cerca de un 30 % (5–6 % por °C). Demasiado viscosa en frío arranca el estucado o las fibras; demasiado fluida provoca velo y flyeo.</li>' +
+    '<li><b>Emulsificación</b> agua-tinta dentro del límite operativo: hasta ~25 % de agua.</li>' +
+    '<li><b>Densidad óptica</b> de los sólidos CMYK uniforme a lo ancho del pliego, <b>TVI</b> según el soporte y <b>registro</b> de las cuatro estaciones.</li></ul>'],
+
   alpha: ['Canal alfa y transparencia real',
     '<p>Un fondo blanco no es transparencia. En estampado textil el arte debe tener <b>canal alfa</b> real (PNG-32, TIFF con alfa o vector) para que la máquina no imprima una caja blanca alrededor del diseño.</p>' +
     '<p>Los generadores de imagen por IA entregan por defecto RGB de 8 bits <b>sin canal alfa</b>: requiere recorte y limpieza de halo (fringe) antes de producción.</p>']
@@ -1250,20 +1315,24 @@ const TARGETS = {
     manual: [
       ['Fuentes incrustadas o texto convertido a curvas', 'pdfx'],
       ['Transparencias aplanadas (sin live transparency)', 'pdfx'],
-      ['Troquel en tinta plana, en sobreimpresión y no imprimible', 'overprint'],
+      ['Troquel en tinta plana, en sobreimpresión y no imprimible', 'overprint', ['estucado', 'noestucado', 'cartulina', 'sintetico']],
       ['Marcas de corte, registro y tira de control presentes', 'bleed'],
       ['Textos y códigos de barras en 100 % K únicamente', 'black'],
-      ['Sangrado de 3 mm verificado en los cuatro lados', 'bleed'],
+      ['Sangrado de 3–5 mm verificado en los cuatro lados', 'bleed'],
       ['Zona de seguridad de 3–5 mm respetada', 'bleed'],
-      ['OutputIntent FOGRA39 declarado, sin perfiles por objeto', 'fogra']
+      // {perfil} se sustituye por el de la clase de sustrato (offManualItem)
+      ['OutputIntent {perfil} declarado, sin perfiles por objeto', 'fogra'],
+      ['Curva tonal previa: medios tonos y sombras aclarados antes de filmar planchas', 'offres', ['noestucado']],
+      ['Alta ganancia tonal compensada según la ISO 12647-3', 'offres', ['prensa']],
+      ['Tinta de secado por oxidación o curado UV confirmada con la imprenta', 'offsust', ['sintetico']]
     ],
     sheet: [
-      ['Resolución', 'Mínimo 300 ppi al tamaño real de reproducción (ideal 350 ppi para 175 lpi)'],
+      ['Resolución', 'Según la clase de sustrato: la norma aplicada la genera offSheet()'],
       ['Modo de color', 'CMYK y/o tintas planas — sin RGB, sin Lab'],
-      ['Perfil / OutputIntent', 'ISO Coated v2 · FOGRA39'],
-      ['Límite de tinta (TAC)', '300 % – 330 %'],
+      ['Perfil / OutputIntent', 'Según la clase de sustrato'],
+      ['Límite de tinta (TAC)', 'Según el perfil de la clase de sustrato'],
       ['Formato', 'PDF/X-1a:2001 · fuentes incrustadas · transparencias aplanadas · página única'],
-      ['Geometría', 'BleedBox >= TrimBox + 3 mm por lado · seguridad 3–5 mm interior'],
+      ['Geometría', 'Sangrado de 3 – 5 mm por lado · seguridad 3–5 mm interior'],
       ['Negros', 'Texto y código de barras C0 M0 Y0 K100 · masas C60 M40 Y40 K100'],
       ['Tipografía y trazos', 'Texto >= 6 pt · grosor de línea >= 0,25 pt']
     ]
@@ -1461,6 +1530,29 @@ function parseExifResolution(dv, base, len) {
   } catch (e) { return null; }
 }
 
+/** Recurso 1005 (ResolutionInfo) del bloque Photoshop 3.0: la resolución se guarda siempre en ppi. */
+function parse8BIMResolution(dv, u8, p, end) {
+  try {
+    let guard = 0;
+    while (p + 12 <= end && guard++ < 500) {
+      if (latin1(u8, p, 4) !== '8BIM') return null;
+      const id = dv.getUint16(p + 4);
+      let q = p + 6;
+      const nameLen = u8[q];
+      q += 1 + nameLen;
+      if ((1 + nameLen) % 2) q++;
+      const size = dv.getUint32(q);
+      q += 4;
+      if (id === 0x03ED && size >= 16) {
+        const x = dv.getUint32(q) / 65536, y = dv.getUint32(q + 8) / 65536;
+        return x > 0 ? { dpiX: Math.round(x), dpiY: Math.round(y || x) } : null;
+      }
+      p = q + size + (size % 2);
+    }
+  } catch (e) { /* bloque truncado */ }
+  return null;
+}
+
 function parseJPEG(buf) {
   const dv = new DataView(buf), u8 = new Uint8Array(buf);
   if (dv.getUint16(0) !== 0xFFD8) return null;
@@ -1477,12 +1569,24 @@ function parseJPEG(buf) {
     const len = dv.getUint16(o), seg = o + 2, segLen = len - 2;
     if (marker === 0xE0 && latin1(u8, seg, 4) === 'JFIF') {
       const units = u8[seg + 7], xd = dv.getUint16(seg + 8), yd = dv.getUint16(seg + 10);
-      if (units === 1) { out.dpiX = xd; out.dpiY = yd; }
-      else if (units === 2) { out.dpiX = Math.round(xd * 2.54); out.dpiY = Math.round(yd * 2.54); }
-      out.dpiSource = 'JFIF';
+      const jx = units === 2 ? Math.round(xd * 2.54) : xd, jy = units === 2 ? Math.round(yd * 2.54) : yd;
+      out.resMeta = out.resMeta || {};
+      out.resMeta.jfif = { units: units, x: xd, y: yd, dpiX: units ? jx : null, dpiY: units ? jy : null };
+      // Units 0 sólo declara la relación de aspecto; 8BIM manda sobre JFIF en el RIP
+      if (units && !out.resMeta.bim) { out.dpiX = jx; out.dpiY = jy; out.dpiSource = 'JFIF'; }
+      else if (!out.dpiSource) out.dpiSource = 'JFIF';
+    }
+    if (marker === 0xED && latin1(u8, seg, 13) === 'Photoshop 3.0') {
+      const bim = parse8BIMResolution(dv, u8, seg + 14, seg + segLen);
+      if (bim) {
+        out.resMeta = out.resMeta || {};
+        out.resMeta.bim = bim;
+        out.dpiX = bim.dpiX; out.dpiY = bim.dpiY; out.dpiSource = '8BIM (Photoshop)';
+      }
     }
     if (marker === 0xE1) {
       const ex = parseExifResolution(dv, seg, segLen);
+      if (ex) { out.resMeta = out.resMeta || {}; out.resMeta.exif = ex; }
       if (ex && !out.dpiX) { out.dpiX = ex.dpiX; out.dpiY = ex.dpiY; out.dpiSource = 'EXIF'; }
       const xmp = latin1(u8, seg, 28);
       if (xmp.indexOf('http://ns.adobe.com/xap') === 0) out.hasXMP = true;
@@ -1856,7 +1960,7 @@ async function loadImage(buf, file, ext, fid) {
     iccDesc: iccDesc,
     iccSpace: hdr.icc ? hdr.icc.space : (hdr.srgbChunk || hdr.iccName ? 'RGB' : null),
     hasEmbeddedProfile: !!(hdr.icc || hdr.iccName || hdr.srgbChunk),
-    dpiX: hdr.dpiX || null, dpiY: hdr.dpiY || null, dpiSource: hdr.dpiSource || null,
+    dpiX: hdr.dpiX || null, dpiY: hdr.dpiY || null, dpiSource: hdr.dpiSource || null, resMeta: hdr.resMeta || null,
     hasAlpha: !!hdr.hasAlpha || !!(state.analysis && state.analysis.hasTransparency),
     alphaDeclared: !!hdr.hasAlpha,
     vector: !!hdr.vector,
@@ -1918,7 +2022,9 @@ function scanPDFRaw(u8) {
   };
   const xVer = text.match(/\/GTS_PDFXVersion\s*[(<]([^)>]*)[)>]/);
   const fonts = uniq(/\/BaseFont\s*\/([A-Za-z0-9#+\-_,.]+)/g, 1);
-  const spots = uniq(/\/Separation\s*\/([A-Za-z0-9#+\-_,.() ]{1,48}?)[\s\/\[]/g, 1);
+  const spots = uniq(/\/Separation\s*\/([A-Za-z0-9#+\-_,.() ]{1,48}?)[\s\/\[]/g, 1).map(pdfNameDecode)
+    .filter((v, i, a) => v && a.indexOf(v) === i);
+  const spotDefs = pdfSpotDefs(text), deviceNInks = pdfDeviceNInks(text);
   const fontFiles = (text.match(/\/FontFile[23]?\b/g) || []).length;
 
   return {
@@ -1930,6 +2036,8 @@ function scanPDFRaw(u8) {
     fontFiles: fontFiles,
     fonts: fonts,
     spotColors: spots,
+    spotDefs: spotDefs,
+    deviceNInks: deviceNInks,
     usesDeviceRGB: /\/DeviceRGB|\/CalRGB/.test(text),
     usesDeviceCMYK: /\/DeviceCMYK/.test(text),
     usesDeviceN: /\/DeviceN/.test(text),
@@ -2063,6 +2171,8 @@ async function loadPDF(buf) {
     fonts: raw.fonts,
     fontsUsed: fontsUsed,
     spotColors: raw.spotColors,
+    spotDefs: raw.spotDefs || [],
+    deviceNInks: raw.deviceNInks || [],
     usesDeviceRGB: raw.usesDeviceRGB,
     usesDeviceCMYK: raw.usesDeviceCMYK,
     usesDeviceN: raw.usesDeviceN,
@@ -2211,8 +2321,8 @@ function checkResolution(t, m, ppi) {
   if (t.id === 'granformato') return gfCheckResolution(t, m);
   const label = 'Resolución efectiva (ppi)';
   const tp = targetPPI(t), dtf = isDTF();
-  const band = tp.band ? ' · banda ' + tp.band.label : '';
-  const help = dtf ? 'dtf' : tp.band ? 'giga' : 'ppi';
+  const band = tp.band ? (t.id === 'offset' ? ' · clase ' : ' · banda ') + tp.band.label : '';
+  const help = dtf ? 'dtf' : t.id === 'offset' ? 'offres' : tp.band ? 'giga' : 'ppi';
   if (m.kind === 'pdf') {
     if (m.imageCount === 0) {
       return chk('ppi', label, 'pass', 'Vector puro (0 imágenes incrustadas)', 'Independiente de resolución', null, 'ppi');
@@ -2268,7 +2378,7 @@ function checkColorMode(t, m) {
     if (t.id === 'offset') {
       if (m.usesDeviceRGB || m.usesLab) {
         return chk('color', label, 'fail', mode + (m.usesLab ? ' + Lab' : ''), 'CMYK y/o tinta plana',
-          'Convierte todo el contenido a CMYK con el perfil ISO Coated v2 (FOGRA39) antes de exportar. PDF/X-1a no admite RGB ni Lab.', 'pdfx');
+          'Convierte todo el contenido a CMYK con ' + offNorma().conv + ' antes de exportar. PDF/X-1a no admite RGB ni Lab.', 'pdfx');
       }
       if (m.usesDeviceCMYK || m.spotColors.length) {
         return chk('color', label, 'pass', mode + (m.spotColors.length ? ' + ' + m.spotColors.length + ' tinta(s) plana(s)' : ''), expected, null, 'spot');
@@ -2287,7 +2397,7 @@ function checkColorMode(t, m) {
   if (t.id === 'offset') {
     if (isCMYK) return chk('color', label, 'pass', mode, expected, null, 'fogra');
     return chk('color', label, 'fail', mode + note, 'CMYK',
-      'Error de Modo de Color: el archivo está en RGB y provocará una conversión destructiva en el RIP. Convierte a CMYK con el perfil ISO Coated v2 (FOGRA39), intento de reproducción Colorimétrico relativo + compensación de punto negro.', 'fogra');
+      'Error de Modo de Color: el archivo está en RGB y provocará una conversión destructiva en el RIP. Convierte a CMYK con ' + offNorma().conv + ', intento de reproducción Colorimétrico relativo + compensación de punto negro.', 'fogra');
   }
   if (t.id === 'textil' && isDTF()) {
     if (isRGB) return chk('color', label, 'pass', mode, 'RGB (sRGB IEC61966-2.1)', null, 'dtf');
@@ -2306,30 +2416,11 @@ function checkColorMode(t, m) {
 /* --- 4. Perfil ICC --- */
 function checkProfile(t, m) {
   if (t.id === 'granformato') return gfCheckProfile(t, m);
+  if (t.id === 'offset') return offCheckProfile(t, m);
   const label = 'Perfil ICC / OutputIntent';
   const desc = m.iccDesc || null;
   const up = (desc || '').toUpperCase();
   const match = expectedProfiles(t).some(p => p && up.indexOf(p) >= 0);
-
-  if (t.id === 'offset') {
-    if (m.kind === 'pdf') {
-      if (!m.hasOutputIntent) {
-        return chk('icc', label, 'fail', 'sin OutputIntent', profileLabel('OutputIntent FOGRA39 / ISO Coated v2'),
-          'PDF/X-1a exige declarar la condición de impresión. En InDesign: Exportar > PDF/X-1a:2001 > Salida > Perfil de destino: Coated FOGRA39.', 'fogra');
-      }
-      if (match) return chk('icc', label, 'pass', desc, profileLabel('ISO Coated v2 / FOGRA39'), null, 'fogra');
-      return chk('icc', label, 'warn', desc || 'OutputIntent presente (sin nombre legible)',
-        profileLabel('ISO Coated v2 / FOGRA39'),
-        'Hay OutputIntent pero no corresponde a la caracterización esperada. Confirma con la imprenta la condición de impresión del sustrato.', 'fogra');
-    }
-    if (!m.hasEmbeddedProfile) {
-      return chk('icc', label, 'fail', 'sin perfil incrustado', profileLabel('ISO Coated v2 / FOGRA39'),
-        'Sin perfil incrustado el RIP aplicará una conversión genérica impredecible. Asigna y convierte a ISO Coated v2 e incrusta el perfil.', 'fogra');
-    }
-    if (match) return chk('icc', label, 'pass', desc, profileLabel('ISO Coated v2 / FOGRA39'), null, 'fogra');
-    return chk('icc', label, 'warn', desc || 'perfil presente', profileLabel('ISO Coated v2 / FOGRA39'),
-      'El perfil incrustado no es la caracterización de destino. Convierte a ISO Coated v2 (FOGRA39) con colorimétrico relativo.', 'fogra');
-  }
 
   if (t.id === 'textil' && isDTF()) {
     const srgb = /SRGB|IEC ?61966/.test(up);
@@ -2360,7 +2451,7 @@ function checkFormat(t, m) {
   if (t.id === 'offset') {
     if (ext !== 'pdf') {
       return chk('format', label, 'fail', '.' + ext, t.exportSpec,
-        'Los archivos de imagen no son entregables de producción para empaque. Coloca el arte en InDesign/Illustrator y exporta PDF/X-1a:2001 con marcas y sangrado.', 'pdfx');
+        'Los archivos de imagen no son entregables de producción en offset. Coloca el arte en InDesign/Illustrator y exporta PDF/X-1a:2001 con marcas y sangrado.', 'pdfx');
     }
     const x = (m.xVersion || '').toUpperCase();
     if (/X-1A/.test(x)) return chk('format', label, 'pass', 'PDF/X-1a (' + m.xVersion + ')', t.exportSpec, null, 'pdfx');
@@ -2433,18 +2524,18 @@ function targetChecks(t, m, ppi, an) {
         const bm = m.bleedMargins, min = Math.min(bm.left, bm.right, bm.top, bm.bottom);
         const txt = ['I ' + fmt(bm.left, 1), 'D ' + fmt(bm.right, 1), 'S ' + fmt(bm.top, 1), 'INF ' + fmt(bm.bottom, 1)].join(' / ') + ' mm';
         out.push(min >= t.bleedMM - 0.05
-          ? chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'pass', txt, '>= 3 mm por lado', null, 'bleed')
-          : chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'fail', txt, '>= 3 mm por lado',
+          ? chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'pass', txt, '3 – 5 mm por lado', null, 'bleed')
+          : chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'fail', txt, '3 – 5 mm por lado',
               'Sangrado insuficiente: con la tolerancia de troquel aparecerán filos blancos. Extiende el arte 3 mm más allá del corte y vuelve a exportar.', 'bleed'));
       } else if (m.trimBox && !m.bleedBox) {
-        out.push(chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'fail', 'sin BleedBox', '>= 3 mm por lado',
+        out.push(chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'fail', 'sin BleedBox', '3 – 5 mm por lado',
           'El PDF no declara BleedBox. Define los cuadros de página o re-exporta activando "Sangrado 3 mm" en el cuadro Marcas y sangrados.', 'bleed'));
       } else {
-        out.push(chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'warn', 'no legible', '>= 3 mm por lado',
+        out.push(chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'warn', 'no legible', '3 – 5 mm por lado',
           'No se pudieron leer los cuadros de página (posible compresión de objetos). Verifica en Acrobat > Producción de impresión > Definir cuadros de página.', 'bleed'));
       }
       out.push(chk('pages', 'Página única', m.pages === 1 ? 'pass' : 'fail', m.pages + ' página(s)', '1 página',
-        m.pages === 1 ? null : 'El flujo de empaque en PDF/X-1a exige un archivo por diseño. Divide el documento en archivos independientes.', 'pdfx'));
+        m.pages === 1 ? null : 'El flujo offset en PDF/X-1a exige un archivo por diseño. Divide el documento en archivos independientes.', 'pdfx'));
       out.push(chk('fonts', 'Fuentes incrustadas', m.fontFiles > 0 ? 'pass' : (m.fonts.length ? 'fail' : 'info'),
         m.fontFiles > 0 ? m.fontFiles + ' fuente(s) incrustada(s)' : (m.fonts.length ? m.fonts.length + ' fuente(s) referenciada(s), 0 incrustada(s)' : 'sin texto vivo detectado'),
         'Todas incrustadas o convertidas a curvas',
@@ -2457,7 +2548,7 @@ function targetChecks(t, m, ppi, an) {
         out.push(m.minTextPt >= t.minTextPt
           ? chk('text', 'Cuerpo mínimo de texto', 'pass', fmt(m.minTextPt, 2) + ' pt', '>= 6 pt', null, 'black')
           : chk('text', 'Cuerpo mínimo de texto', 'fail', fmt(m.minTextPt, 2) + ' pt', '>= 6 pt',
-              'Texto por debajo de 6 pt: con trama de 175 lpi el filo se rompe y, si va en negro compuesto, se ve doble por falta de registro.', 'black'));
+              'Texto por debajo de 6 pt: con trama de ' + state.off.lpi + ' lpi el filo se rompe y, si va en negro compuesto, se ve doble por falta de registro.', 'black'));
       }
       if (m.placedMasks) {
         const okMask = m.minMaskPPI >= 600;
@@ -2465,17 +2556,13 @@ function targetChecks(t, m, ppi, an) {
           fmt(m.minMaskPPI, 0) + ' ppi en la peor de ' + m.placedMasks + ' máscara(s)', '>= 600 ppi (1200 ppi óptimo)',
           okMask ? null : 'Las imágenes de 1 bit (línea, texto rasterizado, códigos) necesitan 600–1200 ppi: a menor densidad el filo del trazo se dentella en plancha.', 'ppi'));
       }
-      out.push(chk('spot', 'Tintas planas declaradas', m.spotColors.length ? 'info' : 'info',
-        m.spotColors.length ? m.spotColors.join(', ') : 'ninguna detectada',
-        'Troquel y barnices como tinta plana en sobreimpresión',
-        m.spotColors.length ? 'Verifica que los nombres coincidan exactamente con la biblioteca Pantone+ Solid Coated y que el troquel esté marcado como no imprimible.'
-                            : 'No se detectaron separaciones. Si el diseño lleva troquel, hendido o barniz, deben ir en tinta plana propia.', 'overprint'));
+      out.push(spotCheck(m));
       out.push(chk('op', 'Sobreimpresión declarada', m.overprint ? 'info' : 'info',
         m.overprint ? 'atributos de sobreimpresión presentes' : 'sin atributos de sobreimpresión',
         'Troquel y negros de texto en overprint',
         'Comprueba visualmente en Acrobat > Previsualización de salida > Simular sobreimpresión.', 'overprint'));
     } else {
-      out.push(chk('bleed', 'Sangrado (3 mm por lado)', 'warn', 'no aplicable a imagen suelta', '>= 3 mm por lado',
+      out.push(chk('bleed', 'Sangrado (3 – 5 mm por lado)', 'warn', 'no aplicable a imagen suelta', '3 – 5 mm por lado',
         'Una imagen no transporta geometría de corte. Colócala en el documento de montaje y extiende el fondo 3 mm más allá del TrimBox.', 'bleed'));
       if (ppi) {
         const bleedPx = Math.round(t.bleedMM / MM_IN * ppi.min);
@@ -2492,8 +2579,8 @@ function targetChecks(t, m, ppi, an) {
       const st = an.tacMax > limit + 20 ? 'fail' : (an.tacOverPct > 0.5 ? 'warn' : 'pass');
       out.push(chk('tac', 'Cobertura de tinta estimada (TAC)', st,
         'máx. ' + fmt(an.tacMax, 0) + ' % · media ' + fmt(an.tacAvg, 0) + ' % · ' + fmt(an.tacOverPct, 2) + ' % del área sobre el límite',
-        '<= ' + limit + ' %' + (an.fromRender ? ' (estimado sobre render RGB)' : ''),
-        st === 'pass' ? null : 'Aplica una conversión con perfil ISOcoated_v2_300_eci o activa la limitación de tinta en el RIP. Revisa especialmente fondos oscuros y negros ricos.', 'tac'));
+        '<= ' + limit + ' %' + offTacSource() + (an.fromRender ? ' (estimado sobre render RGB)' : ''),
+        st === 'pass' ? null : 'Aplica una conversión con ' + offNorma().conv + ' y limitación de tinta, o activa la limitación en el RIP. Revisa especialmente fondos oscuros y negros ricos.', 'tac'));
       out.push(chk('blackk', 'Negros neutros vs. compuestos', an.darkCompositePct > 2 ? 'warn' : 'info',
         fmt(an.darkNeutralPct, 1) + ' % neutro · ' + fmt(an.darkCompositePct, 1) + ' % compuesto',
         'Texto y códigos en 100 % K',
@@ -2503,6 +2590,7 @@ function targetChecks(t, m, ppi, an) {
         fmt(an.outOfGamutPct, 1) + ' % de píxeles muy saturados', '< 8 % del área',
         an.outOfGamutPct > 8 ? 'Naranjas, verdes y azules muy saturados no son reproducibles en CMYK: se apagarán al convertir. Considera una tinta plana de refuerzo o ajusta el arte.' : null, 'fogra'));
     }
+    offTargetChecks(t, m, ppi, an).forEach(c => out.push(c));
     return out;
   }
 
@@ -2824,7 +2912,7 @@ function renderAlerts() {
       '<p class="text-[13px] font-black text-red-300 uppercase tracking-wide">Advertencia de preprensa</p>' +
       '<p class="text-[12.5px] text-red-100 mt-1">Resolución efectiva insuficiente (' + fmt(ppiVal, 0) + ' ppi)' +
       (state.meta.kind === 'pdf' ? ' en una imagen colocada dentro del arte' : '') +
-      '. Riesgo de pixelación en planchas de trama fina (175 lpi).</p></div>';
+      '. Riesgo de pixelación en planchas de trama ' + (t.id === 'offset' ? 'de ' + state.off.lpi + ' lpi' : 'fina') + '.</p></div>';
   }
   const colFail = crit.filter(c => c.key === 'color')[0];
   if (colFail && t.id === 'offset') {
@@ -2858,7 +2946,7 @@ function renderManual() {
 
 function renderSpecSheet() {
   const t = TARGETS[state.target];
-  const tec = t.id === 'textil' ? TEXTIL_TECS[state.textilTec].name : t.id === 'granformato' ? gfSus().name : t.tag;
+  const tec = t.id === 'textil' ? TEXTIL_TECS[state.textilTec].name : t.id === 'granformato' ? gfSus().name : t.id === 'offset' ? offSus().name : t.tag;
   $('#specSheet').innerHTML =
     '<p class="text-zinc-300 font-semibold text-[12.5px]">' + esc(t.name) + '</p>' +
     '<p class="text-[11px] text-zinc-500 uppercase tracking-widest">' + esc(tec) + '</p>' +
@@ -2954,6 +3042,15 @@ function renderTargetCards() {
           (state.textilTec === x ? 'border-emerald-500 text-emerald-300 bg-emerald-950/30' : 'border-zinc-700 text-zinc-400 hover:bg-zinc-800') + '">' +
           esc(TEXTIL_TECS[x].label) + '</button>').join('') + '</div></div>';
     }
+    // En offset la clase de sustrato normaliza la salida
+    if (k === 'offset' && on) {
+      html += '<div class="-mt-2 border border-t-0 border-sky-500 bg-sky-950/20 px-3 pb-2.5 pt-2">' +
+        '<div class="text-[9.5px] uppercase tracking-widest text-zinc-500 mb-1.5">Sustrato · normaliza la salida</div>' +
+        '<div class="grid grid-cols-2 gap-1">' + Object.keys(OFF_SUSTRATOS).map(x =>
+          '<button type="button" data-offsust="' + x + '" class="border px-2 py-1 text-[11px] text-left transition ' +
+          (state.off.sustrato === x ? 'border-emerald-500 text-emerald-300 bg-emerald-950/30' : 'border-zinc-700 text-zinc-400 hover:bg-zinc-800') + '">' +
+          esc(OFF_SUSTRATOS[x].label) + '</button>').join('') + '</div></div>';
+    }
     // En gran formato el sustrato fija la resolución exigida
     if (k === 'granformato' && on) {
       html += '<div class="-mt-2 border border-t-0 border-sky-500 bg-sky-950/20 px-3 pb-2.5 pt-2">' +
@@ -2977,6 +3074,9 @@ function setTarget(k) {
   if (!TARGETS[k]) return;
   state.target = k;
   state.physical.touched = false;
+  // Un sustrato del catálogo sólo vale para su proceso: no debe arrastrarse a la ficha de otro
+  const cs = activeSubstrate();
+  if (cs && cs.target !== k) applySubstrate(null, true);
   // El sustrato del preflight de gigantografía se declara también en el catálogo
   if (k === 'granformato') gfSyncCatalog();
   // La verificación de serigrafía entra en la ficha por defecto en el destino textil
@@ -3043,7 +3143,7 @@ function buildFicha() {
     ['Cliente', $('#clientName').value || '—'],
     ['Operador de preprensa', $('#operator').value || '—'],
     ['Fecha y hora del control', now.toLocaleString('es')],
-    ['Destino de producción', t.name + (t.id === 'textil' ? ' · ' + TEXTIL_TECS[state.textilTec].name : '') + (t.id === 'granformato' ? ' · ' + gfSus().name : '') + ' (' + t.tag + ')'],
+    ['Destino de producción', t.name + (t.id === 'textil' ? ' · ' + TEXTIL_TECS[state.textilTec].name : '') + (t.id === 'granformato' ? ' · ' + gfSus().name : '') + (t.id === 'offset' ? ' · ' + offAcabado() : '') + ' (' + t.tag + ')'],
     ['Sustrato / perfil de destino', (function () {
       const sb = activeSubstrate();
       return sb ? sb.name + ' — ' + sb.icc + ' · TAC ' + (sb.tac ? sb.tac + ' %' : 'n/a') +
@@ -3071,7 +3171,7 @@ function buildFicha() {
     archivo.push(['Sangrado por lado', m.bleedMargins
       ? 'I ' + fmt(m.bleedMargins.left, 2) + ' / D ' + fmt(m.bleedMargins.right, 2) + ' / S ' + fmt(m.bleedMargins.top, 2) + ' / Inf ' + fmt(m.bleedMargins.bottom, 2) + ' mm'
       : 'no declarado']);
-    archivo.push(['Tintas planas', m.spotColors.length ? m.spotColors.join(', ') : 'ninguna']);
+    archivo.push(['Tintas planas', spotSummary()]);
     archivo.push(['Fuentes', m.fonts.length ? m.fonts.length + ' referenciadas / ' + m.fontFiles + ' incrustadas' : 'sin texto vivo']);
   }
   if (an && !an.error) {
@@ -3115,7 +3215,7 @@ function buildFicha() {
     '<h2>5 · Verificación manual del operador</h2><table>' + manualHTML + '</table>' +
     '<h2>6 · Declaración de flujo con Inteligencia Artificial</h2>' + aiHTML +
     '<h2>7 · Norma aplicada</h2><table>' + kv(activeSheet()) + '</table>' +
-    (function () { const sh = seriFichaHTML(); return sh + gigaFichaHTML(sh ? 9 : 8); })() +
+    (function () { const sh = seriFichaHTML(); return sh + gigaFichaHTML(sh ? 9 : 8) + offFichaHTML(sh ? 9 : 8); })() +
     '<div class="meta" style="margin-top:4mm">Las estimaciones de cobertura de tinta (TAC) y de modo de color derivadas del análisis de píxel son ' +
     'heurísticas calculadas sin motor de gestión de color; no sustituyen una separación con perfil ICC ni la verificación en RIP. ' +
     'La lectura de cajas de página y recursos internos del PDF puede ser parcial en documentos con flujos de objetos comprimidos.</div>' +
@@ -3157,6 +3257,8 @@ function exportJSON() {
     perfilesTaller: (state.iccLib || []).map(x => ({ desc: x.desc, espacio: x.space, clase: x.deviceClass, destino: x.asTarget })),
     serigrafia: (typeof seriExport === 'function' ? seriExport() : null),
     gigantografia: gigaExport(),
+    offset: offExport(),
+    tintasPlanas: spotExport(),
     calificacionPorSustrato: (function () {
       const pp = effectivePPI();
       return RES_SUBSTRATES.map(r => ({ sustrato: r.name, lpi: r.lpiText, ppi: r.ppiText,
@@ -3293,6 +3395,10 @@ function init() {
   catch (e) { console.error('Modulo de procesos no disponible:', e); }
   try { initGiga(); }
   catch (e) { console.error('Modulo de gigantografia no disponible:', e); }
+  try { initOffset(); }
+  catch (e) { console.error('Modulo de offset no disponible:', e); }
+  try { initSpots(); }
+  catch (e) { console.error('Modulo de tintas planas no disponible:', e); }
 
   window.addEventListener('error', ev => {
     console.error(ev.error || ev.message);
@@ -3362,35 +3468,35 @@ const PDF_PRESETS = {
  * `file` referencia el nombre canónico del perfil tal y como se distribuye.
  */
 const SUBSTRATES = [
-  { id: 'fogra39', group: 'Offset · estucado',
+  { id: 'fogra39', off: 'cartulina', group: 'Offset · estucado',
     name: 'Cartulina estucada — empaque', icc: 'ISO Coated v2 (ECI)', file: 'CoatedFOGRA39.icc / ISOcoated_v2_eci.icc',
     tac: 330, lpi: 175, gain: '14 % en el 40 % (curva A)', preset: 'x1a', target: 'offset',
     note: 'Caracterización FOGRA39 (ISO 12647-2). Referencia por defecto para plegadizas estucadas en Europa y América Latina.' },
-  { id: 'fogra39_300', group: 'Offset · estucado',
+  { id: 'fogra39_300', off: 'cartulina', group: 'Offset · estucado',
     name: 'Cartulina estucada — tinta limitada 300 %', icc: 'ISOcoated_v2_300_eci', file: 'ISOcoated_v2_300_eci.icc · EffektiverGesamtfarbauftrag300.kfp',
     tac: 300, lpi: 175, gain: '14 % en el 40 %', preset: 'x1a', target: 'offset',
     note: 'Misma caracterización con el límite de tinta bajado a 300 %. Obligado cuando hay barniz en línea, plastificado o secado rápido.' },
-  { id: 'cardboard', group: 'Offset · cartón',
+  { id: 'cardboard', off: 'cartulina', group: 'Offset · cartón',
     name: 'Cartón compacto / microcorrugado', icc: 'APTEC PC10 CardBoard 2023', file: 'APTEC_PC10_CardBoard_2023.icc',
     tac: 300, lpi: 150, gain: '18 % en el 40 %', preset: 'x1a', target: 'offset',
     note: 'Sustrato con blanco más bajo y mayor ganancia. Evita negros ricos por encima de 280 % y textos invertidos menores de 8 pt.' },
-  { id: 'fogra51', group: 'Offset · estucado',
+  { id: 'fogra51', off: 'estucado', group: 'Offset · estucado',
     name: 'Estucado moderno con blanqueadores (OBA)', icc: 'PSOcoated_v3 (FOGRA51)', file: 'PSOcoated_v3.icc',
     tac: 300, lpi: 175, gain: '13 % en el 40 % (M1)', preset: 'x4', target: 'offset',
     note: 'Sucesor de FOGRA39, medido con iluminación M1. Úsalo si la imprenta trabaja con papel con abrillantadores ópticos.' },
-  { id: 'gracol', group: 'Offset · estucado',
+  { id: 'gracol', off: 'estucado', group: 'Offset · estucado',
     name: 'Estucado GRACoL (América del Norte)', icc: 'Coated GRACoL 2006', file: 'CoatedGRACoL2006.icc',
     tac: 320, lpi: 175, gain: 'Curva G7 (NPDC)', preset: 'x1a', target: 'offset',
     note: 'Calibración G7 por densidad neutra. No mezcles arte separado en GRACoL con arte separado en FOGRA en el mismo pliego.' },
-  { id: 'japan', group: 'Offset · estucado',
+  { id: 'japan', off: 'estucado', group: 'Offset · estucado',
     name: 'Estucado Japan Color', icc: 'Japan Color 2001 Coated', file: 'JapanColor2001Coated.icc',
     tac: 320, lpi: 175, gain: '—', preset: 'x1a', target: 'offset',
     note: 'Estándar JIS para exportación a Asia.' },
-  { id: 'uncoated', group: 'Offset · no estucado',
+  { id: 'uncoated', off: 'noestucado', group: 'Offset · no estucado',
     name: 'Papel offset no estucado', icc: 'PSO Uncoated ISO12647 / Euroscale Uncoated', file: 'EuroscaleUncoated.icc',
     tac: 300, lpi: 133, gain: '20 % en el 40 %', preset: 'x1a', target: 'offset',
     note: 'La absorción del papel cierra el detalle: sube el punto mínimo al 3 % y refuerza los medios tonos antes de convertir.' },
-  { id: 'news', group: 'Offset · prensa',
+  { id: 'news', off: 'prensa', group: 'Offset · prensa',
     name: 'Papel prensa (coldset)', icc: 'ISOnewspaper 26v4', file: 'ISOnewspaper26v4.icc',
     tac: 240, lpi: 100, gain: '26 % en el 40 %', preset: 'x1a', target: 'offset',
     note: 'Límite de tinta muy bajo. Nada de negros ricos; el texto siempre en 100 % K y cuerpo mínimo 7 pt.' },
@@ -3462,13 +3568,15 @@ function applySubstrate(id, quiet) {
     if (s.giga && state.giga.sustrato !== s.giga) {
       if (gfSetSustrato(s.giga)) state.physical.touched = false;
     }
+    if (s.off && state.off.sustrato !== s.off) offSetSustrato(s.off);
     if (!quiet && state.target !== s.target) setTarget(s.target);
   }
+  offSyncTac();
   renderCatalog();
   if (quiet) return;
   renderTargetCards();
   autoFillPhysical();
-  if (state.meta) runEvaluation(); else { renderSpecSheet(); renderHero(); renderGiga(); }
+  if (state.meta) runEvaluation(); else { renderSpecSheet(); renderHero(); renderGiga(); renderOffset(); }
 }
 
 function renderCatalog() {
@@ -3544,7 +3652,8 @@ function openPreset(id) {
 function renderHero() {
   const t = TARGETS[state.target], v = verdict(), s = activeSubstrate();
   $('#heroTarget').textContent = t.name.replace(/\s*\(.*\)/, '') + (t.id === 'textil' ? ' · ' + TEXTIL_TECS[state.textilTec].label : '') +
-    (t.id === 'granformato' ? ' · ' + gfSus().label : '');
+    (t.id === 'granformato' ? ' · ' + gfSus().label : '') +
+    (t.id === 'offset' ? ' · ' + offSus().label : '');
   $('#heroFile').textContent = state.file ? state.file.name : '—';
   $('#heroFile').title = state.file ? state.file.name : '';
   $('#heroSub').textContent = s ? s.name : 'Sin definir';
@@ -5236,13 +5345,13 @@ function auditJobOptions(j) {
     const oi = j.PDFXOutputIntentProfile || j.DestinationProfileName;
     if (oi) {
       const up = String(oi).toUpperCase();
-      const match = expectedProfiles(t).some(x => x && up.indexOf(x) >= 0);
+      const match = offExpected(t).some(x => x && up.indexOf(x) >= 0);
       out.push(chk('jo', 'Intención de salida', match ? 'pass' : 'warn', String(oi),
-        sub ? sub.icc : profileLabel('ISO Coated v2 / FOGRA39'),
-        match ? null : 'El perfil del preajuste no coincide con el sustrato seleccionado en el catálogo. Confirma cuál rige en la orden de trabajo.', 'fogra'));
+        sub ? sub.icc : profileLabel(offSus().perfil),
+        match ? null : 'El perfil del preajuste no coincide con la clase de sustrato ni con el sustrato del catálogo. Confirma cuál rige en la orden de trabajo.', 'fogra'));
     } else {
       out.push(chk('jo', 'Intención de salida', 'fail', 'sin perfil declarado',
-        sub ? sub.icc : 'ISO Coated v2 / FOGRA39',
+        sub ? sub.icc : offSus().perfil,
         'Sin OutputIntent el PDF no es PDF/X válido. Defínelo en Salida > Perfil de destino.', 'fogra'));
     }
 
@@ -5285,9 +5394,9 @@ function auditJobOptions(j) {
 
     const ci = j.ColorImageResolution;
     if (ci !== undefined) {
-      out.push(ci >= t.minPPI
-        ? chk('jr', 'Resolución de color', 'pass', ci + ' ppi', '>= ' + t.minPPI + ' ppi', null, 'ppi')
-        : chk('jr', 'Resolución de color', 'fail', ci + ' ppi', '>= ' + t.minPPI + ' ppi',
+      out.push(ci >= targetPPI(t).min
+        ? chk('jr', 'Resolución de color', 'pass', ci + ' ppi', '>= ' + targetPPI(t).min + ' ppi', null, 'ppi')
+        : chk('jr', 'Resolución de color', 'fail', ci + ' ppi', '>= ' + targetPPI(t).min + ' ppi',
             'El preajuste submuestreará las imágenes por debajo del mínimo de la norma. Súbelo a 300–450 ppi.', 'ppi'));
       if (j.ColorImageDownsampleThreshold !== undefined && j.ColorImageDownsampleThreshold < 1.5) {
         out.push(chk('jrt', 'Umbral de submuestreo', 'warn', String(j.ColorImageDownsampleThreshold), '>= 1,5',
@@ -5295,8 +5404,8 @@ function auditJobOptions(j) {
       }
     }
     const gi = j.GrayImageResolution;
-    if (gi !== undefined && gi < t.minPPI) {
-      out.push(chk('jg', 'Resolución de grises', 'fail', gi + ' ppi', '>= ' + t.minPPI + ' ppi',
+    if (gi !== undefined && gi < targetPPI(t).min) {
+      out.push(chk('jg', 'Resolución de grises', 'fail', gi + ' ppi', '>= ' + targetPPI(t).min + ' ppi',
         'Las imágenes en escala de grises necesitan la misma densidad que las de color.', 'ppi'));
     }
     const mi = j.MonoImageResolution;
@@ -5484,6 +5593,12 @@ function densityRamp(t) {
  *  plates  — las cuatro separaciones en cuadrícula
  */
 function renderTacHeat(ink, limit, mode, srcCanvas) {
+  // spots — tintas planas situadas por su color equivalente (estimación)
+  if (mode === 'spots') {
+    const sh = renderSpotHeat(srcCanvas);
+    if (sh) return sh;
+    mode = 'over';
+  }
   const w = ink.w, h = ink.h;
   const cv = newCanvas(w, h);
   const cx = cv.getContext('2d');
@@ -5562,7 +5677,7 @@ function analyzeArt(canvas, limit) {
     const st = inkStats(an.ink, limit);
     an.tacAvg = st.tacAvg; an.tacMax = st.tacMax; an.tacOverPct = st.tacOverPct;
     an.hist = st.hist; an.plates = st.plates;
-    an.heat = renderTacHeat(an.ink, limit, state.tacMode || 'over');
+    an.heat = renderTacHeat(an.ink, limit, state.tacMode || 'over', canvas);
   }
   return an;
 }
@@ -5579,6 +5694,11 @@ function refreshTac(rerender) {
   const show = state.overlay === 'tac' && an && an.ink;
   panel.classList.toggle('hidden', !show);
   if (!show) return;
+  // En el modo de tintas planas el límite TAC no aplica: se muestra la lista de tintas
+  const spotsMode = state.tacMode === 'spots';
+  $('#tacBody').classList.toggle('hidden', spotsMode);
+  $('#spotPanel').classList.toggle('hidden', !spotsMode);
+  if (spotsMode) spotEnsureEq();
 
   const limit = state.tacLimit;
   const st = inkStats(an.ink, limit);
@@ -5597,6 +5717,7 @@ function refreshTac(rerender) {
     drawPreview();
   }
   drawTacHistogram(st.hist, limit, st.samples);
+  if (spotsMode) renderSpotPanel();
 }
 
 function drawTacHistogram(hist, limit, samples) {
@@ -5858,7 +5979,9 @@ function drawPreview() {
     cx.drawImage(an.heat, 0, 0, cv.width, cv.height);
     leg.classList.remove('hidden');
     const lim = state.tacLimit || normTacLimit();
-    if (state.tacMode === 'plates') {
+    if (state.tacMode === 'spots') {
+      leg.innerHTML = spotLegendHTML();
+    } else if (state.tacMode === 'plates') {
       leg.innerHTML = '<span class="text-zinc-400">Cada cuadrante muestra una plancha por separado</span>' +
         '<span class="text-zinc-600">Cobertura media · C ' + fmt(an.plates.c, 0) + ' % · M ' + fmt(an.plates.m, 0) +
         ' % · Y ' + fmt(an.plates.y, 0) + ' % · K ' + fmt(an.plates.k, 0) + ' %</span>';
@@ -6014,8 +6137,8 @@ function openGlosario() {
 
 const DIAGRAMS = {
   offset: {
-    title: 'Especificaciones · Impresión Offset (Empaques)',
-    sub: 'Cómo se relacionan las cajas de página, la carga de tinta, la trama y el negro de texto en un pliego de empaque.',
+    title: 'Gráfico instructivo · Ejemplo de empaque en cartulina a 175 lpi',
+    sub: 'Cómo se relacionan las cajas de página, la carga de tinta, la trama y el negro de texto en un pliego de empaque. Es un ejemplo fijo: los valores de la clase de sustrato elegida están en la norma aplicada.',
     notes: [
       ['1', 'MediaBox — el soporte', 'Es el pliego completo tal como sale de la máquina. Aloja las marcas de corte, de registro y la tira de control de color. Nunca es el formato del producto.'],
       ['2', 'BleedBox — el sangrado', 'TrimBox más 3 mm por lado. El arte se extiende hasta aquí para que la tolerancia del troquel (±1,5 mm o más) no deje filos blancos en la caja terminada.'],
@@ -7439,15 +7562,18 @@ const PROC_SPECS = {
   offset: {
     groups: [
       { name: 'Resolución y trama', rows: [
-        ['Resolución de imagen', 'Mínimo 300 ppi al tamaño real de reproducción', 'auto'],
-        ['Resolución ideal', '350 ppi para trama de 175 lpi (ppi ≈ 2 × lpi)', 'auto'],
-        ['Lineatura', '175 lpi en estucado; por sustrato, ver la tabla inferior', 'ref'],
-        ['Imágenes de línea (1 bit)', '600 – 1200 ppi', 'auto']
+        ['Resolución de imagen', 'Mínimo 300 ppi a escala 1:1 (150–200 ppi en papel prensa)', 'auto'],
+        ['Relación imagen / trama', 'Entre 1,5 y 2 veces la lineatura (LPI)', 'auto'],
+        ['Lineatura', 'Según la porosidad: 150–200 lpi estucados · 120–150 no estucados · 85–100 papel prensa · 150–175 cartulina · 133–150 sintéticos', 'ref'],
+        ['Salida CTP', '2400 – 2540 dpi (1200 – 2400 en papel prensa) · 256 niveles de gris con DPI ≥ LPI × 16', 'ref'],
+        ['Imágenes de línea (1 bit)', '600 – 1200 ppi', 'auto'],
+        ['Metadatos de resolución (JPEG)', 'En Photoshop / 8BIM o JFIF con unidades: el RIP prioriza 8BIM > JFIF y, sin ellos, colapsa la imagen a 72 ppi', 'auto']
       ]},
       { name: 'Color', rows: [
-        ['Modo de color', 'CMYK y/o tintas planas; sin RGB ni Lab', 'auto'],
-        ['Perfil / OutputIntent', 'ISO Coated v2 · FOGRA39', 'auto'],
-        ['Límite de tinta (TAC)', '300 % – 330 %', 'est']
+        ['Modo de color', 'CMYK y/o tintas planas Pantone; sin RGB ni Lab', 'auto'],
+        ['Perfil / estándar', 'FOGRA39 / FOGRA51 en estucados y cartulinas · FOGRA47 / FOGRA52 en no estucados · ISO 12647-3 en papel prensa', 'auto'],
+        ['Límite de tinta (TAC)', '300 % – 330 %', 'est'],
+        ['Curva de compensación tonal', 'Linealización en el RIP según la ganancia de punto esperada (ISO 12647-2)', 'manual']
       ]},
       { name: 'Formato de exportación', rows: [
         ['Norma', 'PDF/X-1a:2001 (ISO 15930-1)', 'auto'],
@@ -7456,15 +7582,22 @@ const PROC_SPECS = {
         ['Páginas', 'Una por archivo de diseño', 'auto']
       ]},
       { name: 'Geometría', rows: [
-        ['Sangrado', 'BleedBox ≥ TrimBox + 3 mm por lado, medido también sobre la tinta real', 'auto'],
-        ['Zona de seguridad', '3 – 5 mm hacia dentro del TrimBox', 'manual'],
-        ['Troquel', 'Tinta plana propia, en sobreimpresión y no imprimible', 'est']
+        ['Sangrado', '3 – 5 mm por lado, medido también sobre la tinta real', 'auto'],
+        ['Zona de seguridad', 'Textos dentro del margen de seguridad, 3 – 5 mm hacia dentro del TrimBox', 'manual'],
+        ['Troquel', 'Tinta plana propia, en sobreimpresión y no imprimible', 'est'],
+        ['Trapping', 'Trampas o solapamientos ligeros entre colores adyacentes contra filetes blancos por desregistro', 'manual']
       ]},
       { name: 'Negros, texto y trazos', rows: [
         ['Texto y códigos de barras', 'C0 M0 Y0 K100', 'manual'],
         ['Masas negras', 'Negro rico C60 M40 Y40 K100', 'manual'],
         ['Cuerpo mínimo de texto', '6 pt', 'auto'],
         ['Grosor mínimo de línea', '0,25 pt', 'manual']
+      ]},
+      { name: 'Prensa y tirada', rows: [
+        ['Prueba de contrato', 'Certificada y validada bajo iluminante D50 antes de bajar planchas', 'manual'],
+        ['Reología de la tinta', '+5 °C reducen la viscosidad cerca de un 30 % (5–6 % por °C)', 'ref'],
+        ['Emulsificación', 'Hasta ~25 % de agua', 'manual'],
+        ['Densidad, TVI y registro', 'Controlados a lo ancho del pliego y durante toda la tirada', 'manual']
       ]}
     ]
   },
@@ -7605,6 +7738,7 @@ function isDTF() { return state.target === 'textil' && state.textilTec === 'dtf'
 /** Umbrales de resolución del destino. En gran formato dependen del sustrato, el uso y la distancia de visión. */
 function targetPPI(t) {
   if (t.id === 'granformato') return gfTargetPPI();
+  if (t.id === 'offset') return offTargetPPI(t);
   if (t.id === 'textil' && state.textilTec === 'dtf') return { min: 300, warn: 200, ideal: 300, band: null };
   return { min: t.minPPI, warn: t.warnPPI, ideal: t.idealPPI, band: null };
 }
@@ -7612,14 +7746,15 @@ function targetPPI(t) {
 /** Verificaciones manuales visibles: en textil, las de la tecnología; en gran formato, las del sustrato. */
 function activeManual() {
   const t = TARGETS[state.target];
-  const sel = t.id === 'textil' ? state.textilTec : t.id === 'granformato' ? state.giga.sustrato : null;
-  return t.manual.map((it, i) => ({ it: it, i: i }))
+  const sel = t.id === 'textil' ? state.textilTec : t.id === 'granformato' ? state.giga.sustrato : t.id === 'offset' ? state.off.sustrato : null;
+  return t.manual.map((it, i) => ({ it: t.id === 'offset' ? offManualItem(it) : it, i: i }))
     .filter(x => !sel || !x.it[2] || x.it[2].indexOf(sel) >= 0);
 }
 
 function activeSheet() {
   const t = TARGETS[state.target];
   if (t.id === 'granformato') return gfSheet();
+  if (t.id === 'offset') return offSheet();
   return (t.id === 'textil' && state.textilTec === 'dtf') ? DTF_SHEET : t.sheet;
 }
 
@@ -7652,7 +7787,7 @@ function procHead(k) {
   const t = TARGETS[k];
   const sub = k === 'textil' ? 'Elige la tecnología de estampado: cada una tiene su propia norma y el preflight verifica con la que esté seleccionada.' : t.desc;
   const verifica = k === 'textil' ? 'Verificando: ' + TEXTIL_TECS[state.textilTec].label
-    : k === 'granformato' ? 'Verificando: ' + gfSus().label : 'El preflight verifica con esta norma';
+    : k === 'granformato' ? 'Verificando: ' + gfSus().label : 'Verificando: ' + offSus().label;
   return '<div class="flex flex-wrap items-start gap-3 mb-4">' +
     '<div class="mr-auto min-w-0"><h3 class="text-[18px] font-black tracking-tight text-zinc-100">' + esc(t.name) + '</h3>' +
     '<p class="text-[10.5px] uppercase tracking-widest text-sky-400 mt-0.5">' + esc(t.tag) + '</p>' +
@@ -7728,6 +7863,7 @@ function renderProcesos() {
       texExtra(k) + procSpecTable(s) + procLegend();
   });
   renderGiga();
+  renderOffset();
 }
 
 /* ---------- Cambio de tecnología textil ---------- */
@@ -8758,6 +8894,1226 @@ function initGiga() {
   });
 
   renderGiga();
+}
+
+
+/* =====================================================================
+   35. PREFLIGHT DE OFFSET POR SUSTRATO
+   Clasifica el soporte por tipo y acabado y normaliza la salida: resolución
+   de entrada de las imágenes, lineatura de trama y resolución del CTP.
+   Incluye el checklist de producción desde la preimpresión hasta la tirada.
+   ===================================================================== */
+
+const OFF_FOGRA_COATED = ['FOGRA39', 'ISO COATED V2', 'FOGRA51', 'PSO COATED V3'];
+
+const OFF_SUSTRATOS = {
+  estucado: {
+    label: 'Estucado / couché', name: 'Papel estucado / couché',
+    acabados: ['Brillo (gloss)', 'Mate (matte)'],
+    ppi: [300, 300], ppiText: '300 ppi (mínimo a escala 1:1)', ctp: [2400, 2540], lpi: [150, 200], lpiDef: 175, ctpDef: 2540,
+    perfil: 'FOGRA39 / FOGRA51 (ISO 12647-2)', tokens: OFF_FOGRA_COATED,
+    caract: 'Capa de arcilla, polímeros y pigmentos sobre la hoja base que rellena las porosidades microscópicas del papel. Alta retención de tinta (ink holdout): el pigmento permanece en la superficie sin penetrar las fibras.',
+    salida: 'Al no absorber tinta en exceso, admite puntos de trama más finos y nítidos.',
+    tvi: 'Mayor retención de tinta: puntos más nítidos y colores más saturados.',
+    uso: 'Revistas, catálogos, folletos, piezas publicitarias y tarjetas de presentación'
+  },
+  noestucado: {
+    label: 'No estucado / offset', name: 'Papel no estucado (offset / woodfree / bond)',
+    acabados: ['Offset', 'Woodfree', 'Bond'],
+    ppi: [300, 300], ppiText: '300 ppi (mínimo a escala 1:1)', ctp: [2400, 2540], lpi: [120, 150], lpiDef: 150, ctpDef: 2540,
+    perfil: 'FOGRA47 / FOGRA52 (ISO 12647-2)', tokens: ['FOGRA47', 'PSO UNCOATED', 'FOGRA52', 'UNCOATED V3'],
+    caract: 'Textura rugosa natural de las fibras celulósicas sin capa de recubrimiento: altamente poroso y absorbente. Mayor expansión del punto (ganancia / TVI) y colores más suaves o mates.',
+    salida: 'Por encima de 150 lpi los puntos de tinta se unen en la fibra absorbente y cierran el detalle en las sombras.',
+    preprensa: 'Ajuste previo de curva tonal: aclarar ligeramente medios tonos y sombras antes de filmar planchas.',
+    tvi: 'La fibra porosa absorbe la tinta y provoca mayor ganancia de punto: hay que compensar la imagen aclarando los medios tonos.',
+    uso: 'Libros de texto, novelas, hojas membretadas, formularios y libretas'
+  },
+  prensa: {
+    label: 'Papel prensa', name: 'Papel prensa / periódico (coldset)',
+    acabados: ['Coldset'],
+    ppi: [150, 200], ppiText: '150 – 200 ppi', ctp: [1200, 2400], lpi: [85, 100], lpiDef: 100, ctpDef: 2400,
+    perfil: 'ISO 12647-3 (Newspaper)', tokens: ['NEWSPAPER', 'IFRA26', '12647-3'],
+    caract: 'Pulpa mecánica de fibra corta: muy económico, delgado y extremadamente absorbente.',
+    salida: 'Tramas abiertas para adaptarse a la velocidad del tren rotativo y controlar la alta ganancia tonal regida por la ISO 12647-3.',
+    tvi: 'Alta ganancia tonal, regida por la norma ISO 12647-3.',
+    uso: 'Periódicos'
+  },
+  cartulina: {
+    label: 'Cartulina / cartón', name: 'Cartulina y cartón para packaging (SBS, folding, reciclado)',
+    acabados: ['Estucado una cara (C1S)', 'Estucado dos caras (C2S)', 'Sin recubrimiento'],
+    ppi: [300, 300], ppiText: '300 ppi', ctp: [2400, 2540], lpi: [150, 175], lpiDef: 175, ctpDef: 2540,
+    perfil: 'FOGRA39 / FOGRA51 (ISO 12647-2)', tokens: OFF_FOGRA_COATED,
+    caract: 'Materiales rígidos de múltiples capas de pasta química o reciclada; en muchos casos con recubrimiento estucado en una cara (C1S) o en ambas (C2S).',
+    salida: '300 ppi para asegurar la nitidez de textos pequeños, códigos de barras e imágenes, con trama estándar.',
+    uso: 'Cajas para productos farmacéuticos, cosméticos, alimentos y empaques de lujo'
+  },
+  sintetico: {
+    label: 'Sintético / plástico', name: 'Sustratos sintéticos (polipropileno, acetato autoadhesivo)',
+    acabados: ['Polipropileno', 'Acetato autoadhesivo'],
+    ppi: [300, 300], ppiText: '300 ppi a tamaño real', ctp: [2400, 2540], lpi: [133, 150], lpiDef: 150, ctpDef: 2540,
+    perfil: 'Perfiles adaptados a tintas de secado por oxidación / UV', tokens: [],
+    caract: 'Soportes no porosos e impermeables: no absorben agua ni tinta por capilaridad. Requieren tintas offset de secado por oxidación o curado UV.',
+    salida: 'Tramas de 133 a 150 lpi para garantizar el anclaje y el correcto secado de la película de tinta.',
+    uso: null
+  }
+};
+
+/** Checklist de producción. key: comprobación del preflight que aporta el dato medido. */
+const OFF_CHECKLIST = [
+  { fase: '1 · Preimpresión y preparación de archivos (entrada)', items: [
+    ['Modo de color: elementos y fotografías convertidos de RGB a CMYK, o tintas planas Pantone si el trabajo lo requiere', 'color'],
+    ['Resolución de imágenes: mínimo 300 ppi a tamaño real (1:1) en offset comercial de alta calidad', 'ppi'],
+    ['Metadatos de resolución JPEG incrustados en Photoshop / 8BIM o JFIF, no sólo en EXIF', 'ometa'],
+    ['Sangrado de 3 a 5 mm por lado y textos dentro del margen de seguridad', 'bleed'],
+    ['Tipografías convertidas a curvas o incrustadas por completo', 'fonts'],
+    ['Trapping: trampas o solapamientos ligeros entre colores adyacentes contra filetes blancos por desregistro', null]
+  ]},
+  { fase: '2 · Procesamiento RIP y grabado de planchas (salida)', items: [
+    ['CTP térmico o láser ajustado a 2400 o 2540 dpi sobre planchas de aluminio fotosensibles', 'octp'],
+    ['Lineatura seleccionada según la porosidad del soporte', 'olin'],
+    ['Curva de linealización aplicada en el RIP para compensar la ganancia de punto (ISO 12647-2)', null],
+    ['Prueba de contrato certificada validada bajo iluminante D50 antes de bajar planchas', null]
+  ]},
+  { fase: '3 · Reología de tinta y acondicionamiento en prensa', items: [
+    ['Temperatura de la batería vigilada: +5 °C reducen la viscosidad cerca de un 30 %', null],
+    ['Viscosidad no excesiva en arranque en frío: sin arrancado del estucado ni desprendimiento de fibras', null],
+    ['Viscosidad suficiente: sin velo o engrasado en la plancha ni salpicaduras (flyeo)', null]
+  ]},
+  { fase: '4 · Control de proceso durante la tirada', items: [
+    ['Equilibrio agua-tinta: emulsificación dentro del límite operativo (hasta ~25 % de agua)', null],
+    ['Densidad óptica de los parches 100 % CMYK uniforme a lo ancho del pliego, según los valores objetivo del soporte', null],
+    ['Incremento del valor tonal (TVI) controlado según el tipo de soporte', null],
+    ['Registro de las cuatro estaciones CMYK en marcas y cruces durante toda la tirada', null]
+  ]}
+];
+
+const OFF_TABS = [
+  ['verif', 'Verificación del arte'],
+  ['sustratos', 'Sustratos y acabados'],
+  ['salida', 'Normalización de la salida'],
+  ['produccion', 'Checklist de producción'],
+  ['papeles', 'Referencia por papel comercial']
+];
+
+state.off = { sustrato: 'cartulina', acabado: 0, lpi: 175, ctp: 2540, tab: 'verif', manual: {}, enFicha: true, dT: 5 };
+
+/**
+ * Condición de impresión de cada clase. El TAC es el del perfil de referencia de la clase;
+ * un sustrato del catálogo aplicado manda sobre él.
+ */
+const OFF_NORMA = {
+  estucado:   { norma: 'ISO 12647-2', tac: 330, perfilCorto: 'FOGRA39 / FOGRA51',
+                tacText: '330 % con Coated FOGRA39 · 300 % con PSO Coated v3 (FOGRA51)',
+                conv: 'Coated FOGRA39 (ISO Coated v2) o PSO Coated v3 (FOGRA51)' },
+  noestucado: { norma: 'ISO 12647-2', tac: 300, perfilCorto: 'FOGRA47 / FOGRA52',
+                tacText: '300 % con PSO Uncoated (FOGRA47 / FOGRA52)',
+                conv: 'PSO Uncoated ISO12647 (FOGRA47) o PSO Uncoated v3 (FOGRA52)' },
+  prensa:     { norma: 'ISO 12647-3', tac: 240, perfilCorto: 'ISOnewspaper26v4 (ISO 12647-3)',
+                tacText: '240 % con ISOnewspaper26v4 (ISO 12647-3)',
+                conv: 'ISOnewspaper26v4 (ISO 12647-3)' },
+  cartulina:  { norma: 'ISO 12647-2', tac: 330, perfilCorto: 'FOGRA39 / FOGRA51',
+                tacText: '330 % con Coated FOGRA39 · 300 % con PSO Coated v3 (FOGRA51) o tinta limitada',
+                conv: 'Coated FOGRA39 (ISO Coated v2) o PSO Coated v3 (FOGRA51)' },
+  sintetico:  { norma: 'ISO 12647-2', tac: null, perfilCorto: 'adaptado a la tinta (acordado con la imprenta)',
+                tacText: 'la referencia no fija límite: 330 % por defecto, confírmalo con la imprenta según la tinta de oxidación o UV',
+                conv: 'el perfil adaptado a la tinta de secado por oxidación o UV que indique la imprenta' }
+};
+const OFF_BASE_TAC = TARGETS.offset.tacMax;
+
+function offNorma() { return OFF_NORMA[state.off.sustrato] || OFF_NORMA.cartulina; }
+
+/** Tarjeta, pestaña, ficha y JSON leen la norma y la descripción de la clase elegida. */
+/** Nombre y ámbito de cada clase: el destino no puede llamarse «Empaques» cuando se imprime un periódico. */
+const OFF_NOMBRE = {
+  estucado:   { nombre: 'Impresión Offset (Comercial y editorial · Estucado)', perfilTag: 'FOGRA39 / FOGRA51',
+                ambito: 'revistas, catálogos, folletos y piezas publicitarias' },
+  noestucado: { nombre: 'Impresión Offset (Editorial y papelería · No estucado)', perfilTag: 'FOGRA47 / FOGRA52',
+                ambito: 'libros, formularios, hojas membretadas y libretas' },
+  prensa:     { nombre: 'Impresión Offset Coldset (Periódicos · Papel prensa)', perfilTag: 'ISOnewspaper26v4',
+                ambito: 'periódicos en rotativa coldset' },
+  cartulina:  { nombre: 'Impresión Offset (Empaques · Cartulina y cartón)', perfilTag: 'FOGRA39 / FOGRA51',
+                ambito: 'cajas y empaques farmacéuticos, cosméticos, de alimentos y de lujo' },
+  sintetico:  { nombre: 'Impresión Offset (Sintéticos · Polipropileno y acetato)', perfilTag: 'perfil según la tinta',
+                ambito: null }
+};
+function offNombre() { return OFF_NOMBRE[state.off.sustrato] || OFF_NOMBRE.cartulina; }
+
+Object.defineProperty(TARGETS.offset, 'name', {
+  configurable: true, enumerable: true,
+  get: () => offNombre().nombre
+});
+Object.defineProperty(TARGETS.offset, 'tag', {
+  configurable: true, enumerable: true,
+  get: () => offNorma().norma + ' · ' + offNombre().perfilTag + ' · PDF/X-1a'
+});
+Object.defineProperty(TARGETS.offset, 'desc', {
+  configurable: true, enumerable: true,
+  get: () => 'Offset litográfico' + (offNombre().ambito ? ' para ' + offNombre().ambito : '') +
+    ' sobre ' + offSus().label.toLowerCase() + ' · ' + offAcabado() + ', trama de ' + state.off.lpi + ' lpi y CTP a ' + state.off.ctp + ' dpi.'
+});
+
+/** El límite de tinta sigue a la clase salvo que haya un sustrato de offset aplicado desde el catálogo. */
+function offSyncTac() {
+  const t = TARGETS.offset, before = t.tacMax, cat = activeSubstrate();
+  if (!(cat && cat.target === 'offset')) t.tacMax = offNorma().tac || OFF_BASE_TAC;
+  if (state.target === 'offset' && t.tacMax !== before) {
+    state.tacLimit = normTacLimit();
+    if ($('#tacSlider')) { $('#tacSlider').value = state.tacLimit; $('#tacInput').value = state.tacLimit; }
+  }
+}
+
+function offTacSource() {
+  const cat = activeSubstrate();
+  return cat && cat.target === 'offset' ? ' · sustrato del catálogo: ' + cat.name : ' · ' + offSus().label.toLowerCase();
+}
+
+function offManualItem(it) {
+  return it[0].indexOf('{perfil}') < 0 ? it : [it[0].replace('{perfil}', offNorma().perfilCorto), it[1], it[2]];
+}
+
+/* ---------- Estado derivado ---------- */
+
+function offSus() { return OFF_SUSTRATOS[state.off.sustrato] || OFF_SUSTRATOS.cartulina; }
+function offAcabado() { const a = offSus().acabados; return a[state.off.acabado] || a[0]; }
+function offLevels(dpi, lpi) { return Math.min(256, Math.floor(Math.pow(dpi / lpi, 2)) + 1); }
+function offRange(r, u) { return (r[0] === r[1] ? String(r[0]) : r[0] + '–' + r[1]) + (u ? ' ' + u : ''); }
+
+function offFilePPI() {
+  const m = state.meta;
+  if (!m) return null;
+  if (m.kind === 'pdf') return m.placedPhotos && m.minImagePPI != null ? m.minImagePPI : null;
+  const p = effectivePPI();
+  return p ? p.min : null;
+}
+
+function offTargetPPI(t) {
+  const s = offSus(), min = s.ppi[0];
+  return { min: min, warn: Math.round(min * t.warnPPI / t.minPPI), ideal: Math.max(min, 2 * state.off.lpi), band: { label: s.label + ' · ' + state.off.lpi + ' lpi' } };
+}
+
+/** Perfiles aceptados: los de la clase de sustrato, los del catálogo aplicado y los marcados en la biblioteca. */
+function offExpected(t) {
+  const own = (state.iccLib || []).filter(p => p.asTarget).map(p => (p.desc || p.name).toUpperCase());
+  const cat = activeSubstrate();
+  return offSus().tokens.concat(cat && cat.target === 'offset' ? t.profiles : []).concat(own);
+}
+
+/** Resolución que leerá el RIP según la prioridad de contenedores: 8BIM > JFIF; EXIF no es fiable. */
+function offRipRead(m) {
+  const r = m.resMeta;
+  if (!r) return null;
+  const bim = r.bim && r.bim.dpiX > 1 ? r.bim.dpiX : null;
+  const jf = r.jfif && r.jfif.units && r.jfif.dpiX > 1 ? r.jfif.dpiX : null;
+  return { bim: bim, jfif: jf, exif: r.exif ? r.exif.dpiX : null, jfifNoUnits: !!(r.jfif && !r.jfif.units),
+           dpi: bim || jf || 72, src: bim ? '8BIM' : jf ? 'JFIF' : null };
+}
+
+/* ---------- Comprobaciones ---------- */
+
+function offCheckProfile(t, m) {
+  const s = offSus(), label = 'Perfil ICC / OutputIntent', desc = m.iccDesc || null, up = (desc || '').toUpperCase();
+  const exp = profileLabel(s.perfil);
+  const tokens = offExpected(t);
+  if (m.kind === 'pdf') {
+    if (!m.hasOutputIntent) {
+      return chk('icc', label, 'fail', 'sin OutputIntent', exp,
+        'PDF/X-1a exige declarar la condición de impresión. Exporta con el perfil de destino de la clase de sustrato: ' + s.perfil + '.', 'fogra');
+    }
+  } else if (!m.hasEmbeddedProfile) {
+    return chk('icc', label, 'fail', 'sin perfil incrustado', exp,
+      'Sin perfil incrustado el RIP aplicará una conversión genérica impredecible. Convierte con el perfil del sustrato (' + s.perfil + ') e incrústalo.', 'fogra');
+  }
+  if (tokens.some(p => p && up.indexOf(p) >= 0)) return chk('icc', label, 'pass', desc || 'OutputIntent presente', exp, null, 'fogra');
+  if (!tokens.length) {
+    return chk('icc', label, 'info', desc || 'OutputIntent presente', exp,
+      'Para sintéticos no hay un perfil estándar único: confirma con la imprenta el perfil adaptado a su tinta de secado por oxidación o UV.', 'fogra');
+  }
+  return chk('icc', label, 'warn', desc || 'OutputIntent presente (sin nombre legible)', exp,
+    'El perfil no corresponde a la clase de sustrato elegida (' + s.label.toLowerCase() + '). Confirma con la imprenta la condición de impresión o convierte con ' + s.perfil + '.', 'fogra');
+}
+
+function offTargetChecks(t, m, ppi, an) {
+  const out = [], s = offSus(), o = state.off, L = o.lpi;
+
+  out.push(chk('osust', 'Clase de sustrato y acabado', 'info', s.name + ' · ' + offAcabado(),
+    'entrada ' + s.ppiText + ' · CTP ' + offRange(s.ctp, 'dpi') + ' · ' + offRange(s.lpi, 'lpi') + ' · ' + s.perfil,
+    s.salida + (s.preprensa ? ' ' + s.preprensa : ''), 'offsust'));
+
+  const inR = L >= s.lpi[0] && L <= s.lpi[1];
+  out.push(chk('olin', 'Lineatura de trama', inR ? 'pass' : 'warn', L + ' lpi', offRange(s.lpi, 'lpi') + ' para ' + s.label.toLowerCase(),
+    inR ? null : (L > s.lpi[1]
+      ? (s === OFF_SUSTRATOS.noestucado || s === OFF_SUSTRATOS.prensa
+          ? 'Trama demasiado cerrada para un soporte absorbente: los puntos se unen en la fibra y cierran el detalle en las sombras. '
+          : 'Lineatura más cerrada que la recomendada para este soporte. ')
+      : 'Lineatura más abierta que la recomendada para este soporte. ') + 'Ajústala a ' + offRange(s.lpi, 'lpi') + '.', 'offres'));
+
+  // Relación entre la resolución de la imagen y la lineatura
+  const fp = offFilePPI(), lo = Math.ceil(1.5 * L), hi = 2 * L;
+  const expQ = '1,5 – 2 × ' + L + ' lpi = ' + lo + '–' + hi + ' ppi';
+  if (m.kind === 'pdf' && !m.imageCount) {
+    out.push(chk('oppl', 'Relación PPI / LPI', 'pass', 'vector puro', expQ, null, 'offres'));
+  } else if (fp) {
+    const q = fp / L;
+    out.push(chk('oppl', 'Relación PPI / LPI', q < 1.49 ? 'warn' : 'pass', fmt(fp, 0) + ' ppi = ' + fmt(q, 2) + ' × lineatura', expQ,
+      q < 1.49 ? 'Por debajo de 1,5 veces la lineatura la trama deja ver el píxel: sube la imagen a ' + lo + ' ppi o baja la lineatura a ' + Math.floor(fp / 1.5) + ' lpi.'
+        : q > 2.05 ? 'Por encima de 2 veces la lineatura la trama no aprovecha el detalle adicional. No bajes de la resolución mínima de la clase (' + s.ppi[0] + ' ppi).' : null, 'offres'));
+  }
+
+  // Resolución del CTP y niveles de gris por canal
+  const lv = offLevels(o.ctp, L), inCtp = o.ctp >= s.ctp[0] && o.ctp <= s.ctp[1], ok16 = o.ctp >= 16 * L;
+  out.push(chk('octp', 'Resolución de salida CTP', !inCtp ? 'warn' : ok16 ? 'pass' : 'info',
+    o.ctp + ' dpi · ' + lv + ' niveles de gris por canal a ' + L + ' lpi',
+    offRange(s.ctp, 'dpi') + ' · ≥ 16 × lpi = ' + 16 * L + ' dpi para 256 niveles',
+    !inCtp ? 'Resolución de exposición fuera del rango de la clase de sustrato (' + offRange(s.ctp, 'dpi') + ').'
+      : ok16 ? null : 'A ' + o.ctp + ' dpi la trama de ' + L + ' lpi da ' + lv + ' niveles de gris por canal: para 256 hacen falta ' + 16 * L +
+        ' dpi, o bajar la lineatura a ' + Math.floor(o.ctp / 16) + ' lpi. Es un parámetro del RIP, no un defecto del arte.', 'offres'));
+
+  // Integridad de los metadatos de resolución en JPEG
+  if (m.kind === 'image' && m.container === 'JPEG') {
+    const r = offRipRead(m) || { dpi: 72, src: null };
+    const parts = [];
+    if (r.bim) parts.push('8BIM ' + r.bim + ' ppi');
+    if (m.resMeta && m.resMeta.jfif) parts.push('JFIF ' + (r.jfifNoUnits ? 'sin unidades' : (r.jfif || '—') + ' ppi'));
+    if (r.exif) parts.push('EXIF ' + r.exif + ' ppi');
+    const size = fmt(m.pxW / r.dpi * CM_IN, 1) + ' × ' + fmt(m.pxH / r.dpi * CM_IN, 1) + ' cm';
+    const exp = '8BIM o JFIF con unidades en pulgadas · prioridad 8BIM > JFIF';
+    const leido = (parts.length ? parts.join(' · ') : 'sin metadatos de resolución') + ' → el RIP lee ' + r.dpi + ' ppi';
+    if (!r.src) {
+      out.push(chk('ometa', 'Metadatos de resolución (JPEG)', 'warn', leido, exp,
+        (r.exif ? 'La resolución sólo está en EXIF, que muchos RIP leen mal. ' : r.jfifNoUnits ? 'JFIF guardado sin unidades: sólo declara la relación de aspecto. ' : 'Sin resolución declarada. ') +
+        'El RIP colapsará la imagen a 72 ppi y la llevará a ' + size + '. Vuelve a guardarla desde Photoshop con la resolución en píxeles por pulgada.', 'offres'));
+    } else if (r.bim && r.jfif && Math.abs(r.bim - r.jfif) > 1) {
+      out.push(chk('ometa', 'Metadatos de resolución (JPEG)', 'warn', leido, exp,
+        'Los contenedores no coinciden: el RIP usará 8BIM (' + r.bim + ' ppi) y la imagen medirá ' + size + '. Unifica la resolución al guardar.', 'offres'));
+    } else {
+      out.push(chk('ometa', 'Metadatos de resolución (JPEG)', 'pass', leido + ' (' + r.src + ')', exp, null, 'offres'));
+    }
+  }
+  return out;
+}
+
+/** Norma aplicada del panel 3 y de la ficha técnica. */
+function offSheet() {
+  const s = offSus(), o = state.off, t = TARGETS.offset;
+  return [
+    ['Sustrato', s.name + ' · ' + offAcabado()],
+    ['Resolución de entrada', s.ppiText + ' · 1,5 – 2 × lineatura (' + Math.ceil(1.5 * o.lpi) + '–' + 2 * o.lpi + ' ppi)'],
+    ['Lineatura', o.lpi + ' lpi · rango ' + offRange(s.lpi, 'lpi')],
+    ['Salida CTP', o.ctp + ' dpi · rango ' + offRange(s.ctp, 'dpi') + ' · 256 niveles con ≥ ' + 16 * o.lpi + ' dpi'],
+    ['Perfil / norma', s.perfil + ' · convertir con ' + offNorma().conv],
+    ['Modo de color', 'CMYK y/o tintas planas — sin RGB, sin Lab'],
+    ['Límite de tinta (TAC)', '<= ' + t.tacMax + ' %' + (activeSubstrate() && activeSubstrate().target === 'offset'
+      ? ' · sustrato del catálogo: ' + activeSubstrate().name : ' · ' + offNorma().tacText)],
+    ['Formato', 'PDF/X-1a:2001 · fuentes incrustadas o a curvas · transparencias aplanadas · página única'],
+    ['Geometría', 'Sangrado de 3 – 5 mm por lado · textos dentro del margen de seguridad'],
+    ['Negros', 'Texto y código de barras C0 M0 Y0 K100 · masas C60 M40 Y40 K100'],
+    ['Tipografía y trazos', 'Texto >= 6 pt · grosor de línea >= 0,25 pt']
+  ];
+}
+
+/* ---------- Render ---------- */
+
+function offField() { return 'w-full bg-zinc-900 border border-zinc-700 px-2.5 py-1.5 text-[13px] text-zinc-100 focus:border-sky-500 focus:outline-none'; }
+function offLab(txt, inner, span) {
+  return '<label class="block min-w-0' + (span || '') + '"><span class="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">' + txt + '</span>' + inner + '</label>';
+}
+
+function buildOffConfig() {
+  const box = $('#offConfig');
+  if (!box) return;
+  const f = offField();
+  box.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">' +
+    offLab('Tipo de sustrato', '<select id="offSustrato" class="' + f + '">' + Object.keys(OFF_SUSTRATOS).map(k =>
+      '<option value="' + k + '">' + esc(OFF_SUSTRATOS[k].name) + '</option>').join('') + '</select>', ' sm:col-span-2') +
+    offLab('Acabado', '<select id="offAcabado" class="' + f + '"></select>', ' lg:col-span-2') +
+    offLab('Lineatura (lpi)', '<input id="offLpi" type="number" min="60" max="300" step="1" list="offLpiList" class="' + f + ' font-mono"><datalist id="offLpiList"></datalist>') +
+    offLab('Salida CTP (dpi)', '<select id="offCtp" class="' + f + ' font-mono">' + [1200, 2400, 2540].map(d => '<option value="' + d + '">' + d + '</option>').join('') + '</select>') +
+    '</div><p id="offConfigNote" class="text-[11px] text-zinc-500 mt-3 leading-relaxed"></p>';
+}
+
+function syncOffConfig() {
+  if (!$('#offSustrato')) return;
+  const o = state.off, s = offSus();
+  $('#offSustrato').value = o.sustrato;
+  const ac = $('#offAcabado');
+  if (ac.dataset.for !== o.sustrato) {
+    ac.innerHTML = s.acabados.map((a, i) => '<option value="' + i + '">' + esc(a) + '</option>').join('');
+    ac.dataset.for = o.sustrato;
+    $('#offLpiList').innerHTML = [s.lpi[0], Math.round((s.lpi[0] + s.lpi[1]) / 2), s.lpi[1]].map(v => '<option value="' + v + '">').join('');
+  }
+  ac.value = String(o.acabado);
+  if (document.activeElement !== $('#offLpi')) $('#offLpi').value = String(o.lpi);
+  $('#offCtp').value = String(o.ctp);
+  $('#offConfigNote').textContent = 'Rango de la clase: entrada ' + s.ppiText + ' · lineatura ' + offRange(s.lpi, 'lpi') + ' · CTP ' + offRange(s.ctp, 'dpi') + ' · ' + s.perfil + '.';
+}
+
+function renderOffTabs() {
+  const box = $('#offTabs');
+  if (!box) return;
+  box.innerHTML = OFF_TABS.map(t => {
+    const on = state.off.tab === t[0];
+    return '<button type="button" role="tab" id="offtab-' + t[0] + '" aria-controls="offPanel-' + t[0] + '" aria-selected="' + on +
+      '" tabindex="' + (on ? 0 : -1) + '" data-offtab="' + t[0] + '" class="px-4 py-2.5 text-[12.5px] whitespace-nowrap border-b-2 transition ' +
+      (on ? 'border-sky-400 text-zinc-100 bg-zinc-900/70 font-semibold' : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40') +
+      '">' + esc(t[1]) + '</button>';
+  }).join('');
+  OFF_TABS.forEach(t => { const p = $('#offPanel-' + t[0]); if (p) p.hidden = state.off.tab !== t[0]; });
+}
+
+const OFF_DEF = {
+  entrada: 'Resolución de las imágenes calculada a la escala final del diseño (1:1). Como regla general, entre 1,5 y 2 veces la lineatura de trama.',
+  lpi: 'Frecuencia de la trama según la porosidad del soporte: más alta en estucados, más abierta en no estucados y en papel prensa.',
+  ctp: 'Resolución de exposición del CTP térmico o láser sobre planchas de aluminio. Para 256 niveles de gris por canal: DPI ≥ LPI × 16.'
+};
+
+function offTriadHTML() {
+  const s = offSus(), o = state.off, m = state.meta, fp = offFilePPI(), lv = offLevels(o.ctp, o.lpi);
+  const card = (tag, def, val, sub, file) => '<div class="bg-zinc-950 p-4 min-w-0">' +
+    '<div class="text-[10px] uppercase tracking-widest text-sky-400 font-bold">' + tag + '</div>' +
+    '<p class="text-[11px] text-zinc-500 mt-1 leading-snug">' + esc(def) + '</p>' +
+    '<div class="mt-3 text-[19px] font-black font-mono text-zinc-100 leading-tight">' + esc(val) + '</div>' +
+    '<div class="text-[11px] text-zinc-400 mt-0.5 leading-snug">' + esc(sub) + '</div>' +
+    '<div class="mt-3 pt-2 border-t border-zinc-800 text-[11.5px] text-zinc-300 leading-snug">' + file + '</div></div>';
+  const none = '<span class="text-zinc-600">Sin archivo cargado</span>';
+  const vector = m && m.kind === 'pdf' && !m.imageCount;
+  let entradaFile = none;
+  if (m) {
+    if (vector) entradaFile = 'Este archivo: vector puro, independiente de la resolución';
+    else if (fp) {
+      const q = fp / o.lpi, ok = fp >= s.ppi[0] - 0.5 && q >= 1.49;
+      entradaFile = 'Este archivo: <b>' + fmt(fp, 0) + ' ppi</b> = ' + fmt(q, 2) + ' × lpi · <b class="' + (ok ? 'text-emerald-400' : 'text-amber-400') + '">' + (ok ? 'cumple' : 'revisar') + '</b>';
+    } else entradaFile = '<span class="text-zinc-500">Declara el tamaño de reproducción en el panel 2</span>';
+  }
+  return '<div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-800 border border-zinc-800">' +
+    card('Resolución de entrada (PPI)', OFF_DEF.entrada, s.ppiText.replace(/ \(.*\)/, ''), Math.ceil(1.5 * o.lpi) + '–' + 2 * o.lpi + ' ppi a ' + o.lpi + ' lpi', entradaFile) +
+    card('Lineatura de trama (LPI)', OFF_DEF.lpi, o.lpi + ' lpi', 'rango ' + offRange(s.lpi, 'lpi') + ' · ' + offAcabado(),
+      'La fija el RIP: ' + (o.lpi >= s.lpi[0] && o.lpi <= s.lpi[1] ? '<b class="text-emerald-400">dentro del rango</b>' : '<b class="text-amber-400">fuera del rango</b>') + '.') +
+    card('Salida CTP (DPI)', OFF_DEF.ctp, o.ctp + ' dpi', 'rango ' + offRange(s.ctp, 'dpi') + ' · ' + lv + ' niveles de gris',
+      o.ctp >= 16 * o.lpi ? '<b class="text-emerald-400">256 niveles</b> a ' + o.lpi + ' lpi.' : '<b class="text-amber-400">' + lv + ' niveles</b>: 256 exigen ' + 16 * o.lpi + ' dpi o ' + Math.floor(o.ctp / 16) + ' lpi.') +
+    '</div>';
+}
+
+function offNote(html, tone) {
+  return '<div class="mb-4 border-l-2 px-3.5 py-2.5 text-[12px] leading-relaxed ' +
+    (tone === 'amber' ? 'border-amber-600 bg-amber-950/25 text-amber-100' : 'border-sky-700 bg-sky-950/25 text-sky-100') + '">' + html + '</div>';
+}
+
+function offVerifHTML() {
+  const m = state.meta;
+  const sheet = '<div class="border border-zinc-800 divide-y divide-zinc-800/70">' + offSheet().map(r =>
+    '<div class="grid grid-cols-[34%_1fr] gap-3 px-4 py-2 text-[12px]"><span class="text-zinc-500">' + esc(r[0]) + '</span><span class="text-zinc-200">' + esc(r[1]) + '</span></div>').join('') + '</div>';
+  if (!m) {
+    return '<p class="text-[12.5px] text-zinc-400 mb-3 leading-relaxed">Carga un arte en el <a href="#preflight" class="text-sky-400 underline">Preflight</a> para verificarlo con esta clase de sustrato. Norma que se aplicará:</p>' + sheet;
+  }
+  const v = verdict();
+  const tone = v.key === 'fail' ? 'text-red-300 border-red-700 bg-red-950/30' : v.key === 'warn' ? 'text-amber-300 border-amber-700 bg-amber-950/30' : 'text-emerald-300 border-emerald-700 bg-emerald-950/30';
+  return '<div class="flex flex-wrap items-center gap-3 mb-3">' +
+      '<span class="border px-3 py-1.5 text-[12px] font-bold uppercase tracking-wider ' + tone + '">' + esc(v.label) + '</span>' +
+      '<span class="text-[12px] text-zinc-400 min-w-0">' + esc(state.file.name) + ' · ' + esc(offSus().name) + ' · ' + esc(offAcabado()) + '</span></div>' +
+    '<div class="border border-zinc-800 divide-y divide-zinc-800/70 mb-4">' + state.checks.mandatory.concat(state.checks.target).map(checkRow).join('') + '</div>' +
+    '<label class="flex items-start gap-2.5 text-[12px] text-zinc-300 cursor-pointer">' +
+      '<input id="offEnFicha" type="checkbox"' + (state.off.enFicha ? ' checked' : '') + ' class="mt-0.5 accent-emerald-500">' +
+      '<span>Incluir la clasificación del sustrato, la normalización de la salida y el checklist de producción en la Ficha Técnica en PDF</span></label>';
+}
+
+function offSustratosHTML() {
+  const o = state.off, fp = offFilePPI(), m = state.meta;
+  const td = 'px-3 py-2.5 border-b border-zinc-800/70';
+  const rows = Object.keys(OFF_SUSTRATOS).map(k => {
+    const s = OFF_SUSTRATOS[k], on = o.sustrato === k;
+    const q = fp != null ? qualifyFor({ ppi: s.ppi }, fp) : null;
+    const file = q ? '<span class="font-bold ' + q.cls + '">' + q.label + '</span>' +
+        '<div class="text-[10.5px] text-zinc-500">' + fmt(fp / s.lpi[1], 2) + '× a ' + s.lpi[1] + ' lpi</div>'
+      : (m && m.kind === 'pdf' && !m.imageCount ? '<span class="text-sky-300">Vector</span>' : '—');
+    return '<tr class="align-top ' + (on ? 'bg-sky-950/25' : 'hover:bg-zinc-900/50') + '">' +
+      '<td class="' + td + ' text-zinc-200 font-semibold">' + esc(s.name) + (on ? '<div class="text-[10px] uppercase tracking-widest text-sky-400 mt-0.5">Clase activa</div>' : '') + '</td>' +
+      '<td class="' + td + ' text-zinc-400 text-[11.5px]">' + esc(s.acabados.join(' · ')) + '</td>' +
+      '<td class="' + td + ' font-mono text-zinc-200">' + esc(s.ppiText) + '</td>' +
+      '<td class="' + td + ' font-mono text-zinc-300 whitespace-nowrap">' + offRange(s.ctp, 'dpi') + '</td>' +
+      '<td class="' + td + ' font-mono text-zinc-200 whitespace-nowrap">' + offRange(s.lpi, 'lpi') + '</td>' +
+      '<td class="' + td + ' text-zinc-300 text-[11.5px]">' + esc(s.perfil) + '</td>' +
+      '<td class="' + td + '">' + file + '</td></tr>';
+  }).join('');
+  const cards = Object.keys(OFF_SUSTRATOS).map(k => {
+    const s = OFF_SUSTRATOS[k], on = o.sustrato === k;
+    const dl = [['Características', s.caract], ['Acabados', s.acabados.join(' · ')], ['Salida CTP y trama', s.salida],
+      s.preprensa ? ['Preprensa', s.preprensa] : null, s.tvi ? ['Ganancia de punto (TVI)', s.tvi] : null, s.uso ? ['Uso habitual', s.uso] : null].filter(Boolean);
+    return '<div class="border ' + (on ? 'border-sky-600 bg-sky-950/15' : 'border-zinc-800 bg-zinc-950') + ' p-4 min-w-0">' +
+      '<div class="flex items-start gap-2 mb-2"><h4 class="mr-auto text-[14px] font-bold text-zinc-100">' + esc(s.name) + '</h4>' +
+      (on ? '<span class="chip text-sky-300 border-sky-700 whitespace-nowrap">Activo</span>'
+          : '<button type="button" data-offsust="' + k + '" class="border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-300 hover:bg-zinc-800 whitespace-nowrap">Verificar con este</button>') + '</div>' +
+      '<dl class="space-y-1.5">' + dl.map(r => '<div><dt class="text-[10px] uppercase tracking-wider text-zinc-500">' + esc(r[0]) + '</dt>' +
+        '<dd class="text-[12px] text-zinc-300 leading-snug">' + esc(r[1]) + '</dd></div>').join('') + '</dl></div>';
+  }).join('');
+  return '<div class="flex flex-wrap items-center gap-2 mb-2"><h4 class="mr-auto text-[13px] font-bold text-zinc-100">Sustratos, resoluciones y estándares en offset</h4>' +
+      '<span class="text-[11.5px] text-zinc-400">' + (fp != null ? 'Este archivo: ' + fmt(fp, 0) + ' ppi efectivos' : 'Sin resolución efectiva calculada') + '</span></div>' +
+    '<div class="overflow-x-auto border border-zinc-800 mb-2"><table class="w-full text-[12px] border-collapse min-w-[900px]"><thead>' +
+      '<tr class="text-[10px] uppercase tracking-widest text-zinc-500 text-left">' +
+      ['Tipo de sustrato', 'Acabados', 'Entrada (PPI)', 'Salida CTP', 'Lineatura', 'Perfil / estándar', 'Este archivo'].map(h =>
+        '<th class="px-3 py-2 font-bold border-b border-zinc-800">' + h + '</th>').join('') + '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<p class="text-[11px] text-zinc-500 mb-5 leading-relaxed">«Este archivo» compara la resolución efectiva con la entrada de cada clase y muestra cuántas veces cubre la lineatura más alta del rango.</p>' +
+    '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">' + cards + '</div>';
+}
+
+function offSalidaHTML() {
+  const o = state.off, m = state.meta, L = o.lpi, lv = offLevels(o.ctp, L);
+  const cell = (k, v, sub, cls) => '<div class="bg-zinc-950 px-3 py-2.5 min-w-0">' +
+    '<div class="text-[9.5px] uppercase tracking-widest text-zinc-500">' + esc(k) + '</div>' +
+    '<div class="text-[14px] font-bold font-mono mt-0.5 ' + (cls || 'text-zinc-100') + '">' + esc(v) + '</div>' +
+    '<div class="text-[10.5px] text-zinc-500 mt-0.5 leading-tight">' + esc(sub) + '</div></div>';
+  const td = 'px-3 py-2.5 border-b border-zinc-800/70';
+  const rows = Object.keys(OFF_SUSTRATOS).map(k => {
+    const s = OFF_SUSTRATOS[k], need = [16 * s.lpi[0], 16 * s.lpi[1]], maxL = Math.floor(s.ctp[1] / 16);
+    const res = s.ctp[1] >= need[1] ? ['Sí, en todo el rango', 'text-emerald-400']
+      : s.ctp[1] >= need[0] ? ['Sólo hasta ' + maxL + ' lpi a ' + s.ctp[1] + ' dpi', 'text-amber-400'] : ['No', 'text-red-400'];
+    const low = s.ctp[0] < need[0] ? '<div class="text-[10.5px] text-zinc-500">a ' + s.ctp[0] + ' dpi, 256 niveles sólo hasta ' + Math.floor(s.ctp[0] / 16) + ' lpi</div>' : '';
+    return '<tr class="align-top ' + (o.sustrato === k ? 'bg-sky-950/25' : '') + '">' +
+      '<td class="' + td + ' text-zinc-200">' + esc(s.label) + '</td>' +
+      '<td class="' + td + ' font-mono text-zinc-300">' + offRange(s.lpi, 'lpi') + '</td>' +
+      '<td class="' + td + ' font-mono text-zinc-300">' + Math.ceil(1.5 * s.lpi[0]) + '–' + 2 * s.lpi[1] + ' ppi</td>' +
+      '<td class="' + td + ' font-mono text-zinc-300">' + offRange(s.ctp, 'dpi') + '</td>' +
+      '<td class="' + td + ' font-mono text-zinc-300">' + offRange(need, 'dpi') + '</td>' +
+      '<td class="' + td + '"><span class="font-bold ' + res[1] + '">' + res[0] + '</span>' + low + '</td></tr>';
+  }).join('');
+
+  let meta = '<p class="text-[12px] text-zinc-500">Carga un JPEG para ver qué contenedores declaran su resolución.</p>';
+  if (m && m.container === 'JPEG') {
+    const r = offRipRead(m) || { dpi: 72, src: null };
+    const row = (k, v, win) => '<div class="grid grid-cols-[30%_1fr] gap-3 px-3 py-2 text-[12px]"><span class="text-zinc-500">' + k + '</span><span class="font-mono ' +
+      (win ? 'text-emerald-300 font-bold' : 'text-zinc-300') + '">' + v + (win ? ' ← lo usa el RIP' : '') + '</span></div>';
+    meta = '<div class="border border-zinc-800 divide-y divide-zinc-800/70">' +
+      row('1 · Photoshop / 8BIM', r.bim ? r.bim + ' ppi' : 'no declarado', r.src === '8BIM') +
+      row('2 · JFIF', r.jfifNoUnits ? 'sin unidades (sólo relación de aspecto)' : r.jfif ? r.jfif + ' ppi' : 'no declarado', r.src === 'JFIF') +
+      row('EXIF', r.exif ? r.exif + ' ppi · lectura poco fiable en RIP' : 'no declarado', false) +
+      (r.src ? '' : row('Resultado', '72 ppi por defecto → ' + fmt(m.pxW / 72 * CM_IN, 1) + ' × ' + fmt(m.pxH / 72 * CM_IN, 1) + ' cm', false)) + '</div>';
+  } else if (m) {
+    meta = '<p class="text-[12px] text-zinc-500">El archivo cargado no es JPEG: la prioridad 8BIM > JFIF sólo afecta a ese formato.</p>';
+  }
+
+  return '<div class="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-800 border border-zinc-800 mb-4">' +
+      cell('Resolución de imagen', Math.ceil(1.5 * L) + '–' + 2 * L + ' ppi', '1,5 – 2 × ' + L + ' lpi') +
+      cell('CTP mínimo para 256 niveles', 16 * L + ' dpi', L + ' lpi × 16') +
+      cell('Niveles de gris a ' + o.ctp + ' dpi', String(lv), '(DPI ÷ LPI)² + 1, máximo 256', lv >= 256 ? 'text-emerald-400' : 'text-amber-400') +
+      cell('Lineatura máxima con 256 niveles', Math.floor(o.ctp / 16) + ' lpi', o.ctp + ' dpi ÷ 16') +
+    '</div>' +
+    offNote('<b>Ejemplo de la norma.</b> Para una trama comercial de 150 lpi se graba a 2400 dpi: 150 × 16 = 2400. ' +
+      'La lineatura depende de la porosidad del soporte: más alta (150–200 lpi) en estucados y más abierta (120–150 lpi) en no estucados.') +
+    '<h4 class="text-[13px] font-bold text-zinc-100 mb-2">¿La resolución CTP de cada clase sostiene 256 niveles en todo su rango de lineatura?</h4>' +
+    '<div class="overflow-x-auto border border-zinc-800 mb-2"><table class="w-full text-[12px] border-collapse min-w-[760px]"><thead>' +
+      '<tr class="text-[10px] uppercase tracking-widest text-zinc-500 text-left">' +
+      ['Sustrato', 'Lineatura', 'Imagen 1,5–2×', 'CTP de la tabla', 'CTP para 256 niveles', '¿Alcanza?'].map(h =>
+        '<th class="px-3 py-2 font-bold border-b border-zinc-800">' + h + '</th>').join('') + '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    offNote('<b>La tabla de referencia y la regla del 16 no coinciden en las lineaturas altas.</b> La tabla asigna 150–200 lpi a 2400–2540 dpi, ' +
+      'pero con DPI ≥ LPI × 16 esas resoluciones sólo dan 256 niveles hasta 158 lpi: a 175 lpi hacen falta 2800 dpi y a 200 lpi, 3200. ' +
+      'En papel prensa, 1200 dpi sólo sostienen 75 lpi con 256 niveles. El preflight lo informa sin bloquear el arte, porque es un parámetro del RIP.', 'amber') +
+    '<h4 class="text-[13px] font-bold text-zinc-100 mb-1 mt-5">Prioridad de metadatos en el RIP (JPEG)</h4>' +
+    '<p class="text-[12px] text-zinc-400 mb-2 leading-relaxed">El RIP lee la resolución del encabezado con un orden estricto: <b>8BIM &gt; JFIF</b>. Si no está bien incrustada en esos contenedores —por ejemplo, al guardar sin definir unidades en pulgadas—, muchos RIP colapsan la imagen a 72 ppi y alteran su tamaño físico en la salida CTP.</p>' +
+    meta;
+}
+
+function offProduccionHTML() {
+  const o = state.off, all = state.meta ? state.checks.mandatory.concat(state.checks.target) : [];
+  const tag = { pass: ['medido: conforme', 'text-emerald-300 border-emerald-800'], warn: ['medido: observación', 'text-amber-300 border-amber-800'],
+                fail: ['medido: no conforme', 'text-red-300 border-red-800'], info: ['medido: informativo', 'text-zinc-400 border-zinc-700'] };
+  let idx = 0, done = 0, total = 0;
+  const fases = OFF_CHECKLIST.map(f => '<div class="border border-zinc-800 mb-3"><div class="px-4 py-2 bg-zinc-900/80 text-[10.5px] uppercase tracking-widest text-sky-400 font-bold">' + esc(f.fase) + '</div>' +
+    f.items.map(it => {
+      const i = idx++, on = !!o.manual[i], c = it[1] ? all.filter(x => x.key === it[1])[0] : null;
+      total++; if (on) done++;
+      return '<label class="flex items-start gap-2.5 px-4 py-2.5 border-t border-zinc-800/70 cursor-pointer hover:bg-zinc-900/50">' +
+        '<input type="checkbox" data-offman="' + i + '"' + (on ? ' checked' : '') + ' class="mt-0.5 accent-emerald-500">' +
+        '<span class="text-[12px] leading-snug flex-1 ' + (on ? 'text-zinc-300' : 'text-zinc-400') + '">' + esc(it[0]) + '</span>' +
+        (c ? '<span class="chip whitespace-nowrap ' + tag[c.status][1] + '">' + tag[c.status][0] + '</span>' : '') + '</label>';
+    }).join('') + '</div>').join('');
+  const s = offSus();
+  return '<div class="flex flex-wrap items-center gap-2 mb-3"><h4 class="mr-auto text-[13px] font-bold text-zinc-100">Checklist técnico de control para impresión offset</h4>' +
+      '<span class="text-[12px] font-mono text-zinc-400">' + done + '/' + total + ' verificados</span></div>' +
+    '<div class="grid grid-cols-1 xl:grid-cols-3 gap-4"><div class="xl:col-span-2">' + fases + '</div>' +
+    '<div class="space-y-3">' +
+      '<div class="border border-zinc-800 bg-zinc-950 p-4">' +
+        '<span class="block text-[10.5px] uppercase tracking-widest text-zinc-400 font-bold mb-3">Temperatura y viscosidad de la tinta</span>' +
+        offLab('Variación de temperatura en la batería (°C)', '<input id="offDT" type="number" min="-15" max="15" step="1" value="' + o.dT + '" class="' + offField() + ' font-mono">') +
+        '<div id="offDTOut" class="mt-3">' + offDTHTML(o.dT) + '</div>' +
+        '<p class="text-[11px] text-zinc-500 mt-3 leading-relaxed">Aproximación lineal con el coeficiente térmico de 5 % a 6 % por °C: +5 °C reducen la viscosidad cerca de un 30 %.</p></div>' +
+      offNote('<b>Equilibrio agua-tinta.</b> Ajusta la solución de mojado para mantener la emulsificación en el límite operativo recomendable: hasta ~25 % de agua.') +
+      offNote('<b>Ganancia de punto en esta clase.</b> ' + esc(s.tvi || 'La norma de referencia no da una indicación específica para esta clase de sustrato.')) +
+    '</div></div>';
+}
+
+function offDTHTML(dT) {
+  if (!isFinite(dT) || dT === 0) return '<p class="text-[12px] text-zinc-500">Sin variación: la viscosidad de referencia se mantiene.</p>';
+  const a = Math.abs(dT) * 5, b = Math.abs(dT) * 6, up = dT > 0;
+  return '<div class="text-[18px] font-black font-mono ' + (up ? 'text-amber-300' : 'text-sky-300') + '">' + (up ? '−' : '+') + a + ' % a ' + (up ? '−' : '+') + b + ' %</div>' +
+    '<p class="text-[12px] text-zinc-400 mt-1 leading-snug">' + (up
+      ? 'Viscosidad más baja: cambia el flujo de tinta y el tono. Si cae demasiado aparecen velo o engrasado en la plancha y salpicaduras (flyeo).'
+      : 'Viscosidad más alta, típica del arranque en frío: riesgo de arrancado del recubrimiento en couché o de desprendimiento de fibras en papeles offset.') + '</p>';
+}
+
+function offPapelesNote() {
+  return offNote('<b>Dos tablas que no dicen lo mismo.</b> Esta referencia por papel comercial y la clasificación por sustrato difieren: ' +
+    'periódico 75–85 lpi, 112–200 ppi y 1200 dpi aquí, frente a 85–100 lpi, 150–200 ppi y 1200–2400 dpi en la clasificación; ' +
+    'bond 85–110 lpi y 200–220 ppi, frente a 120–150 lpi y 300 ppi para no estucados; couché 150–175 lpi y 2400–3600 dpi, frente a 150–200 lpi y 2400–2540 dpi. ' +
+    'El preflight verifica con la clasificación por sustrato; esta tabla queda como referencia de papeles comerciales.', 'amber');
+}
+
+function renderOffset() {
+  if (!$('#offsetpre')) return;
+  syncOffConfig();
+  renderOffTabs();
+  $('#offTriad').innerHTML = offTriadHTML();
+  $('#offPanel-verif').innerHTML = offVerifHTML();
+  $('#offPanel-sustratos').innerHTML = offSustratosHTML();
+  $('#offPanel-salida').innerHTML = offSalidaHTML();
+  if (!$('#offPanel-produccion').contains(document.activeElement)) $('#offPanel-produccion').innerHTML = offProduccionHTML();
+  $('#offPapelesNote').innerHTML = offPapelesNote();
+}
+
+/* ---------- Ficha técnica y exportación ---------- */
+
+function offFichaHTML(n) {
+  const o = state.off, m = state.meta;
+  if (state.target !== 'offset' || !o.enFicha || !m) return '';
+  const s = offSus(), fp = offFilePPI(), kv = rows => rows.map(r => '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td></tr>').join('');
+  const r = m.container === 'JPEG' ? offRipRead(m) : null;
+  let idx = 0;
+  const lista = OFF_CHECKLIST.map(f => f.items.map(it => {
+    const on = !!o.manual[idx++];
+    return '<tr><th>' + esc(f.fase.split(' · ')[0] + ' · ' + it[0]) + '</th><td><b class="' + (on ? 'ok' : 'nf') + '">' + (on ? 'VERIFICADO' : 'PENDIENTE') + '</b></td></tr>';
+  }).join('')).join('');
+  return '<h2>' + n + ' · Offset: clasificación del sustrato y normalización de la salida</h2><table>' + kv([
+    ['Tipo de sustrato y acabado', s.name + ' · ' + offAcabado()],
+    ['Resolución de entrada', s.ppiText + ' · 1,5 – 2 × lineatura'],
+    ['Resolución del archivo', m.kind === 'pdf' && !m.imageCount ? 'vector puro' : fp != null ? fmt(fp, 0) + ' ppi = ' + fmt(fp / o.lpi, 2) + ' × lineatura' : 'no calculada'],
+    ['Lineatura de trama', o.lpi + ' lpi · rango ' + offRange(s.lpi, 'lpi')],
+    ['Salida CTP', o.ctp + ' dpi · ' + offLevels(o.ctp, o.lpi) + ' niveles de gris por canal · rango ' + offRange(s.ctp, 'dpi')],
+    ['Perfil / estándar', s.perfil],
+    ['Metadatos de resolución (JPEG)', r ? (r.src ? r.dpi + ' ppi leídos en ' + r.src : 'sin 8BIM ni JFIF con unidades: el RIP leerá 72 ppi') : 'no aplica']
+  ]) + '</table><table style="margin-top:2mm">' + lista + '</table>';
+}
+
+function offExport() {
+  const o = state.off, s = offSus(), fp = offFilePPI(), m = state.meta;
+  let idx = 0;
+  return {
+    activo: state.target === 'offset',
+    sustrato: s.name, acabado: offAcabado(),
+    entrada: s.ppiText, lineaturaLpi: o.lpi, rangoLineatura: offRange(s.lpi, 'lpi'),
+    salidaCtpDpi: o.ctp, rangoCtp: offRange(s.ctp, 'dpi'), nivelesDeGris: offLevels(o.ctp, o.lpi),
+    perfil: s.perfil,
+    archivoPpi: fp, relacionPpiLpi: fp != null ? fp / o.lpi : null,
+    metadatosJPEG: m && m.container === 'JPEG' ? offRipRead(m) : null,
+    checklistProduccion: OFF_CHECKLIST.map(f => ({ fase: f.fase, items: f.items.map(it => ({ item: it[0], verificado: !!o.manual[idx++] })) })),
+    incluidaEnFicha: o.enFicha
+  };
+}
+
+/* ---------- Eventos ---------- */
+
+function offSetSustrato(k) {
+  const o = state.off, s = OFF_SUSTRATOS[k];
+  if (!s || o.sustrato === k) return false;
+  o.sustrato = k; o.acabado = 0; o.lpi = s.lpiDef; o.ctp = s.ctpDef;
+  return true;
+}
+
+function offRefresh() {
+  // Todo el panel se subordina a la clase: límite de tinta, tarjeta, norma y verificación manual
+  offSyncTac();
+  if (state.target === 'offset') { renderTargetCards(); renderCatalog(); }
+  if (state.meta && state.target === 'offset') { runEvaluation(); return; }
+  renderProcesos();
+  if (state.target === 'offset') { renderManual(); renderSpecSheet(); updatePPIWidget(); renderHero(); }
+}
+
+function offChooseSustrato(k) {
+  if (!OFF_SUSTRATOS[k]) return;
+  offSetSustrato(k);
+  // Un sustrato del catálogo de otra clase deja de ser válido
+  const cat = activeSubstrate();
+  if (cat && cat.target === 'offset' && cat.off !== k) applySubstrate(null, true);
+  offSyncTac();
+  if (state.target !== 'offset') { setTarget('offset'); return; }
+  renderTargetCards();
+  offRefresh();
+}
+
+function offFromControls(el) {
+  const o = state.off;
+  if (el.id === 'offSustrato') { offChooseSustrato(el.value); return; }
+  if (el.id === 'offAcabado') o.acabado = parseInt(el.value, 10) || 0;
+  if (el.id === 'offLpi') { const v = parseInt(el.value, 10); if (v >= 40 && v <= 400) o.lpi = v; }
+  if (el.id === 'offCtp') o.ctp = parseInt(el.value, 10) || o.ctp;
+  offRefresh();
+}
+
+function offGoTab(k, focus) {
+  if (!OFF_TABS.some(t => t[0] === k)) return;
+  state.off.tab = k;
+  renderOffTabs();
+  if (focus) { const b = $('#offtab-' + k); if (b) b.focus({ preventScroll: true }); }
+}
+
+function initOffset() {
+  if (!$('#offsetpre')) return;
+  offSyncTac();
+  buildOffConfig();
+  $('#offConfig').addEventListener('change', e => { if (e.target.matches('select, input')) offFromControls(e.target); });
+  $('#offTabs').addEventListener('click', e => { const b = e.target.closest('[data-offtab]'); if (b) offGoTab(b.dataset.offtab); });
+  $('#offTabs').addEventListener('keydown', e => tabKeyNav(e, OFF_TABS.map(t => t[0]), state.off.tab, k => offGoTab(k, true)));
+  $('#offPanel-verif').addEventListener('change', e => { if (e.target.id === 'offEnFicha') state.off.enFicha = e.target.checked; });
+  $('#offPanel-produccion').addEventListener('change', e => {
+    const t = e.target;
+    if (t.matches('[data-offman]')) { state.off.manual[+t.dataset.offman] = t.checked; $('#offPanel-produccion').innerHTML = offProduccionHTML(); }
+  });
+  // El campo de temperatura sólo actualiza su salida: re-renderizar el panel perdería el foco
+  $('#offPanel-produccion').addEventListener('input', e => {
+    if (e.target.id !== 'offDT') return;
+    const v = parseFloat(e.target.value);
+    state.off.dT = isFinite(v) ? v : 0;
+    $('#offDTOut').innerHTML = offDTHTML(state.off.dT);
+  });
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-offsust]');
+    if (b) offChooseSustrato(b.dataset.offsust);
+  });
+  renderOffset();
+}
+
+
+/* =====================================================================
+   36. TINTAS PLANAS: IDENTIFICACIÓN Y MAPA ESTIMADO
+   La lista de tintas directas y especiales se lee del archivo. Su ubicación
+   en el arte se estima buscando en el render el color equivalente de cada
+   tinta, calculado con el propio PDF.js para que coincida con su conversión.
+   ===================================================================== */
+
+const SPOT_KINDS = {
+  pantone:  ['Pantone', 'text-sky-300 border-sky-800'],
+  metal:    ['Metálica', 'text-amber-200 border-amber-700'],
+  fluor:    ['Fluorescente', 'text-lime-300 border-lime-700'],
+  libreria: ['Otra guía', 'text-sky-300 border-sky-800'],
+  especial: ['Especial sin guía', 'text-violet-300 border-violet-800'],
+  blanco:   ['Blanco', 'text-zinc-200 border-zinc-600'],
+  tecnica:  ['Troquel / corte', 'text-fuchsia-300 border-fuchsia-800'],
+  barniz:   ['Barniz / acabado', 'text-teal-300 border-teal-800'],
+  registro: ['Registro', 'text-zinc-400 border-zinc-700'],
+  proceso:  ['Proceso como plana', 'text-red-300 border-red-800']
+};
+
+state.spots = { key: null, info: null, eq: {}, eqKey: null, busy: false, focus: null, cov: null, mapped: [], candMapped: [] };
+
+/* ---------- Lectura del PDF ---------- */
+
+function pdfNameDecode(s) {
+  return String(s).replace(/#([0-9A-Fa-f]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16))).trim();
+}
+
+function pdfObjText(text, num) {
+  const m = text.match(new RegExp('(?:^|[^0-9])' + num + '\\s+0\\s+obj\\b([\\s\\S]{0,2000}?)endobj'));
+  return m ? m[1] : null;
+}
+
+function pdfNums(s) { return s ? s.trim().split(/\s+/).map(parseFloat).filter(v => isFinite(v)) : null; }
+
+/** Espacio alternativo de la separación: define cuántos componentes tiene su equivalente. */
+function pdfAltComps(text, alt, depth) {
+  if (!alt || depth > 3) return null;
+  if (/^\/DeviceCMYK/.test(alt)) return 'cmyk';
+  if (/^\/DeviceRGB/.test(alt)) return 'rgb';
+  if (/^\/DeviceGray/.test(alt)) return 'gray';
+  if (/^\[\s*\/Lab/.test(alt)) return 'lab';
+  let m = alt.match(/^\[\s*\/ICCBased\s+(\d+)\s+\d+\s+R/);
+  if (m) {
+    const o = pdfObjText(text, m[1]), n = o && o.match(/\/N\s+(\d)/);
+    return n ? ({ 4: 'cmyk', 3: 'rgb', 1: 'gray' })[n[1]] || null : null;
+  }
+  m = alt.match(/^(\d+)\s+\d+\s+R/);
+  if (m) { const o = pdfObjText(text, m[1]); return o ? pdfAltComps(text, o.trim(), depth + 1) : null; }
+  return null;
+}
+
+/** Función de tono: tipo 2 (exponencial) y tipo 4 sin comprimir con un factor por componente. */
+function pdfTintFn(text, fn, ncomp) {
+  let body = fn;
+  const r = fn.match(/^(\d+)\s+\d+\s+R/);
+  if (r) body = pdfObjText(text, r[1]);
+  if (!body) return null;
+  const type = (body.match(/\/FunctionType\s+(\d)/) || [])[1];
+  if (type === '2') {
+    const c1 = body.match(/\/C1\s*\[([^\]]*)\]/), c0 = body.match(/\/C0\s*\[([^\]]*)\]/), n = body.match(/\/N\s+([\d.]+)/);
+    return c1 ? { type: 2, c1: pdfNums(c1[1]), c0: c0 ? pdfNums(c0[1]) : null, n: n ? parseFloat(n[1]) : 1 } : { type: 2, c1: null };
+  }
+  if (type === '4' && !/\/Filter/.test(body)) {
+    const prog = body.match(/stream[\r\n]+\s*\{([\s\S]*?)\}/);
+    const mul = [];
+    if (prog) { let mm; const re = /(-?\d*\.?\d+)\s+mul/g; while ((mm = re.exec(prog[1])) !== null) mul.push(parseFloat(mm[1])); }
+    return { type: 4, c1: mul.length === ncomp ? mul : null, c0: null, n: 1 };
+  }
+  return { type: type ? +type : null, c1: null };
+}
+
+function pdfSpotDefs(text) {
+  const out = {};
+  const re = /\/Separation\s*\/([^\s\/\[\]<>()]+)\s*(\/Device(?:CMYK|RGB|Gray)|\[[^\]]{0,200}\]|\d+\s+\d+\s+R)\s*(<<[\s\S]{0,800}?>>|\d+\s+\d+\s+R)/g;
+  let m, guard = 0;
+  while ((m = re.exec(text)) !== null && guard++ < 200) {
+    const name = pdfNameDecode(m[1]);
+    if (out[name] && out[name].c1) continue;
+    const comps = pdfAltComps(text, m[2].trim(), 0);
+    const nc = ({ cmyk: 4, rgb: 3, gray: 1, lab: 3 })[comps] || 0;
+    const fn = comps ? pdfTintFn(text, m[3].trim(), nc) : null;
+    out[name] = { name: name, comps: comps, c1: fn && fn.c1 && fn.c1.length === nc ? fn.c1 : null,
+                  c0: fn ? fn.c0 : null, n: fn ? fn.n : 1, fnType: fn ? fn.type : null };
+  }
+  return Object.keys(out).map(k => out[k]);
+}
+
+function pdfDeviceNInks(text) {
+  const set = {}, re = /\/DeviceN\s*\[([^\]]{0,400})\]/g;
+  let m, guard = 0;
+  while ((m = re.exec(text)) !== null && guard++ < 100) {
+    (m[1].match(/\/[^\s\/\[\]<>()]+/g) || []).forEach(t => {
+      const n = pdfNameDecode(t.slice(1));
+      if (!/^(Cyan|Magenta|Yellow|Black|None|All)$/i.test(n)) set[n] = 1;
+    });
+  }
+  return Object.keys(set);
+}
+
+/* ---------- Clasificación ---------- */
+
+function spotClassify(name) {
+  const n = name.trim(), up = n.toUpperCase();
+  const out = { kind: 'especial', note: '', warn: null, lib: null, key: null, base: null };
+  if (/^ALL$/.test(up)) {
+    out.kind = 'registro';
+    out.note = 'Color de registro: se imprime en todas las planchas. Sólo para marcas de corte y registro, nunca para texto ni arte.';
+    return out;
+  }
+  if (/^(PROCESS ?)?(CYAN|MAGENTA|YELLOW|BLACK|CIAN|AMARILLO|NEGRO)$/.test(up)) {
+    out.kind = 'proceso';
+    out.note = 'Tinta de cuatricromía definida como plana.';
+    out.warn = 'Genera una plancha extra que duplica la de proceso: conviértela al canal de proceso correspondiente.';
+    return out;
+  }
+  const isPantone = /PANTONE|PMS/.test(up);
+  if (isPantone || /^\d{3,5}\s?(CVC|CV|CP|UP|C|U)$/.test(up)) {
+    const suf = up.match(/(?:\s|\d)(CVC|CV|CP|UP|TCX|TPX|TPG|C|U|M)$/);
+    out.lib = suf ? suf[1] : null;
+    out.key = up.replace(/PANTONE|PMS/g, '').replace(/[^A-Z0-9]/g, '').replace(/(CVC|CV)$/, 'C');
+    out.base = out.key.replace(/(CP|UP|TCX|TPX|TPG|C|U|M)$/, '');
+  }
+  if (DIE_WORDS.test(n)) {
+    out.kind = 'tecnica';
+    out.note = 'Tinta técnica: debe ir en sobreimpresión y marcada como no imprimible. No es un color del diseño.';
+  } else if (/barniz|varnish|lack|coating|laca|\bUV\b|relieve|emboss|golpe seco/i.test(n)) {
+    out.kind = 'barniz';
+    out.note = 'Plancha de acabado (barniz selectivo, UV o relieve): en sobreimpresión y sin mezclarse con el color.';
+  } else if (/white|blanco|weiss/i.test(n)) {
+    out.kind = 'blanco';
+    out.note = 'Blanco de base: en soportes transparentes, metalizados u oscuros se imprime debajo del color. Confirma el orden de impresión.';
+  } else if (/gold|\boro\b|silver|plata|metal|foil|hot ?stamp|stamping/i.test(n) || (isPantone && /\b(87[1-7]|8\d{3}|10\d{3})\b/.test(up))) {
+    out.kind = 'metal';
+    out.note = 'Tinta metálica o estampado: no tiene equivalente en CMYK, la vista en pantalla es sólo orientativa.';
+  } else if (/fluor|neon/i.test(n) || (isPantone && /\b80[1-7]\b/.test(up))) {
+    out.kind = 'fluor';
+    out.note = 'Fluorescente: queda fuera de la gama CMYK; su equivalente en pantalla es aproximado.';
+  } else if (isPantone) {
+    out.kind = 'pantone';
+    out.note = ({ C: 'Guía coated: para soportes estucados.', CV: 'Guía coated: para soportes estucados.', CVC: 'Guía coated: para soportes estucados.',
+                  U: 'Guía uncoated: para soportes no estucados.', CP: 'Guía CP: simulación en cuatricromía.', UP: 'Guía UP: simulación en cuatricromía.',
+                  TCX: 'Guía textil de algodón (Pantone FHI).', TPX: 'Guía textil en papel (Pantone FHI).', TPG: 'Guía textil en papel (Pantone FHI).',
+                  M: 'Guía mate.' })[out.lib] || 'Tinta directa de la guía Pantone sin sufijo de guía: confirma si es C o U.';
+  } else if (/HKS|TOYO|\bDIC\b|FOCOLTONE|TRUMATCH|\bRAL\b/.test(up)) {
+    out.kind = 'libreria';
+    out.note = 'Tinta directa de una guía distinta de Pantone: confirma que la imprenta trabaja con esa guía.';
+  } else {
+    out.note = 'Tinta especial sin guía reconocida: confirma la fórmula o la muestra física con la imprenta.';
+  }
+  if (out.lib === 'CP' || out.lib === 'UP') {
+    out.warn = 'Pantone CP / UP es la versión en cuatricromía: no debería ir como tinta plana. Usa la guía C o U para tinta directa, o convierte el color a CMYK.';
+  } else if ((out.lib === 'C' || out.lib === 'U') && state.target === 'offset' && typeof offSus === 'function') {
+    const coated = state.off.sustrato === 'estucado' || (state.off.sustrato === 'cartulina' && state.off.acabado !== 2);
+    const uncoated = state.off.sustrato === 'noestucado' || state.off.sustrato === 'prensa' || (state.off.sustrato === 'cartulina' && state.off.acabado === 2);
+    if (out.lib === 'C' && uncoated) out.warn = 'Guía coated (C) sobre un soporte no estucado: la referencia U representa mejor cómo absorbe el papel.';
+    if (out.lib === 'U' && coated) out.warn = 'Guía uncoated (U) sobre un soporte estucado: usa la referencia C.';
+  }
+  return out;
+}
+
+function spotFileKey() {
+  const f = state.file;
+  return f ? f.name + ':' + f.size + ':' + (f.lastModified || 0) : '';
+}
+
+/** Colores planos muy saturados que la cuatricromía no alcanza: mismo criterio que «fuera de gama». */
+function spotCandidates() {
+  const s = state.source;
+  if (!s || typeof seriDominantColors !== 'function') return [];
+  const dom = seriDominantColors(s, true);
+  if (!dom) return [];
+  return dom.colors.map(c => {
+    const rgb = [1, 3, 5].map(i => parseInt(c.hex.slice(i, i + 2), 16));
+    const mx = Math.max.apply(null, rgb), mn = Math.min.apply(null, rgb);
+    return { hex: c.hex, rgb: rgb, share: c.share, sat: mx ? (mx - mn) / mx : 0, mx: mx };
+  }).filter(c => c.sat > 0.82 && c.mx > 190 && c.share >= 0.02);
+}
+
+function spotInfo() {
+  const m = state.meta;
+  if (!m) return { mode: 'none', list: [], cand: [] };
+  const key = spotFileKey() + '|' + state.target + '|' + (state.target === 'offset' ? state.off.sustrato + state.off.acabado : '');
+  // Durante la carga el archivo nuevo convive con los metadatos del anterior: la caché depende de ambos
+  if (state.spots.key === key && state.spots.infoMeta === m && state.spots.info) return state.spots.info;
+
+  let mode = 'raster';
+  const list = [];
+  const push = (name, origen) => {
+    if (!name || /^None$/i.test(name) || list.some(s => s.name === name)) return;
+    list.push(Object.assign({ name: name, origen: origen }, spotClassify(name)));
+  };
+  if (m.kind === 'pdf') {
+    mode = 'pdf';
+    (m.spotDefs || []).forEach(d => push(d.name, 'Separation'));
+    (m.spotColors || []).forEach(n => push(n, 'Separation'));
+    (m.deviceNInks || []).forEach(n => push(n, 'DeviceN'));
+  } else if (m.tiff) {
+    mode = 'tiff';
+    (m.tiff.inkNames || []).forEach(n => { if (!/^(cyan|magenta|yellow|black)$/i.test(n)) push(n, 'TIFF InkNames'); });
+  } else if (m.psd) {
+    mode = 'psd';
+  }
+
+  // Dos grafías de la misma tinta generan dos planchas
+  const groups = {};
+  list.forEach(s => { if (s.key) (groups[s.key] = groups[s.key] || []).push(s); });
+  Object.keys(groups).forEach(k => {
+    const g = groups[k];
+    if (g.length < 2) return;
+    g.forEach(s => {
+      s.warn = (s.warn ? s.warn + ' ' : '') + 'Duplicada con ' + g.filter(x => x !== s).map(x => '«' + x.name + '»').join(', ') +
+        ': dos nombres para la misma tinta generan dos planchas. Unifica el nombre.';
+    });
+  });
+  // La misma referencia en guías distintas
+  const bases = {};
+  list.forEach(s => { if (s.base && s.lib) (bases[s.base] = bases[s.base] || []).push(s); });
+  Object.keys(bases).forEach(b => {
+    const g = bases[b], libs = g.map(s => s.lib.replace(/CVC|CV/, 'C')).filter((v, i, a) => a.indexOf(v) === i);
+    if (libs.length < 2) return;
+    g.forEach(s => { s.warn = (s.warn ? s.warn + ' ' : '') + 'La referencia ' + b + ' aparece en guías distintas (' + libs.join(' y ') + '): elige la del soporte.'; });
+  });
+
+  list.forEach(s => { s.def = (m.spotDefs || []).filter(d => d.name === s.name)[0] || null; });
+  const colorInks = list.filter(s => ['pantone', 'metal', 'fluor', 'libreria', 'especial', 'blanco'].indexOf(s.kind) >= 0);
+  const info = { mode: mode, list: list, cand: (mode === 'raster' || !colorInks.length) ? spotCandidates() : [] };
+  state.spots.key = key;
+  state.spots.info = info;
+  state.spots.infoMeta = m;
+  if (state.spots.focus && !list.some(s => s.name === state.spots.focus)) state.spots.focus = null;
+  return info;
+}
+
+/* ---------- Equivalentes con el propio PDF.js ---------- */
+
+/** Rasteriza un PDF mínimo con cada tinta al 25, 50, 75 y 100 %: da la conversión real del visor. */
+async function spotEquivalents(defs) {
+  const nc = { cmyk: 4, rgb: 3, gray: 1, lab: 3 };
+  const use = defs.filter(d => d.comps && d.c1 && d.c1.length === nc[d.comps]);
+  if (!use.length || !window.pdfjsLib) return {};
+  const tints = [0.25, 0.5, 0.75, 1];
+  let ops = '';
+  use.forEach((d, i) => tints.forEach((t, j) => {
+    const v = d.c1.map((c1, k) => {
+      const c0 = d.c0 && d.c0.length === d.c1.length ? d.c0[k] : 0;
+      return c0 + Math.pow(t, d.n || 1) * (c1 - c0);
+    }).map(x => x.toFixed(4)).join(' ');
+    const op = d.comps === 'cmyk' ? v + ' k' : d.comps === 'rgb' ? v + ' rg' : d.comps === 'gray' ? v + ' g' : '/L0 cs ' + v + ' sc';
+    ops += op + ' ' + (i * 4 + j) + ' 0 1 1 re f\n';
+  }));
+  const objs = [
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + use.length * 4 + ' 1] /Resources << /ColorSpace << /L0 [/Lab << /WhitePoint [0.9642 1 0.8249] /Range [-128 127 -128 127] >>] >> >> /Contents 4 0 R >>',
+    '<< /Length ' + ops.length + ' >>\nstream\n' + ops + 'endstream'
+  ];
+  let pdf = '%PDF-1.4\n';
+  const offs = [];
+  objs.forEach((o, i) => { offs.push(pdf.length); pdf += (i + 1) + ' 0 obj\n' + o + '\nendobj\n'; });
+  const xref = pdf.length;
+  pdf += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n' + offs.map(n => String(n).padStart(10, '0') + ' 00000 n \n').join('') +
+    'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF\n';
+  const data = new Uint8Array(pdf.length);
+  for (let i = 0; i < pdf.length; i++) data[i] = pdf.charCodeAt(i) & 255;
+
+  const doc = await pdfjsLib.getDocument({ data: data }).promise;
+  try {
+    const page = await doc.getPage(1);
+    const S = 8, vp = page.getViewport({ scale: S });
+    const cv = newCanvas(vp.width, vp.height), cx = cv.getContext('2d', { willReadFrequently: true });
+    cx.fillStyle = '#ffffff';
+    cx.fillRect(0, 0, cv.width, cv.height);
+    // intent 'print': el render no depende de requestAnimationFrame
+    const task = page.render({ canvasContext: cx, viewport: vp, intent: 'print' });
+    const ok = await Promise.race([task.promise.then(() => true).catch(() => false), new Promise(r => setTimeout(() => r(false), 6000))]);
+    if (!ok) { try { task.cancel(); } catch (e) { /* ignorado */ } return {}; }
+    const px = cx.getImageData(0, 0, cv.width, cv.height).data, row = Math.floor(cv.height / 2), out = {};
+    use.forEach((d, i) => {
+      const pts = [[255, 255, 255]];
+      tints.forEach((t, j) => {
+        const q = (row * cv.width + (i * 4 + j) * S + (S >> 1)) * 4;
+        pts.push([px[q], px[q + 1], px[q + 2]]);
+      });
+      out[d.name] = pts;
+    });
+    return out;
+  } finally {
+    doc.destroy();
+  }
+}
+
+/** Los equivalentes valen para el archivo y los metadatos con que se calcularon. */
+function spotEqReady() {
+  return state.spots.eqKey === spotFileKey() && state.spots.eqMeta === state.meta;
+}
+
+function spotEnsureEq() {
+  const m = state.meta, key = spotFileKey();
+  if (!m || state.spots.busy || (state.spots.eqKey === key && state.spots.eqMeta === m)) return;
+  const defs = m.kind === 'pdf' ? (m.spotDefs || []) : [];
+  if (!defs.some(d => d.c1)) { state.spots.eq = {}; state.spots.eqKey = key; state.spots.eqMeta = m; return; }
+  state.spots.busy = true;
+  spotEquivalents(defs).catch(() => ({})).then(eq => {
+    state.spots.busy = false;
+    if (spotFileKey() !== key || state.meta !== m) return;
+    state.spots.eq = eq || {};
+    state.spots.eqKey = key;
+    state.spots.eqMeta = m;
+    if (state.overlay === 'tac' && state.tacMode === 'spots' && state.analysis) refreshTac(true);
+  });
+}
+
+/* ---------- Mapa ---------- */
+
+/** Distancia RGB del píxel a la curva de tonos blanco → 25 → 50 → 75 → 100 % de la tinta. */
+function spotPolyDist(r, g, b, pts) {
+  let best = Infinity;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], c = pts[i + 1];
+    const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    const L = vx * vx + vy * vy + vz * vz;
+    let t = L ? ((r - a[0]) * vx + (g - a[1]) * vy + (b - a[2]) * vz) / L : 0;
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    const dx = r - (a[0] + vx * t), dy = g - (a[1] + vy * t), dz = b - (a[2] + vz * t);
+    const dd = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (dd < best) best = dd;
+  }
+  return best;
+}
+
+function renderSpotHeat(srcCanvas) {
+  const src = srcCanvas || state.source;
+  if (!src) return null;
+  const info = spotInfo(), eq = spotEqReady() ? state.spots.eq : {}, focus = state.spots.focus;
+  // Registro y proceso como plana coinciden con el negro y el cian del arte: sólo se muestran aisladas
+  // Dos nombres con el mismo equivalente ocupan los mismos píxeles: el segundo se remite al primero
+  const same = {}, targets = [];
+  info.list.filter(s => eq[s.name] && (focus ? s.name === focus : (s.kind !== 'registro' && s.kind !== 'proceso'))).forEach(s => {
+    const twin = targets.filter(t => JSON.stringify(eq[t.name]) === JSON.stringify(eq[s.name]))[0];
+    if (twin) same[s.name] = twin.name; else targets.push(s);
+  });
+  const cands = focus ? [] : info.cand;
+  const k = Math.min(1, 640 / Math.max(src.width, src.height));
+  const W = Math.max(1, Math.round(src.width * k)), H = Math.max(1, Math.round(src.height * k));
+  const cv = newCanvas(W, H), cx = cv.getContext('2d', { willReadFrequently: true });
+  cx.drawImage(src, 0, 0, W, H);
+  let img;
+  try { img = cx.getImageData(0, 0, W, H); } catch (e) { return null; }
+  const d = img.data, cov = {}, TOL = 26;
+  targets.forEach(t => { cov[t.name] = 0; });
+  cands.forEach(c => { cov[c.hex] = 0; });
+  let opaque = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i + 3] < 16) { d[i] = 24; d[i + 1] = 24; d[i + 2] = 27; d[i + 3] = 255; continue; }
+    const r = d[i], g = d[i + 1], b = d[i + 2];
+    opaque++;
+    let hit = null, best = TOL;
+    // Los tonos casi blancos coinciden con cualquier tinta: no identifican nada
+    if ((255 - r) * (255 - r) + (255 - g) * (255 - g) + (255 - b) * (255 - b) > 484) {
+      for (let j = 0; j < targets.length; j++) {
+        const dd = spotPolyDist(r, g, b, eq[targets[j].name]);
+        if (dd < best) { best = dd; hit = targets[j].name; }
+      }
+      if (!hit) {
+        for (let j = 0; j < cands.length; j++) {
+          const c = cands[j].rgb, dd = Math.sqrt((r - c[0]) * (r - c[0]) + (g - c[1]) * (g - c[1]) + (b - c[2]) * (b - c[2]));
+          if (dd < 30 && dd < best + 4) { best = dd; hit = cands[j].hex; }
+        }
+      }
+    }
+    if (hit) { cov[hit]++; continue; }          // la tinta conserva su color; el resto pasa a gris
+    const v = Math.round((0.2126 * r + 0.7152 * g + 0.0722 * b) * 0.35 + 70);
+    d[i] = v; d[i + 1] = v; d[i + 2] = v; d[i + 3] = 255;
+  }
+  cx.putImageData(img, 0, 0);
+  Object.keys(cov).forEach(n => { cov[n] = opaque ? cov[n] / opaque * 100 : 0; });
+  state.spots.cov = cov;
+  state.spots.same = same;
+  // La cobertura de la vista completa se conserva al aislar una tinta
+  if (!focus) { state.spots.covAll = Object.assign({}, cov); state.spots.sameAll = same; }
+  state.spots.mapped = targets.map(t => t.name);
+  state.spots.candMapped = cands.map(c => c.hex);
+  return cv;
+}
+
+function spotSwatch(rgb, title, big) {
+  const sz = big ? 'h-5 w-5' : 'h-3 w-3';
+  return rgb
+    ? '<span class="inline-block ' + sz + ' shrink-0 align-middle border border-zinc-600" style="background:rgb(' + rgb.join(',') + ')" title="' + esc(title || '') + '"></span>'
+    : '<span class="inline-flex ' + sz + ' shrink-0 items-center justify-center align-middle border border-dashed border-zinc-600 text-[10px] text-zinc-500" title="' + esc(title || '') + '">?</span>';
+}
+
+function spotLegendHTML() {
+  const info = spotInfo(), cov = state.spots.cov || {}, eq = spotEqReady() ? state.spots.eq : {};
+  const items = (state.spots.mapped || []).filter(n => eq[n]).map(n =>
+    '<span>' + spotSwatch(eq[n][4]) + ' ' + esc(n) + ' <b class="font-mono text-zinc-300">' + fmt(cov[n] || 0, 1) + ' %</b></span>');
+  (state.spots.candMapped || []).forEach(hx => {
+    const c = info.cand.filter(x => x.hex === hx)[0];
+    if (c) items.push('<span>' + spotSwatch(c.rgb) + ' candidata ' + hx + ' <b class="font-mono text-zinc-300">' + fmt(cov[hx] || 0, 1) + ' %</b></span>');
+  });
+  Object.keys(state.spots.same || {}).forEach(n => {
+    items.push('<span>' + spotSwatch(eq[n] ? eq[n][4] : null) + ' ' + esc(n) + ' <span class="text-zinc-500">mismo color que «' + esc(state.spots.same[n]) + '»</span></span>');
+  });
+  if (state.spots.busy) items.push('<span class="text-zinc-500">calculando equivalentes…</span>');
+  if (!items.length) {
+    items.push('<span class="text-zinc-500">' + (info.list.length ? 'Ninguna tinta con equivalente legible para situarla en el mapa' : 'Sin tintas planas ni colores candidatos en el arte') + '</span>');
+  }
+  items.push('<span class="text-zinc-600">Mapa estimado: en color, las zonas que coinciden con cada tinta; en gris, el resto</span>');
+  return items.join('');
+}
+
+function renderSpotPanel() {
+  const box = $('#spotPanel');
+  if (!box) return;
+  const m = state.meta, info = spotInfo(), cov = state.spots.cov || {};
+  const eqOk = spotEqReady(), eq = eqOk ? state.spots.eq : {};
+  const origen = { pdf: 'espacios /Separation y /DeviceN del PDF', tiff: 'InkNames del TIFF', psd: 'cabecera del PSD', raster: 'formato sin tintas planas', none: '' }[info.mode];
+  let h = '<div class="flex flex-wrap items-center gap-2 mb-2">' +
+    '<span class="text-[11.5px] font-bold text-zinc-200 mr-auto">Tintas planas · tinta directa / especial' + HELP_BTN('spot') + '</span>' +
+    '<span class="text-[11px] text-zinc-500">' + origen + '</span></div>';
+
+  if (info.mode === 'pdf' || info.mode === 'tiff') {
+    if (info.list.length) {
+      const n = kinds => info.list.filter(s => kinds.indexOf(s.kind) >= 0).length;
+      const warns = info.list.filter(s => s.warn).length;
+      h += '<div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] mb-2">' +
+        '<span class="text-zinc-500">De color <b class="font-mono text-zinc-200">' + n(['pantone', 'metal', 'fluor', 'libreria', 'especial', 'blanco']) + '</b></span>' +
+        '<span class="text-zinc-500">Técnicas y acabados <b class="font-mono text-zinc-200">' + n(['tecnica', 'barniz']) + '</b></span>' +
+        (n(['registro']) ? '<span class="text-zinc-500">Registro <b class="font-mono text-zinc-200">' + n(['registro']) + '</b></span>' : '') +
+        '<span class="' + (warns ? 'text-amber-400' : 'text-emerald-400') + '">' + (warns ? warns + ' con observaciones' : 'sin conflictos de nombre') + '</span></div>';
+      h += '<div class="border border-zinc-800 divide-y divide-zinc-800/70">' + info.list.map(s => {
+        const e = eq[s.name], on = state.spots.focus === s.name;
+        let eqNote = '';
+        if (!e) {
+          eqNote = s.origen !== 'Separation' ? 'sin equivalente: tinta de ' + s.origen
+            : (!eqOk || state.spots.busy) ? 'calculando el equivalente…'
+            : s.def && s.def.fnType && s.def.fnType !== 2 && s.def.fnType !== 4 ? 'función de tono tipo ' + s.def.fnType + ': equivalente no legible'
+            : 'equivalente no legible (función comprimida o sin definir)';
+        }
+        return '<div class="px-2.5 py-2' + (on ? ' bg-sky-950/30' : '') + '">' +
+          '<div class="flex items-center gap-2 min-w-0">' + spotSwatch(e ? e[4] : null, e ? 'Equivalente al 100 %' : eqNote, true) +
+            '<span class="font-mono text-[12px] text-zinc-100 truncate min-w-0" title="' + esc(s.name) + '">' + esc(s.name) + '</span>' +
+            '<span class="chip whitespace-nowrap ' + SPOT_KINDS[s.kind][1] + '">' + SPOT_KINDS[s.kind][0] + (s.lib ? ' · ' + s.lib : '') + '</span>' +
+            '<span class="ml-auto text-[11px] font-mono text-zinc-400 whitespace-nowrap">' +
+              ((state.spots.sameAll || {})[s.name] ? 'mismo color que «' + esc(state.spots.sameAll[s.name]) + '»'
+                : cov[s.name] != null ? fmt(cov[s.name], 1) + ' %'
+                : (state.spots.covAll || {})[s.name] != null ? fmt(state.spots.covAll[s.name], 1) + ' %' : '') + '</span>' +
+            (e ? '<button type="button" data-spotfocus="' + esc(s.name) + '" class="border border-zinc-700 px-1.5 py-0.5 text-[10.5px] text-zinc-300 hover:bg-zinc-800 whitespace-nowrap">' + (on ? 'Ver todas' : 'Aislar') + '</button>' : '') +
+          '</div>' +
+          '<p class="text-[11px] text-zinc-500 mt-1 leading-snug">' + esc(s.note) + (eqNote ? ' · ' + esc(eqNote) : '') + '</p>' +
+          (s.warn ? '<p class="text-[11px] text-amber-300/90 mt-0.5 leading-snug">' + esc(s.warn) + '</p>' : '') + '</div>';
+      }).join('') + '</div>';
+    } else {
+      h += '<p class="text-[12px] text-zinc-400 leading-relaxed">' + (info.mode === 'pdf'
+        ? 'El PDF no declara tintas planas: no hay espacios /Separation ni /DeviceN con tintas propias. Todo el color se imprimirá en cuatricromía.'
+        : 'El TIFF no declara tintas además de CMYK.') + '</p>';
+    }
+    if (m.partialScan) {
+      h += '<p class="text-[11px] text-amber-400/90 mt-2 leading-snug">El PDF comprime sus objetos (/ObjStm): puede haber tintas planas que el escaneo directo no ve. Confírmalo en Acrobat › Previsualización de salida.</p>';
+    }
+    if (info.mode === 'tiff' && info.list.length) {
+      h += '<p class="text-[11px] text-zinc-500 mt-2">Los canales de tinta plana del TIFF no se decodifican: el mapa muestra el arte compuesto.</p>';
+    }
+  } else if (info.mode === 'psd') {
+    const cm = m.colorMode || '', ch = m.psd.channels;
+    const base = /CMYK/.test(cm) ? 4 : /RGB|Lab/.test(cm) ? 3 : /grises|bits/i.test(cm) ? 1 : null;
+    const txt = /Duotono/i.test(cm) ? 'Documento en duotono: sus tintas son planas por definición.'
+      : /Multicanal/i.test(cm) ? 'Documento multicanal: cada canal es una tinta.'
+      : base !== null && ch > base ? 'El PSD tiene ' + (ch - base) + ' canal(es) además de los de color: pueden ser tintas planas o canales alfa.'
+      : 'La cabecera no declara canales además de los de color: no hay tintas planas.';
+    h += '<p class="text-[12px] text-zinc-400 leading-relaxed">' + esc(txt) + ' Esta aplicación sólo lee la cabecera del PSD: exporta a PDF para ver los nombres de las tintas.</p>';
+  } else {
+    h += '<p class="text-[12px] text-zinc-400 leading-relaxed">' + esc(m.formatName || m.container) +
+      ' no admite tintas planas: no puede transportar canales de tinta directa, así que todo el color se imprimirá en cuatricromía. ' +
+      'Si el diseño necesita una tinta Pantone, un blanco, un barniz o un troquel, entrégalo en PDF con cada uno como tinta plana (/Separation).</p>';
+  }
+
+  if (info.cand.length) {
+    h += '<div class="mt-3"><div class="text-[10px] uppercase tracking-widest text-zinc-500 mb-1.5">Candidatas a tinta directa · colores planos fuera de la gama CMYK</div>' +
+      '<div class="flex flex-wrap gap-2">' + info.cand.map(c =>
+        '<span class="flex items-center gap-1.5 border border-zinc-800 px-2 py-1 text-[11px]">' + spotSwatch(c.rgb, c.hex) +
+        '<span class="font-mono text-zinc-300">' + c.hex + '</span><span class="text-zinc-500">' + fmt(c.share * 100, 1) + ' % del área con color</span></span>').join('') + '</div>' +
+      '<p class="text-[11px] text-zinc-500 mt-1.5 leading-snug">Masas planas muy saturadas que la cuatricromía no alcanza: se apagarán al convertir. Si es un color de marca, valora una tinta directa de la guía Pantone.</p></div>';
+  }
+  h += '<p class="text-[10.5px] text-zinc-600 mt-2.5 leading-snug">La lista se lee del archivo. El mapa es una estimación: marca las zonas del render cuyo color coincide con el equivalente de cada tinta, no ve la tinta en sobreimpresión ni bajo otros colores y puede marcar colores de proceso iguales.</p>';
+  box.innerHTML = h;
+}
+
+/* ---------- Motor de reglas, ficha y exportación ---------- */
+
+function spotCheck(m) {
+  const info = spotInfo(), names = info.list.filter(s => s.kind !== 'registro'), issues = info.list.filter(s => s.warn);
+  const exp = 'Troquel y barnices como tinta plana en sobreimpresión · un único nombre por tinta';
+  if (!names.length) {
+    return chk('spot', 'Tintas planas declaradas', 'info', 'ninguna detectada', exp,
+      'No se detectaron separaciones. Si el diseño lleva troquel, hendido o barniz, deben ir en tinta plana propia.', 'spot');
+  }
+  return chk('spot', 'Tintas planas declaradas', issues.length ? 'warn' : 'info',
+    names.map(s => s.name + ' (' + SPOT_KINDS[s.kind][0].toLowerCase() + ')').join(', '), exp,
+    issues.length ? issues.map(s => s.name + ': ' + s.warn).join(' ')
+                  : 'Verifica que los nombres coincidan exactamente con la guía de la imprenta y que el troquel esté marcado como no imprimible.', 'spot');
+}
+
+function spotSummary() {
+  const info = spotInfo();
+  if (!info.list.length) return 'ninguna';
+  return info.list.map(s => s.name + ' (' + SPOT_KINDS[s.kind][0].toLowerCase() + ')' + (s.warn ? ' — revisar' : '')).join(', ');
+}
+
+function spotExport() {
+  if (!state.meta) return null;
+  const info = spotInfo(), eq = spotEqReady() ? state.spots.eq : {};
+  const cov = state.spots.covAll || state.spots.cov || {}, same = state.spots.sameAll || state.spots.same || {};
+  return {
+    origen: info.mode,
+    declaradas: info.list.map(s => ({
+      nombre: s.name, espacio: s.origen, clase: SPOT_KINDS[s.kind][0], guia: s.lib, nota: s.note, aviso: s.warn,
+      equivalenteRGB: eq[s.name] ? eq[s.name][4] : null, coberturaEstimadaPct: cov[s.name] != null ? cov[s.name] : null,
+      mismoColorQue: same[s.name] || null
+    })),
+    candidatas: info.cand.map(c => ({ color: c.hex, areaConColorPct: c.share * 100 }))
+  };
+}
+
+function initSpots() {
+  const box = $('#spotPanel');
+  if (!box) return;
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-spotfocus]');
+    if (!b) return;
+    state.spots.focus = state.spots.focus === b.dataset.spotfocus ? null : b.dataset.spotfocus;
+    refreshTac(true);
+  });
 }
 
 </script>

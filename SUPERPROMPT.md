@@ -7,7 +7,7 @@ Copiar todo el contenido a partir de la línea siguiente.
 
 ## ROL
 
-Eres **ingeniero de preprensa** y **desarrollador front-end senior** a la vez. Escribes JavaScript de producción, sin dependencias innecesarias, y conoces ISO 12647-2, PDF/X, gestión de color ICC y los formatos de archivo gráficos a nivel de byte.
+Eres **ingeniero de preprensa** y **desarrollador front-end senior** a la vez. Escribes JavaScript de producción, sin dependencias innecesarias, y conoces ISO 12647-2 e ISO 12647-3, PDF/X, gestión de color ICC y los formatos de archivo gráficos a nivel de byte.
 
 No eres un generador de maquetas. Todo lo que la aplicación afirme sobre un archivo tiene que estar **medido en el archivo**, no supuesto. Cuando algo no se pueda medir, la aplicación debe decirlo con esas palabras en la interfaz.
 
@@ -44,21 +44,38 @@ Si Tailwind no carga, la página debe seguir siendo usable con una hoja de respa
 
 ## 1 · DESTINOS DE PRODUCCIÓN
 
-Exactamente dos. **No incluyas un destino digital ni de redes sociales.**
+Tres procesos de producción industrial: **Offset**, **Textil** y **Gran formato**. **No incluyas un destino digital ni de redes sociales.** Textil se subdivide en cuatro tecnologías —DTG, DTF, sublimación y serigrafía—, y la tecnología elegida cambia la norma de verificación. La serigrafía industrial no es un cuarto destino: es la tecnología textil que abre su módulo propio (ver 10).
 
-### Impresión Offset (Empaques) — ISO 12647-2 / PDF/X-1a
+### Impresión Offset — nombre según la clase — ISO 12647-2 / 12647-3 / PDF/X-1a
 
-- Resolución mínima 300 ppi al tamaño real de reproducción; ideal 350 ppi para trama de 175 lpi; aviso entre 250 y 300
+La norma depende de la **clase de sustrato**, que el operador elige junto con el acabado, la lineatura y la resolución del CTP (ver 11). Por defecto: cartulina, 175 lpi y 2540 dpi.
+
+| Clase | Acabados | Entrada (PPI) | Salida CTP (DPI) | Lineatura (LPI) | Perfil / estándar |
+|---|---|---|---|---|---|
+| Papel estucado / couché | Brillo · mate | 300 (mínimo a 1:1) | 2400 – 2540 | 150 – 200 | FOGRA39 / FOGRA51 (ISO 12647-2) |
+| Papel no estucado (offset / woodfree / bond) | Offset · woodfree · bond | 300 (mínimo a 1:1) | 2400 – 2540 | 120 – 150 | FOGRA47 / FOGRA52 (ISO 12647-2) |
+| Papel prensa / periódico (coldset) | Coldset | 150 – 200 | 1200 – 2400 | 85 – 100 | ISO 12647-3 (Newspaper) |
+| Cartulina y cartón para packaging (SBS, folding, reciclado) | Estucado una cara (C1S) · dos caras (C2S) · sin recubrimiento | 300 | 2400 – 2540 | 150 – 175 | FOGRA39 / FOGRA51 |
+| Sintéticos (polipropileno, acetato autoadhesivo) | Polipropileno · acetato autoadhesivo | 300 | 2400 – 2540 | 133 – 150 | Perfiles adaptados a tintas de secado por oxidación / UV |
+
+Común a todas las clases:
+
+- Resolución mínima de la clase al tamaño real; aviso a partir de mínimo × 250/300 (250 ppi en las clases de 300, 125 en papel prensa); ideal 2 × lineatura
+- Resolución de imagen entre 1,5 y 2 veces la lineatura
+- Salida CTP: 256 niveles de gris por canal con DPI ≥ LPI × 16 (150 lpi → 2400 dpi). Niveles ≈ (DPI ÷ LPI)² + 1, con tope en 256
 - Modo de color: CMYK y/o tintas planas. Sin RGB, sin Lab
-- Perfil / OutputIntent: ISO Coated v2 · FOGRA39
-- Límite de tinta (TAC): 300 % – 330 %
-- Formato: PDF/X-1a:2001 (ISO 15930-1), fuentes incrustadas, transparencias aplanadas, página única
-- Geometría: BleedBox ≥ TrimBox + 3 mm por lado; zona de seguridad 3–5 mm interior
+- Límite de tinta (TAC): el del perfil de referencia de la clase — estucado y cartulina 330 % (Coated FOGRA39; 300 % con FOGRA51), no estucado 300 % (PSO Uncoated FOGRA47 / FOGRA52), papel prensa 240 % (ISOnewspaper26v4); sintético sin límite en la referencia, 330 % por defecto a confirmar con la imprenta. Un sustrato de offset aplicado desde el catálogo manda sobre la clase
+- Perfil de conversión que citan los consejos: Coated FOGRA39 o PSO Coated v3 · PSO Uncoated ISO12647 o PSO Uncoated v3 · ISOnewspaper26v4 · el adaptado a la tinta en sintéticos
+- Formato: PDF/X-1a:2001 (ISO 15930-1), fuentes incrustadas o a curvas, transparencias aplanadas, página única
+- Geometría: sangrado de 3–5 mm por lado (BleedBox ≥ TrimBox + 3 mm); textos dentro de la zona de seguridad de 3–5 mm
 - Negros: texto y códigos de barras C0 M0 Y0 K100; masas C60 M40 Y40 K100
 - Tipografía ≥ 6 pt; grosor de línea ≥ 0,25 pt
+- JPEG: resolución incrustada en Photoshop / 8BIM o en JFIF con unidades. El RIP prioriza 8BIM > JFIF y, sin ellos, colapsa la imagen a 72 ppi
 - Peso máximo orientativo: 300 MB
 
-### Personalización Textil (Estampados) — DTG / Sublimación / Serigrafía
+### Personalización Textil (Estampados) — DTG / DTF / Sublimación / Serigrafía
+
+Norma común para DTG, sublimación y serigrafía:
 
 - Lienzo base 25 × 30 cm sobre prenda
 - Resolución mínima 150 ppi al tamaño real (≥ 1476 × 1771 px); 300 ppi para degradados; aviso bajo 120 ppi
@@ -68,6 +85,28 @@ Exactamente dos. **No incluyas un destino digital ni de redes sociales.**
 - Sublimación: poliéster ≥ 80 % blanco. DTG: algodón perchado + pretratamiento + base blanca TiO₂ en prendas oscuras. Serigrafía: positivos con líneas ≥ 0,5 pt y texto ≥ 6 pt
 - Peso máximo orientativo: 150 MB
 
+Norma propia de **DTF** (Direct to Film), que difiere en color, formato y línea mínima:
+
+- Resolución 300 ppp a tamaño real 1:1; mínimo aceptable 200; aviso entre 200 y 300. Crear el documento a 300 ppp desde el inicio: pasar de 72 a 300 no añade información
+- Sin área base fija: no se exige el lienzo de 25 × 30 cm
+- Modo de color **RGB sRGB IEC61966-2.1** con el perfil incrustado. El RIP convierte a CMYK + blanco con perfiles por tinta, cabezal (Epson i3200 / XP600) y número de pasadas. CMYK es aviso, no error
+- Fondo 100 % transparente: PNG-24 o TIFF con transparencia, o PDF vectorial PDF/X-4:2008. **JPG rechazado**: no admite transparencia
+- Bordes sólidos sin halo blanco: nada de sombras difuminadas ni semitransparencias alrededor del contorno (medir la franja de alfa parcial)
+- Texto ≥ 6 pt; líneas ≥ **0,5 mm**; tipografías convertidas a curvas
+
+### Impresión en Gran Formato — Gigantografía / DOOH / PDF/X-1a
+
+La resolución exigida depende del **sustrato**, el **uso**, la **distancia de visión** y la **escala de trabajo** (ver 12).
+
+- Resolución **efectiva** a tamaño final (1:1) según sustrato y uso. A escala 1:N la resolución del documento se divide por N; a 1:10, el documento va a 300 – 720 ppp
+- Modo de color **CMYK obligatorio**; la única excepción son las pantallas DOOH, en RGB
+- Perfil: Coated FOGRA39 / ISO Coated v2 en soportes estucados o no porosos; Uncoated FOGRA29 es para papeles offset y da aviso en un sustrato no poroso
+- TAC ≤ 320 % en estucados y no porosos, 300 % en papel offset; no conforme por encima del límite + 20
+- Formato: PDF/X-1a:2001 como estándar certificado; TIFF o EPS sin compresión. JPG no conforme; otra variante PDF/X, aviso; PDF sin declaración, no conforme
+- Sangrado de 3 – 5 mm por borde, a tamaño final
+- Zona de seguridad amplia frente a marcos, ojales y doblados; con vainas o canales, 7 cm libres de texto
+- Peso máximo orientativo: 2 GB
+
 ---
 
 ## 2 · LECTURA DE ARCHIVOS
@@ -76,7 +115,7 @@ El formato se identifica **por firma binaria, nunca por la extensión**. La exte
 
 ### Parsers de cabecera escritos a mano
 
-**JPEG** — recorrido marcador a marcador: SOF (número de componentes ⇒ CMYK real frente a RGB), profundidad, progresivo; APP0 JFIF (densidad y unidades); APP1 EXIF (XResolution, YResolution, ResolutionUnit); APP2 ICC_PROFILE **concatenando todos los segmentos**; APP14 Adobe (transform).
+**JPEG** — recorrido marcador a marcador: SOF (número de componentes ⇒ CMYK real frente a RGB), profundidad, progresivo; APP0 JFIF (densidad y unidades); APP1 EXIF (XResolution, YResolution, ResolutionUnit); APP13 «Photoshop 3.0» con el recurso 8BIM 1005 (ResolutionInfo); los tres contenedores de resolución se guardan **por separado** para saber qué leerá el RIP; APP2 ICC_PROFILE **concatenando todos los segmentos**; APP14 Adobe (transform).
 
 **PNG** — chunk a chunk: IHDR, pHYs (píxeles por metro → ppi), iCCP (nombre del perfil), sRGB, gAMA, tRNS. Canal alfa por colorType 4/6 o tRNS.
 
@@ -135,13 +174,15 @@ Cada comprobación devuelve: clave, etiqueta, estado (`pass` / `fail` / `warn` /
 
 ### Comprobaciones por destino
 
-Hasta 25 según el archivo: sangrado declarado, sangrado medido, demasías, página única, fuentes incrustadas, transparencias aplanadas, cuerpo mínimo de texto, tintas planas, sobreimpresión, cobertura de tinta, negros neutros frente a compuestos, gama CMYK, máscaras de línea, troquel detectado, canal alfa, halo de recorte, área de estampado, densidad para degradados, definición de borde y naturaleza del arte.
+Hasta 25 según el archivo: sangrado declarado, sangrado medido, demasías, página única, fuentes incrustadas, transparencias aplanadas, cuerpo mínimo de texto, tintas planas, sobreimpresión, cobertura de tinta, negros neutros frente a compuestos, gama CMYK, máscaras de línea, troquel detectado, canal alfa, halo de recorte, área de estampado, densidad para degradados y naturaleza del arte. Offset añade clase de sustrato, lineatura, relación PPI/LPI, resolución CTP y metadatos de resolución JPEG (ver 11). Gran formato sustituye las suyas por las del preflight de gigantografía (ver 12).
+
+**No conviertas el índice de nitidez en una comprobación.** Promedia el gradiente de toda la imagen reducida: un arte plano con bordes duros sale «blando» y un remuestreo no deja huella tras la reducción. Muéstralo como dato neutro en el análisis de píxel, sin color de alarma, y deja la «creación desde cero» como verificación manual.
 
 ### Advertencias destacadas
 
 Dos mensajes en bloque rojo, aparte del checklist:
 
-> **ADVERTENCIA DE PREPRENSA:** Resolución efectiva insuficiente (X ppi). Riesgo de pixelación en planchas de trama fina (175 lpi).
+> **ADVERTENCIA DE PREPRENSA:** Resolución efectiva insuficiente (X ppi). Riesgo de pixelación en planchas de trama de N lpi (la lineatura configurada en offset; «trama fina» en los demás procesos).
 
 > **ERROR DE MODO DE COLOR:** El archivo está en RGB: provocará conversión destructiva en el RIP.
 
@@ -149,7 +190,9 @@ En PDF, la advertencia de resolución usa la peor imagen colocada dentro del art
 
 ### Verificación manual del operador
 
-Ocho puntos por destino, con casilla y registro en la ficha técnica. Offset: fuentes en curvas, transparencias aplanadas, troquel en tinta plana y sobreimpresión, marcas de corte y registro, negros de texto en 100 % K, sangrado verificado, zona de seguridad, OutputIntent declarado. Textil: fondo transparente limpio, base blanca TiO₂, poliéster ≥ 80 %, pretratamiento, positivos de serigrafía, colores Pantone confirmados, prueba de lavado, área de estampado verificada.
+Puntos por proceso, con casilla y registro en la ficha técnica. Offset (8): fuentes en curvas, transparencias aplanadas, troquel en tinta plana y sobreimpresión, marcas de corte y registro, negros de texto en 100 % K, sangrado verificado, zona de seguridad, OutputIntent declarado. Textil: la lista se **filtra por tecnología** —fondo transparente limpio, base blanca TiO₂, poliéster ≥ 80 %, pretratamiento, positivos de serigrafía, colores Pantone confirmados, prueba de lavado, área de estampado— y DTF añade cinco: documento creado a 300 ppp sin remuestrear desde 72, RGB sRGB IEC61966-2.1 con el perfil incrustado, perfil ICC del RIP según tinta, cabezal y pasadas, contorno sin sombras suaves ni halo blanco, y líneas ≥ 0,5 mm con texto ≥ 6 pt y tipografías a curvas. Gran formato: 18 puntos **filtrados por sustrato** con un tercer elemento, igual que en textil —sustrato, uso y distancia confirmados; escala declarada; gramaje ≥ 450 g/m² y vainas de 7 cm (frontlit y PE); estructura frente al efecto vela (frontlit); polietileno sin PVC (PE); tipos grandes y ubicación (mesh); tipo de vinilo y tecnología de impresión (vinilo); material del panel y modo de impresión (rígido); textos lejos de marcos y ojales, tipografías, límite de tinta y prueba de color (todos los impresos); píxeles exactos y pixel pitch (DOOH)—.
+
+Offset suma un **checklist de producción** de 17 puntos en su módulo, aparte de estos ocho (ver 11).
 
 ### Veredicto
 
@@ -177,8 +220,29 @@ TAC = (c + m + y + k) × 100
 - **Sobre el límite** — arte desaturado en gris y resalte macizo rojo donde se supera el umbral, ámbar en los 25 puntos previos
 - **Densidad** — rampa continua azul → verde → amarillo → rojo sobre el total de cobertura
 - **Separaciones** — las cuatro planchas en cuadrícula 2×2, cada una entintada con su color de proceso y rotulada
+- **Tintas planas** — identificación de tintas directas y especiales (ver abajo)
 
 Añade un **histograma** de distribución de cobertura con la línea del umbral, y una lectura de área sobre el límite, máximo, medio y origen del dato (medido o estimado).
+
+### Modo «Tintas planas»
+
+Cuarto botón del control de cobertura. Oculta el límite y el histograma, que no aplican, y muestra la lista de tintas y su mapa.
+
+**Lista, leída del archivo.** PDF: nombres de `/Separation` decodificando todas las secuencias `#xx`, y colorantes de `/DeviceN` sin los de proceso, `/None` ni `/All`. TIFF: `InkNames` sin los de proceso. PSD: sólo se informa de los canales que superan los del modo de color, o del duotono o multicanal. Formatos sin tintas planas (JPEG, PNG, WebP…): aviso de que todo irá en cuatricromía.
+
+**Clasificación por nombre:** registro (`All`) · proceso como plana (Cyan, Magenta, Yellow, Black y sus nombres en español; aviso) · troquel o corte (misma expresión que el detector de troquel) · barniz o acabado · blanco · metálica (gold, silver, foil… o Pantone 871–877, 8xxx y 10xxx) · fluorescente (Pantone 801–807, fluor, neon) · Pantone con su guía (C, U, CP, UP, TCX, TPX, TPG, M) · otra guía (HKS, Toyo, DIC, Focoltone, Trumatch, RAL) · especial sin guía.
+
+**Avisos:** la misma tinta con dos grafías (clave normalizada sin «PANTONE», espacios ni signos, con CV/CVC → C); la misma referencia en guías distintas; Pantone CP/UP como tinta directa; en offset, guía C sobre no estucado o prensa y guía U sobre estucado o cartulina recubierta. Con avisos, la comprobación de offset «Tintas planas declaradas» pasa a observación.
+
+**Color equivalente, calculado con el propio visor.** Del escaneo binario se lee el espacio alternativo (`DeviceCMYK`, `DeviceRGB`, `DeviceGray`, `Lab`, o `ICCBased` resolviendo su `/N`) y la función de tono: tipo 2 (`C0`, `C1`, `N`) o tipo 4 sin `/Filter`, tomando un factor `mul` por componente. Con esos valores se genera en memoria un PDF mínimo con cada tinta al 25, 50, 75 y 100 %, se rasteriza con PDF.js (`intent: 'print'` y guarda de 6 s) y se leen los píxeles. Así el equivalente coincide con la conversión que produjo el render del arte.
+
+**Mapa estimado.** Cada píxel se compara con la curva de tonos blanco → 25 → 50 → 75 → 100 % de cada tinta (distancia RGB al segmento más cercano, tolerancia 26). Los casi blancos no identifican nada y se descartan. Las zonas que coinciden conservan su color y el resto pasa a gris, con el porcentaje estimado de área por tinta. Registro y proceso como plana sólo se pintan cuando se aíslan. Cada tinta con equivalente tiene un botón **Aislar**. Dos nombres con el mismo equivalente ocupan los mismos píxeles: el segundo no se pinta y se muestra como «mismo color que «…»». La cobertura y esas equivalencias de la vista completa se conservan al aislar, para el panel y el JSON.
+
+**Caché.** La lista y los equivalentes dependen del archivo **y** del objeto de metadatos: durante la carga el archivo nuevo convive un instante con los metadatos del anterior, y una caché que sólo mire el nombre del archivo guardaría las tintas del archivo previo.
+
+**Candidatas a tinta directa.** Si no hay tintas de color declaradas: colores dominantes con saturación > 0,82, brillo > 190 y al menos un 2 % del área con color.
+
+La ficha técnica lista las tintas con su clase y el JSON exporta nombre, espacio, clase, guía, nota, aviso, equivalente RGB, cobertura estimada y candidatas.
 
 ---
 
@@ -218,7 +282,7 @@ Escena Three.js: suelo, retícula, luz ambiental y foco con sombras, grupo conte
 
 ## 7 · CATÁLOGOS DE REFERENCIA
 
-### Sustratos — 13 entradas
+### Sustratos — 17 entradas
 
 Cada una con perfil ICC de destino, archivo del perfil, límite de tinta, lineatura, ganancia de punto, preajuste PDF recomendado, destino asociado y una nota de producción.
 
@@ -236,9 +300,17 @@ Cada una con perfil ICC de destino, archivo del perfil, límite de tinta, lineat
 | DTG sobre algodón | perfil calibrado del equipo | 260 % | — | ráster |
 | Sublimación sobre poliéster | perfil del papel transfer | 240 % | — | ráster |
 | Serigrafía textil | Pantone+ Solid Coated | — | 55 | ráster |
-| Gran formato / inkjet | perfil del RIP + sustrato | 280 % | — | X-4 |
+| Lona Frontlit (PVC opaca) | Coated FOGRA39 / ISO Coated v2 | 320 % | — | X-1a |
+| Lona Mesh (microperforada) | Coated FOGRA39 / ISO Coated v2 | 320 % | — | X-1a |
+| Lona ecológica PE (sin PVC) | Coated FOGRA39 / ISO Coated v2 | 320 % | — | X-1a |
+| Vinilo adhesivo (corte, opaco, microperforado) | Coated FOGRA39 / ISO Coated v2 | 320 % | — | X-1a |
+| Soporte rígido (Dibond / PVC espumado) | Coated FOGRA39 / ISO Coated v2 | 320 % | — | X-1a |
 
 **Al seleccionar un sustrato, el motor adopta su límite de tinta y su perfil esperado**, y el mapa de cobertura se recalcula. Un botón devuelve los valores de la norma. La ficha técnica nunca debe declarar un sustrato que no esté vigente en las reglas.
+
+El catálogo muestra por defecto **sólo los sustratos del proceso activo**, con un botón «Ver todos».
+
+Los sustratos de offset llevan la clase del preflight de offset (`off`): cartulina estucada, tinta limitada y cartón compacto → cartulina; FOGRA51, GRACoL y Japan Color → estucado; papel offset no estucado → no estucado; papel prensa → prensa; flexo, sin clase. Los de gran formato llevan su sustrato de gigantografía (`giga`). Aplicar uno cambia la clase o el sustrato del módulo; elegir en el módulo una clase distinta retira el sustrato de offset aplicado, y elegir un sustrato de gran formato aplica su entrada del catálogo. Al abrir Gran formato, el sustrato del módulo se declara también en el catálogo.
 
 ### Preajustes PDF — 4
 
@@ -261,9 +333,9 @@ Tabla con descripción, uso principal, profundidad de color, compresión y alcan
 | HEIF | Alta eficiencia para imágenes de alta calidad | Fotografía digital, móviles y web | Según la imagen | Con o sin pérdida |
 | WebP | Formato de Google con y sin pérdida | Fotografía digital, web, carga rápida | 8 bits por canal | Con o sin pérdida |
 
-### Resolución por sustrato — 8
+### Papeles comerciales — 8 (referencia)
 
-Tabla de resolución de entrada (PPI), salida digital (DPI), salida impresa (LPI) y modo mapa de bits. Una columna final califica el archivo cargado: Óptimo, Apto, Al límite o Insuficiente, con el ancho máximo reproducible.
+Tabla de resolución de entrada (PPI), salida digital (DPI), salida impresa (LPI) y modo mapa de bits. Una columna final califica el archivo cargado: Óptimo, Apto, Al límite o Insuficiente, con el ancho máximo reproducible. Se muestra en Offset › Referencia por papel comercial, sin la fila de serigrafía, con una nota que la contrasta con la clasificación por sustrato: el preflight verifica con la clasificación.
 
 | Sustrato | LPI | PPI | DPI | Mapa de bits / B&N |
 |---|---|---|---|---|
@@ -278,9 +350,9 @@ Tabla de resolución de entrada (PPI), salida digital (DPI), salida impresa (LPI
 
 En PDF, la calificación usa la **peor imagen colocada dentro del arte**, no el documento.
 
-### Gigantografía — 6 bandas
+### Gigantografía por tamaño — 6 bandas (referencia)
 
-La exigencia baja al crecer la pieza porque crece la distancia de observación. La banda se selecciona automáticamente por el lado mayor del tamaño declarado.
+La exigencia baja al crecer la pieza porque crece la distancia de observación. La banda se selecciona por el lado mayor del tamaño final declarado, pero **sólo como referencia**: el preflight califica con el sustrato y la distancia de visión (ver 12).
 
 | Tamaño aproximado | Resolución orientativa a tamaño final |
 |---|---:|
@@ -317,7 +389,164 @@ Muestra el resultado con el mismo formato de fila del checklist, y los ajustes l
 
 ---
 
-## 10 · INTERFAZ
+## 10 · SERIGRAFÍA INDUSTRIAL
+
+Módulo situado en **Procesos de producción › Textil › Serigrafía industrial**, no un destino aparte: abarca textil, rígidos y PCB. Configurador arriba, parámetros calculados debajo, y diez pestañas.
+
+**Conflicto de lineatura que debe mostrarse, no esconderse:** la tabla general de resolución por sustrato da 60 · 70 · 85 LPI para serigrafía, mientras la regla de la malla (`hilos ÷ 2`) da 38–65 LPI en las mallas habituales. Prevalece la regla de la malla, que es la que se comprueba, y la nota lo explica.
+
+### Configurador
+
+Técnica (cuatricromía, proceso simulado, tintas planas, color indexado, PCB) · soporte (textil de algodón, textil sintético, rígido, PCB) · fondo claro u oscuro · malla (34, 43, 49, 55, 61, 77, 90, 100, 110, 120, 140 hilos/cm) · colores previstos · método de leyenda PCB · efecto 3D. La técnica PCB y el soporte PCB van siempre juntos. Al cambiar técnica, soporte o efecto se propone la malla recomendada.
+
+### Parámetros por técnica
+
+| Técnica | Malla (hilos/cm) | Lineatura | Pantallas | Ángulos | Punto |
+|---|---|---|---|---|---|
+| Cuatricromía | 90 – 120 | hilos ÷ 2 · algodón 45–55 · sintético o rígido 55–65 | 4 claro · 5 oscuro (base blanca) | Y 0° · C 15° · K 45° · M 75°, o genérico 22,5° / 23° | redondo o elíptico |
+| Proceso simulado | 90 – 120 | 38 – 55 LPI | 6 – 10 (dominantes + base blanca) | genérico 22,5° / 23° | semitono con tintas directas, en RGB |
+| Tintas planas | textil 34–43 (plastisol 43) · rígido 90–120 | no aplica | una por tinta (+ base blanca) | no aplica | sólido Pantone (PMS) |
+| Color indexado | 90 – 120 (detalle fino) | no aplica | 6 – 10 colores sólidos | sin ángulos: sin muaré | cuadrado FM uniforme |
+| PCB | según método | — | capa de leyenda en resina epoxi | — | — |
+
+Métodos PCB: manual / fotográfica (emulsión, insolación UV, revelado por agua) · foto-imagen líquida (resina epoxi fotosensible, alta densidad y trazos finos) · impresión directa de leyenda (inyección, sin malla ni fotolito). **En PCB, LPI significa *Liquid Photo-Imageable*:** adviértelo en la interfaz, porque en el resto de la herramienta LPI es lineatura.
+
+Durómetro: tramadas 80 (alternativa 70/90/70) · efecto 3D 60 · tintas planas 70. Emulsión: tramadas y rígidos fotopolímero / SBQ-UV · tintas planas textiles Diazo / doble curado · efecto 3D alta densidad. Las técnicas tramadas mandan sobre el efecto 3D, y la combinación se avisa.
+
+### Verificación del arte — hasta 12 comprobaciones
+
+1. **Malla y técnica** — fuera de rango en tramada con malla abierta: error, porque los puntos caen entre hilos.
+2. **Efecto 3D sobre trama** — aviso: el relieve pide malla baja y rasqueta 60; la trama, malla alta y rasqueta 80.
+3. **Lineatura según malla** — `hilos ÷ 2` contra el rango de la técnica y el soporte, proponiendo la malla o la lineatura correctas.
+4. **Resolución** ≥ 300 ppi al tamaño final; aviso dentro del 10 %; en PDF, la peor imagen colocada.
+5. **Modo de color** — CMYK para cuatricromía; RGB para simulado e indexado; separaciones Pantone en tintas planas.
+6. **Tintas y pantallas** — colores dominantes por cuantización a 16 niveles por canal, ignorando lo que ocupe menos del 0,5 % del área y agrupando tonos vecinos. Si los dominantes cubren menos del 90 %, es tono continuo: error en tintas planas. En PDF mandan las `/Separation` declaradas.
+7. **Base blanca** sobre fondo oscuro — derivable del canal alfa; sin alfa, aviso de rectángulo blanco.
+8. **Texto** — ≥ 6 pt y convertido a contornos.
+9. **Grosor de trazo** ≥ 0,5 pt, con detección de trazos de grosor 0.
+10. **Detalle frente a malla** — el trazo debe abarcar al menos dos pasos de malla (`10 ÷ hilos` mm). Márcalo siempre como **orientativo**.
+11. **Registro** — presencia del color de registro `/Separation /All`.
+12. **Método de leyenda PCB** — aviso si se elige el fotográfico con trazos finos.
+
+### Pestañas
+
+Verificación del arte · Cuatricromía (calculadora malla → lineatura con rangos por soporte, roseta de ángulos con `mix-blend-mode: multiply`, trama frente a malla a 0° y 22,5°, pantallas por fondo) · Proceso simulado · Tintas planas · Color indexado (AM frente a FM) · PCB · Arte y fotolito (vectorización, registro, reventado, opacidad del positivo, ganancia del plotter) · Mallas (tabla, color de malla y refracción, simulador de detalle con hilos a escala real) · Grabado de pantalla (cuatro fases, tipos de emulsión, efecto de la exposición) · Rasquetas (durómetros con depósito relativo).
+
+Doce verificaciones manuales del proceso de grabado. Bloque 8 opcional en la ficha técnica, activado por defecto al elegir la tecnología textil de serigrafía hasta que el usuario lo toque.
+
+---
+
+## 11 · PREFLIGHT DE OFFSET POR SUSTRATO
+
+Módulo en **Procesos de producción › Offset**, bajo la tabla de especificaciones. Clasifica el soporte y **normaliza la salida**.
+
+### Configurador
+
+Tipo de sustrato (las cinco clases de la sección 1) · acabado, dependiente de la clase · lineatura (número, con `datalist` del rango) · salida CTP (1200, 2400 o 2540 dpi). Al cambiar de clase se proponen su lineatura y su CTP: estucado 175 / 2540, no estucado 150 / 2540, prensa 100 / 2400, cartulina 175 / 2540, sintético 150 / 2540. La misma elección está en la tarjeta de offset del panel 1.
+
+Debajo, tres tarjetas —**Entrada (PPI)**, **Lineatura (LPI)** y **Salida CTP (DPI)**— con su definición, el valor de la clase y la lectura del archivo.
+
+### Comprobaciones que se suman a las de offset
+
+1. **Clase de sustrato y acabado** — informativa, con la nota de salida de la clase y, en no estucados, el ajuste de curva previo.
+2. **Lineatura de trama** — aviso fuera del rango de la clase. En soportes absorbentes explica que una trama cerrada une los puntos en la fibra y cierra las sombras.
+3. **Relación PPI / LPI** — aviso por debajo de 1,5 ×, con la resolución o la lineatura que lo corrigen. Conforme entre 1,5 y 2 ×. Por encima de 2 ×, conforme con nota de que la trama no aprovecha el detalle, sin sugerir bajar del mínimo de la clase.
+4. **Resolución de salida CTP** — aviso fuera del rango de la clase. Si no alcanza DPI ≥ LPI × 16, informativa con los niveles resultantes: es un parámetro del RIP, no un defecto del arte, y no debe empeorar el dictamen.
+5. **Metadatos de resolución (JPEG)** — el RIP lee 8BIM; si falta, JFIF con unidades; si falta, 72 ppi. Aviso cuando no hay 8BIM ni JFIF con unidades, con el tamaño físico que resultaría a 72 ppi, y aviso cuando 8BIM y JFIF discrepan.
+
+El **perfil esperado** cambia con la clase: `FOGRA39`, `ISO COATED V2`, `FOGRA51`, `PSO COATED V3` en estucados y cartulinas; `FOGRA47`, `PSO UNCOATED`, `FOGRA52`, `UNCOATED V3` en no estucados; `NEWSPAPER`, `IFRA26`, `12647-3` en papel prensa. Se suman los tokens del sustrato de catálogo aplicado y los perfiles marcados en la biblioteca. En sintéticos no hay tokens: sin coincidencia, el resultado es informativo.
+
+### Pestañas
+
+- **Verificación del arte** — dictamen, todas las comprobaciones y la casilla para incluir el bloque en la ficha técnica.
+- **Sustratos y acabados** — tabla de las cinco clases con la calificación del archivo (y cuántas veces cubre la lineatura más alta del rango), y fichas con características, acabados, salida, preprensa, ganancia de punto y uso habitual. Botón «Verificar con este».
+- **Normalización de la salida** — cuatro cifras para la configuración (imagen 1,5–2 ×, CTP para 256 niveles, niveles a la resolución elegida, lineatura máxima con 256 niveles), una tabla que responde por clase si su CTP sostiene 256 niveles en todo su rango de lineatura, y la prioridad de metadatos con la lectura del JPEG cargado.
+- **Checklist de producción** — 17 puntos en cuatro fases. **1 · Preimpresión**: modo de color, resolución, metadatos JPEG, sangrado y seguridad, tipografías, trapping. **2 · RIP y planchas**: CTP a 2400/2540 dpi, lineatura por porosidad, curva de linealización, prueba de contrato bajo D50. **3 · Reología**: temperatura, arrancado en frío, velo y flyeo. **4 · Tirada**: emulsificación hasta ~25 % de agua, densidad de los sólidos a lo ancho del pliego, TVI, registro. Los puntos ligados a una comprobación medida muestran su estado. Incluye una calculadora de temperatura → viscosidad (aproximación lineal de 5–6 % por °C: +5 °C ≈ −25 a −30 %; en negativo, riesgo de arrancado) y notas de emulsificación y de TVI de la clase.
+- **Referencia por papel comercial** — la tabla de la sección 7.
+
+### Subordinación de todo el panel a la clase
+
+Ningún texto del camino de offset puede dar por hecho FOGRA39, 175 lpi, 330 % o empaque. Al cambiar clase, acabado, lineatura o CTP se re-evalúa y se repinta:
+
+- `TARGETS.offset.name`, `tag` y `desc` son **getters**, para que ningún título diga «Empaques» cuando no lo es y la tarjeta, la pestaña, el título de especificaciones, la norma aplicada, las alertas, el catálogo, la portada, la ficha y el JSON no puedan quedar desfasados:
+
+  | Clase | `name` | `tag` |
+  |---|---|---|
+  | Estucado | Impresión Offset (Comercial y editorial · Estucado) | ISO 12647-2 · FOGRA39 / FOGRA51 · PDF/X-1a |
+  | No estucado | Impresión Offset (Editorial y papelería · No estucado) | ISO 12647-2 · FOGRA47 / FOGRA52 · PDF/X-1a |
+  | Papel prensa | Impresión Offset Coldset (Periódicos · Papel prensa) | ISO 12647-3 · ISOnewspaper26v4 · PDF/X-1a |
+  | Cartulina | Impresión Offset (Empaques · Cartulina y cartón) | ISO 12647-2 · FOGRA39 / FOGRA51 · PDF/X-1a |
+  | Sintético | Impresión Offset (Sintéticos · Polipropileno y acetato) | ISO 12647-2 · perfil según la tinta · PDF/X-1a |
+
+  `desc` = «Offset litográfico para {ámbito de la clase} sobre {clase} · {acabado}, trama de {lpi} lpi y CTP a {dpi} dpi», con el ámbito tomado del uso habitual de la clase (sintéticos no tienen). Como el nombre ya contiene la clase, el título de especificaciones no la repite y la ficha sólo añade el acabado. El gráfico instructivo se rotula como «Ejemplo de empaque en cartulina a 175 lpi», porque es un ejemplo fijo, y la portada habla de impresión offset, estampado textil y gran formato.
+- `offSyncTac()` fija `tacMax` desde la clase, salvo con un sustrato de offset del catálogo aplicado, y reajusta el deslizador del mapa TAC sólo si el límite cambia. Se llama al cambiar de clase, al refrescar el módulo, al arrancar y al final de `applySubstrate`, para que retirar un sustrato del catálogo devuelva el límite de la clase.
+- En la comprobación de resolución, el sufijo es «clase …», no «banda …», y la ayuda es la de PPI · LPI · DPI.
+- Los consejos de modo de color (PDF e imagen) y de TAC citan el perfil de conversión de la clase; el de cuerpo mínimo, la lineatura configurada; la norma de sangrado es 3 – 5 mm; la expectativa del TAC indica si el límite viene de la clase o del catálogo.
+- Verificación manual: el ítem de OutputIntent lleva `{perfil}` y se resuelve con el perfil de la clase; el troquel se filtra fuera de papel prensa; se añaden la curva tonal previa (no estucado), la ganancia ISO 12647-3 (prensa) y la tinta de oxidación o UV (sintético). Los ítems nuevos van al final para no cambiar los índices ya marcados.
+- Norma aplicada: TAC con su origen y perfil con el de conversión. En el preajuste `.joboptions` de offset, perfil esperado, etiqueta y resolución mínima de imagen salen de la clase.
+
+### Conflictos que la interfaz muestra
+
+- La tabla asigna 150–200 lpi a 2400–2540 dpi, pero con DPI ≥ LPI × 16 esas resoluciones dan 256 niveles sólo hasta 158 lpi: 175 lpi piden 2800 dpi y 200 lpi, 3200. En papel prensa, 1200 dpi sostienen 75 lpi.
+- La tabla de papeles comerciales difiere de la clasificación: periódico 75–85 lpi, 112–200 ppi y 1200 dpi frente a 85–100 lpi, 150–200 ppi y 1200–2400 dpi; bond 85–110 lpi y 200–220 ppi frente a 120–150 lpi y 300 ppi; couché 150–175 lpi y 2400–3600 dpi frente a 150–200 lpi y 2400–2540 dpi. Prevalece la clasificación.
+
+---
+
+## 12 · PREFLIGHT DE GIGANTOGRAFÍA
+
+Módulo en **Procesos de producción › Gran formato**, bajo la tabla de parámetros transversales.
+
+### Sustratos y resolución por uso
+
+| Sustrato | Uso · distancia | Entrada 1:1 | Entrada 1:10 | Salida | Efectiva |
+|---|---|---|---|---|---|
+| Lona Frontlit (PVC opaca) | Mupi / marquesina · 1–3 m | 150 ppp | 300 ppp (hasta 720) | 300 – 720+ DPI | 100 – 150 ppp |
+| | Valla de carretera · 10–16 m | 72 – 100 ppp | 300 ppp (hasta 720) | 300 – 720+ DPI | 5 – 15 ppp |
+| Lona Mesh (microperforada) | Fachada / andamio / cerramiento · 5–50 m | 72 ppp (más se desperdicia) | 300 ppp | 300 – 600 DPI | 5 – 25 ppp |
+| Lona ecológica PE | Los usos de la frontlit, **asumidos** | | | | |
+| Vinilo adhesivo | Escaparate / vehículo · 0,5–2 m | 150 – 300 ppp | no especificada | 720 – 1440 DPI | 100 – 300 ppp |
+| Soporte rígido (Dibond, PVC espumado) | Panel interior / stand · 0,5–1,5 m | 150 – 300 ppp | no especificada | 600 – 1200 DPI (UV cama plana) | 150 – 300 ppp |
+| | Mural exterior grande · 1,5–3 m (emparejado por distancia) | 72 – 100 ppp | no especificada | 600 – 1200 DPI | 38 – 76 ppp |
+| Pantalla LED (DOOH) | Píxeles exactos · RGB a 72 ppi | — | no aplica | pixel pitch 2,5 – 16 mm | 25,4 ÷ pitch |
+
+Cada sustrato impreso lleva su ficha: composición, rendimiento gráfico, gramaje (≥ 450 g/m² en frontlit), confección (vainas de 7 cm en frontlit y PE), limitación física (efecto vela), uso ideal.
+
+**Calificación:** Óptimo si la efectiva alcanza la entrada recomendada · Apto si alcanza la efectiva mínima · Al límite hasta un 10 % por debajo (aviso) · Insuficiente (no conforme).
+
+**Tabla de distancia de visión** (referencia; para una distancia no tabulada se toma la fila inferior, la más exigente): 0,25–0,50 m → 150–305 ppp · 1,00–1,20 m → 64–76 ppp · 3 m → 25 ppp · 5 m → 15 ppp · 10–16 m o más → 5–8 ppp.
+
+### Configurador
+
+Sustrato · uso (propone su distancia) · distancia de visión · escala del documento (1:1, 2, 5, 10, 20) · confección de bordes (vainas de 7 cm, ojales / dobladillo / bastidor, sin confección). En DOOH, ancho y alto de la pantalla en píxeles y pixel pitch. La elección de sustrato también está en la tarjeta del panel 1.
+
+**Tamaño final autocompletado:** PDF → TrimBox × N; imagen con ppi → píxeles ÷ ppi × N; sin ppi → píxeles ÷ entrada recomendada; DOOH → píxeles × pitch. El panel 2 siempre es el tamaño final.
+
+Debajo, tres tarjetas —**Resolución de entrada**, **de salida** y **efectiva**— con la definición de cada una y la lectura del archivo.
+
+### Comprobaciones
+
+El gran formato delega los seis campos obligatorios y todas sus específicas en este módulo:
+
+- **Dimensiones** — PDF: TrimBox × N frente al tamaño final declarado. DOOH: píxeles exactos de la pantalla (un PDF no es conforme).
+- **Resolución efectiva** — calificación anterior, con la resolución del documento a 1:N. En mesh, nota cuando supera 72 ppp a 1:1. En DOOH, informativa con los ppp de emisión.
+- **Color, perfil y formato** — según la sección 1; en DOOH, RGB y formato del reproductor como información.
+- **Sustrato y uso**, **distancia de visión** (aviso si queda fuera del rango del uso), **escala 1:10** (conforme con ≥ 300 ppp en el documento), **banda por tamaño** (referencia).
+- **Sangrado** — BleedBox − TrimBox × N ≥ 3 mm a tamaño final; en imagen suelta, los píxeles de 3–5 mm.
+- **Zona de seguridad por confección** — distancia mínima de las cajas de texto vivo al TrimBox, × N. Con vainas, aviso por debajo de 70 mm; sin vainas, informativa. Siempre **orientativa**.
+- **Tipografías**, **texto más pequeño a tamaño final** (pt × N y cm de cuerpo, con nota de tipos grandes en mesh), **transparencias vivas** (aviso) y **TAC**.
+
+### Pestañas
+
+Verificación del arte · Sustratos (tabla con calificación del archivo y fichas) · Resolución y distancia (las tres definiciones, la tabla de distancia y la de bandas por tamaño) · Escala de trabajo (calculadora: ancho y alto finales, escala, ppp del documento → documento en mm, píxeles, efectiva a tamaño real y calificación con el sustrato; ejemplo de la valla de 8 × 3 m a 1:10 = 800 × 300 mm a 300 ppp → 30 ppp; en DOOH, de píxeles y pitch a metros).
+
+### Conflictos que la interfaz muestra
+
+- Tres referencias que no dicen lo mismo: la tabla de distancia (lo que el ojo aprecia), la regla por sustrato (lo que se recomienda producir) y la tabla por tamaño. Califica la del sustrato.
+- «720 dpi (o 300 ppp)» a 1:10 no equivalen: dan 72 y 30 ppp a tamaño real, y son resolución de entrada del documento, no DPI de salida.
+
+---
+
+## 13 · INTERFAZ
 
 **Estética:** modo oscuro, paleta zinc/slate, bordes rectos sin redondeos, jerarquía tipográfica clara, densidad alta pero legible. Nada de degradados decorativos ni tarjetas flotantes.
 
@@ -325,10 +554,21 @@ Muestra el resultado con el mismo formato de fila del checklist, y los ajustes l
 
 **Barra fija** con logotipo, anclas de sección, botón de **Glosario**, selector de destino y píldora de veredicto con color según el estado.
 
-**Cuatro secciones:** Preflight · Catálogo de perfiles · Formatos y resolución · Visor 3D de capas.
+**Cinco secciones:** Preflight · Procesos de producción · Catálogo de perfiles · Formatos de archivo · Visor 3D de capas.
+
+**Procesos de producción, en pestañas** para que el estudiante no mezcle las propiedades técnicas de un proceso con las de otro:
+
+- Pestañas **Offset · Textil · Gran formato** con roles ARIA `tablist` / `tab` / `tabpanel` y navegación con flechas, Inicio y Fin. Paneles ocultos con `hidden`, reforzado con `display: none !important` para que ninguna utilidad de Tailwind los muestre.
+- **La pestaña activa es la norma que verifica el preflight.** Selector de la cabecera, tarjetas del panel 1 y pestañas están sincronizados en ambos sentidos; cambiar de pestaña re-evalúa el archivo cargado.
+- Cada pestaña abre con su **tabla de especificaciones técnicas**, agrupada por bloques (resolución, color, formato, geometría, tipografía y trazo…). Cada fila lleva un distintivo de **cómo se comprueba**: *se mide* en el archivo, *se estima*, *verificación manual* o *referencia*, con leyenda. No marques como medido lo que sólo se estima.
+- **Offset:** tabla de especificaciones (resolución y trama, color, formato, geometría con trapping, negros, prensa y tirada), acceso al gráfico instructivo y el preflight de offset por sustrato (ver 11).
+- **Textil:** subpestañas DTG · DTF · Sublimación · Serigrafía industrial, cada una con su tabla. DTF lleva una nota que separa su línea mínima (0,5 mm) de la de serigrafía (0,5 pt). Serigrafía contiene el módulo completo (ver 10) y la nota del conflicto de lineatura con la calificación del archivo.
+- **Gran formato:** tabla de parámetros transversales (resolución de entrada, salida y efectiva, escala 1:1 y 1:10; modo de color y perfiles; TAC; formato de entrega; sangrado, seguridad y vainas; tecnologías de impresión) y el preflight de gigantografía (ver 12). Números con separador de miles de punto escrito a mano: `toLocaleString('es')` no agrupa las cifras de cuatro dígitos.
+
+El título de especificaciones, la portada, la verificación manual, la norma aplicada, la ficha técnica y el JSON muestran el proceso **y su subdivisión**: la tecnología textil, la clase de sustrato offset o el sustrato de gran formato. El botón del gráfico instructivo sólo aparece en offset.
 
 **Panel de preflight en tres columnas:**
-1. Destino de producción · tamaño de reproducción con cálculo de ppi en vivo · control de flujo con IA · emisión del informe
+1. Proceso de producción, con botones de tecnología textil, clase de sustrato offset o sustrato de gran formato bajo la tarjeta activa · tamaño de reproducción con cálculo de ppi en vivo · control de flujo con IA · emisión del informe
 2. Previsualización con superposiciones · dashboard de metadatos · análisis forense de píxel
 3. Alertas · checklist obligatorio · especificaciones del destino · verificación manual · norma aplicada
 
@@ -344,23 +584,23 @@ Con selector de unidad (cm, pulgadas, mm), bloqueo de proporción, tamaño suger
 
 **Control de flujo con IA:** casilla «¿Este diseño contiene gráficos generados con Inteligencia Artificial?» que despliega dos listas —limitación nativa detectada y acción correctiva aplicada— más notas del operador. Se integra en la ficha técnica como trazabilidad.
 
-**Ayuda contextual:** botón de interrogación junto a cada concepto, que abre una ficha explicativa. Y un botón de **Glosario** que abre las 14 fichas completas con buscador.
+**Ayuda contextual:** botón de interrogación junto a cada concepto, que abre una ficha explicativa. Y un botón de **Glosario** que abre las 30 fichas completas con buscador (incluidas DTF, gigantografía, resoluciones y sustratos de gran formato, sustratos de offset, PPI · LPI · DPI y control en prensa).
 
 **Gráfico instructivo** para el panel de especificaciones de offset: un SVG con cuatro cuadrantes —anatomía del pliego con MediaBox, BleedBox, TrimBox, seguridad y troquel con solapas; barras de carga de tinta comparando negro rico de 240 % contra negro de registro de 400 % con la línea del límite; roseta de trama de 175 lpi con la regla ppi ≈ 2 × lpi; y el negro de texto en 100 % K frente al compuesto con registro desviado— y siete llamadas numeradas explicadas.
 
 ---
 
-## 11 · SALIDAS
+## 14 · SALIDAS
 
-**Ficha Técnica en PDF** por `window.print()` con hoja de estilo A4. Siete bloques: identificación del trabajo (OT, cliente, operador, fecha, destino, sustrato y perfil), metadatos del archivo, checklist obligatorio, especificaciones del destino, verificación manual, declaración de flujo con IA y norma aplicada. Con logotipo institucional **a color**, línea de docente y curso, aviso técnico y casillas de firma para operador, producción y cliente.
+**Ficha Técnica en PDF** por `window.print()` con hoja de estilo A4. Siete bloques: identificación del trabajo (OT, cliente, operador, fecha, destino con su subdivisión, sustrato y perfil), metadatos del archivo, checklist obligatorio, especificaciones del destino, verificación manual, declaración de flujo con IA y norma aplicada. Después, bloques opcionales numerados a continuación: verificación de serigrafía industrial; en gran formato, el preflight de gigantografía (sustrato, uso, distancia, escala, confección, las tres resoluciones, la del archivo, la fila de distancia y la banda por tamaño); en offset, la clasificación del sustrato y la normalización de la salida con el estado de los 17 puntos del checklist de producción. Con logotipo institucional **a color**, línea de docente y curso, aviso técnico y casillas de firma para operador, producción y cliente.
 
-**Diagnóstico JSON** descargable con metadatos completos, análisis de píxel, los tres checklists, sustrato, formato identificado, perfiles del taller, calificación por sustrato y banda de gigantografía.
+**Diagnóstico JSON** descargable con metadatos completos, análisis de píxel, los tres checklists, sustrato, formato identificado, perfiles del taller, calificación por papel comercial, verificación de serigrafía industrial, preflight de gigantografía y clasificación offset con su checklist de producción.
 
 **Captura PNG** de la vista actual del visor 3D.
 
 ---
 
-## 12 · DETALLES DE IMPLEMENTACIÓN QUE EVITAN FALLOS REALES
+## 15 · DETALLES DE IMPLEMENTACIÓN QUE EVITAN FALLOS REALES
 
 Éstos no son opcionales. Cada uno corresponde a un fallo que aparece si se omite.
 
@@ -374,7 +614,7 @@ Con selector de unidad (cm, pulgadas, mm), bloqueo de proporción, tamaño suger
 
 5. **`preserveDrawingBuffer: true`** en el renderer de Three.js, o `toDataURL` devuelve un lienzo vacío.
 
-6. **Escapa el NUL como ` `** en las expresiones regulares. Un byte nulo literal es válido en JavaScript pero convierte el archivo en binario para las herramientas.
+6. **Escapa el NUL como `\u0000`** en las expresiones regulares. Un byte nulo literal es válido en JavaScript pero convierte el archivo en binario para las herramientas.
 
 7. **Trama, no transparencia,** para señalar zonas sobre el arte. Un relleno translúcido desaparece sobre arte del mismo color.
 
@@ -384,9 +624,19 @@ Con selector de unidad (cm, pulgadas, mm), bloqueo de proporción, tamaño suger
 
 10. **Sin código muerto.** Si una función se sustituye por otra versión, elimina la anterior.
 
+11. **Grosor de trazo con la matriz vigente.** Captura `setLineWidth` en la lista de operadores, guárdalo y recupéralo con `save` / `restore`, y escálalo por √|det(CTM)|. Un grosor 0 es la línea más fina del dispositivo: se marca como error, no como «muy fino».
+
+12. **Deslizadores que sobreviven al arrastre.** En las pestañas interactivas, el evento `input` actualiza sólo la salida del control. Re-renderizar el panel durante el arrastre destruye el deslizador bajo el cursor.
+
+13. **Configuradores construidos una sola vez.** En los módulos de offset y gigantografía, el render sincroniza los valores de los controles sin reemplazarlos, no toca el campo que tiene el foco y sólo rehace las opciones dependientes (acabados, usos) cuando cambia la clase o el sustrato. Los campos numéricos evalúan en `change`, no en cada pulsación, porque cada evaluación rehace el análisis de píxel.
+
+14. **Sincronización sin doble evaluación.** `applySubstrate(id, quiet)` acepta un modo silencioso para que un módulo declare su sustrato en el catálogo sin lanzar otra evaluación. Volver a elegir el sustrato o la clase activos no debe reiniciar el uso, la distancia ni la lineatura configurados.
+
+15. **Recurso 8BIM 1005.** Cada bloque es `8BIM` + id (uint16) + nombre Pascal con relleno a longitud par + tamaño (uint32) + datos con relleno a par. En ResolutionInfo, `hRes` y `vRes` son 16.16 de coma fija y **siempre en ppi**; la unidad que acompaña es sólo de visualización. Si llega antes que JFIF, JFIF no debe sobrescribirlo.
+
 ---
 
-## 13 · HONESTIDAD TÉCNICA
+## 16 · HONESTIDAD TÉCNICA
 
 La aplicación debe declarar sus límites **en la propia interfaz**, no sólo en la documentación:
 
@@ -395,12 +645,18 @@ La aplicación debe declarar sus límites **en la propia interfaz**, no sólo en
 - La descomposición en capas del visor 3D es una reconstrucción de diagnóstico por análisis de imagen, no la separación interna del documento. Dilo bajo el visor.
 - El troquel se identifica por geometría: hay que confirmar que esté en su propia tinta plana y marcado como no imprimible.
 - Enumera los casos no soportados con la acción correctiva: AI y EPS exportar a PDF; RAW revelar a TIFF; PSD aplanar y exportar; TIFF en mosaicos o de 32 bits sólo metadatos; HEIF según el navegador.
+- Cuando dos referencias técnicas no coinciden, muestra ambas y di cuál prevalece y por qué, en lugar de elegir una en silencio.
+- En gran formato, la zona de seguridad se mide sobre las cajas de texto vivo: no ve los elementos gráficos y es orientativa. La lona PE usa los valores de la frontlit y la interfaz dice que son asumidos. En DOOH no se verifica el formato del reproductor.
+- En offset, curvas de linealización, prueba de contrato, reología, emulsificación, densidad, TVI y registro no se miden en el archivo: son puntos del checklist, no comprobaciones.
+- No inventes valores que la referencia no da: sin densidades objetivo por soporte, sin uso habitual para sintéticos, sin resolución a 1:10 para vinilos y rígidos.
+- El mapa de tintas planas es una estimación por color: no ve la tinta en sobreimpresión ni bajo otros colores y puede marcar colores de proceso iguales. Dilo bajo la lista. Sin función de tono legible, la tinta se lista pero no se sitúa, y la interfaz explica por qué.
+- En serigrafía, el conteo de tintas y colores dominantes es una estimación del render; el criterio de dos pasos de malla es orientativo; las marcas de registro se infieren por el uso del color de registro, no por su geometría.
 
 Prefiere un `warn` honesto a un `pass` cómodo. Nunca declares conforme algo que no se ha podido comprobar.
 
 ---
 
-## 14 · CALIDAD DEL CÓDIGO
+## 17 · CALIDAD DEL CÓDIGO
 
 - Español en toda la interfaz, con acentuación correcta. Comentarios en español, explicando **por qué**, no qué.
 - Organiza el archivo en bloques numerados con cabecera de comentario.
