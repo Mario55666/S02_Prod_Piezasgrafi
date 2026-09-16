@@ -282,7 +282,7 @@ Escena Three.js: suelo, retícula, luz ambiental y foco con sombras, grupo conte
 
 ## 7 · CATÁLOGOS DE REFERENCIA
 
-### Sustratos — 17 entradas
+### Sustratos — 16 entradas
 
 Cada una con perfil ICC de destino, archivo del perfil, límite de tinta, lineatura, ganancia de punto, preajuste PDF recomendado, destino asociado y una nota de producción.
 
@@ -296,7 +296,6 @@ Cada una con perfil ICC de destino, archivo del perfil, límite de tinta, lineat
 | Estucado Japan Color | Japan Color 2001 Coated | 320 % | 175 | X-1a |
 | Papel offset no estucado | PSO Uncoated / Euroscale Uncoated | 300 % | 133 | X-1a |
 | Papel prensa (coldset) | ISOnewspaper 26v4 | 240 % | 100 | X-1a |
-| Flexo sobre corrugado | perfil del proveedor | 240 % | 85 | X-4 |
 | DTG sobre algodón | perfil calibrado del equipo | 260 % | — | ráster |
 | Sublimación sobre poliéster | perfil del papel transfer | 240 % | — | ráster |
 | Serigrafía textil | Pantone+ Solid Coated | — | 55 | ráster |
@@ -484,6 +483,24 @@ Ningún texto del camino de offset puede dar por hecho FOGRA39, 175 lpi, 330 % o
 - Los consejos de modo de color (PDF e imagen) y de TAC citan el perfil de conversión de la clase; el de cuerpo mínimo, la lineatura configurada; la norma de sangrado es 3 – 5 mm; la expectativa del TAC indica si el límite viene de la clase o del catálogo.
 - Verificación manual: el ítem de OutputIntent lleva `{perfil}` y se resuelve con el perfil de la clase; el troquel se filtra fuera de papel prensa; se añaden la curva tonal previa (no estucado), la ganancia ISO 12647-3 (prensa) y la tinta de oxidación o UV (sintético). Los ítems nuevos van al final para no cambiar los índices ya marcados.
 - Norma aplicada: TAC con su origen y perfil con el de conversión. En el preajuste `.joboptions` de offset, perfil esperado, etiqueta y resolución mínima de imagen salen de la clase.
+- **La tabla de especificaciones de la pestaña se genera desde la clase** (`offSpecs()`), no desde una constante: dos tablas con los mismos conceptos y valores distintos son una contradicción esperando a ocurrir.
+- **El gráfico instructivo también depende de la clase:** título, subtítulo con norma, perfil, TAC, lineatura y CTP; línea del límite de tinta en su porcentaje; etiqueta del negro rico de 240 % que dice «correcto», «justo en el límite» o «supera el límite» según el TAC; sección de trama con la lineatura, su rango y la resolución; cuerpo mínimo de texto; pie con norma y perfil. El interior del TrimBox cambia: troquel con solapas, mancha de la página o mancha sin troquel en papel prensa. La roseta es esquemática y la interfaz lo dice.
+- **Escala del gráfico:** las barras de carga de tinta arrancan en el 0 % y la línea del límite se sitúa con la misma escala. Si las barras empiezan en la marca del 100 %, un negro rico de 240 % se dibuja cruzando un límite de 330 % y el gráfico enseña lo contrario de lo que explica.
+
+### Reglas que no son iguales en todas las clases
+
+Un destino con clases no puede aplicar la misma regla a todas: `OFF_REGLA` recoge las que cambian.
+
+- **Páginas:** un archivo por diseño en cartulina y sintéticos (no conforme si hay más); en estucado, no estucado y papel prensa un documento paginado es lo normal y sólo se informa, recordando acordar la imposición.
+- **Cuerpo mínimo de texto:** 6 pt, y 7 pt en papel prensa, donde la alta ganancia tonal cierra el filo. El consejo cita el mínimo y la lineatura vigentes.
+- **Troquel:** obligatorio en cartulina y sintéticos, opcional en estucado y no estucado —el contorno dominante se informa sin exigirlo— e inexistente en papel prensa, donde la comprobación no se emite.
+
+### Coherencia del catálogo con el destino
+
+- Ningún sustrato del catálogo puede pertenecer a un proceso que no se verifica: la flexografía sobre corrugado no es offset y no debe aparecer en su catálogo.
+- El preajuste PDF de un sustrato de offset no puede proponer PDF/X-4 mientras el destino exige PDF/X-1a.
+- Las notas de los sustratos no pueden contradecir las reglas del destino: si la nota del papel prensa dice «nada de negros ricos» y «cuerpo mínimo 7 pt», o se alinean los textos o se cambia la regla, pero no pueden convivir.
+- Aplicar un sustrato de offset adopta también su lineatura cuando cabe en el rango de la clase.
 
 ### Conflictos que la interfaz muestra
 

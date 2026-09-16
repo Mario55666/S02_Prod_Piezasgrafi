@@ -1,0 +1,218 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Flujo de producción · Personalización textil",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "external": {
+          "label": "Pedido del cliente"
+        },
+        "frontend": {
+          "label": "Arte del diseñador"
+        },
+        "backend": {
+          "label": "Preprensa textil"
+        },
+        "cloud": {
+          "label": "Tecnología de estampado"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "diseno",
+      "label": "Pedido y arte final"
+    },
+    {
+      "id": "preprensa",
+      "label": "Preprensa textil"
+    },
+    {
+      "id": "taller",
+      "label": "Taller de estampado"
+    }
+  ],
+  "phases": [
+    {
+      "id": "entrada",
+      "label": "Entrada y preflight",
+      "fromCol": 0,
+      "toCol": 2
+    },
+    {
+      "id": "taller_fase",
+      "label": "Rutas de estampado",
+      "fromCol": 3,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "groups": [
+    {
+      "id": "alternativas",
+      "label": "Rutas alternativas · se elige una según el tejido y el color de la prenda",
+      "lane": "taller",
+      "fromCol": 2,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "semanticChecks": {
+    "allowedRoots": [
+      "pedido"
+    ],
+    "allowedTerminals": [
+      "dtg",
+      "dtf",
+      "subl",
+      "seri"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "pedido",
+      "lane": "diseno",
+      "col": 0,
+      "type": "external",
+      "label": "Pedido y prenda",
+      "sublabel": "tejido · color · talla",
+      "width": 152
+    },
+    {
+      "id": "arte",
+      "lane": "diseno",
+      "col": 1,
+      "type": "frontend",
+      "label": "Arte final",
+      "sublabel": "25 × 30 cm · fondo alfa",
+      "width": 152
+    },
+    {
+      "id": "qc",
+      "lane": "preprensa",
+      "col": 2,
+      "type": "backend",
+      "label": "Preflight y ruta técnica",
+      "sublabel": "alfa · ppi · Pantone",
+      "tag": "150 ppi mínimo a 1:1",
+      "width": 168
+    },
+    {
+      "id": "dtg",
+      "lane": "taller",
+      "col": 2,
+      "type": "cloud",
+      "label": "DTG",
+      "sublabel": "pretratar · base TiO₂",
+      "width": 152
+    },
+    {
+      "id": "dtf",
+      "lane": "taller",
+      "col": 3,
+      "type": "cloud",
+      "label": "DTF",
+      "sublabel": "PET · polvo · plancha",
+      "width": 152
+    },
+    {
+      "id": "subl",
+      "lane": "taller",
+      "col": 4,
+      "type": "cloud",
+      "label": "Sublimación",
+      "sublabel": "prensa térmica",
+      "width": 152
+    },
+    {
+      "id": "seri",
+      "lane": "taller",
+      "col": 5,
+      "type": "cloud",
+      "label": "Serigrafía",
+      "sublabel": "una pantalla por tinta",
+      "width": 152
+    }
+  ],
+  "edges": [
+    {
+      "id": "t-pedido-arte",
+      "from": "pedido",
+      "to": "arte",
+      "label": "ficha de prenda",
+      "variant": "default"
+    },
+    {
+      "id": "t-arte-qc",
+      "from": "arte",
+      "to": "qc",
+      "label": "vector o PNG-32",
+      "variant": "emphasis"
+    },
+    {
+      "id": "t-qc-arte",
+      "from": "qc",
+      "to": "arte",
+      "label": "halo o RGB: corregir",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "t-qc-dtg",
+      "from": "qc",
+      "to": "dtg",
+      "label": "algodón perchado",
+      "variant": "emphasis",
+      "role": "branch",
+      "fromSide": "bottom"
+    },
+    {
+      "id": "t-qc-dtf",
+      "from": "qc",
+      "to": "dtf",
+      "label": "tejido mixto",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "bottom"
+    },
+    {
+      "id": "t-qc-subl",
+      "from": "qc",
+      "to": "subl",
+      "label": "poliéster ≥ 80 %",
+      "variant": "default",
+      "role": "branch"
+    },
+    {
+      "id": "t-qc-seri",
+      "from": "qc",
+      "to": "seri",
+      "label": "tiraje alto",
+      "variant": "default",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Lo que cambia con la tecnología",
+      "items": [
+        "DTG, sublimación y serigrafía: CMYK o Pantone+ Solid Coated",
+        "DTF: se entrega en sRGB y lo convierte el RIP del taller",
+        "La sublimación no tiene tinta blanca: el blanco es el tejido"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Lo que devuelve un arte al diseño",
+      "items": [
+        "Fondo blanco en vez de alfa: sale como planta de tinta blanca",
+        "Bordes difuminados: dejan halo blanco sobre la prenda",
+        "Menos de 150 ppi a tamaño real (1476 × 1771 px)"
+      ]
+    }
+  ]
+}

@@ -184,7 +184,14 @@ Los sustratos de offset del catálogo están asociados a una clase: aplicar uno 
   | Cartulina / cartón | Impresión Offset (Empaques · Cartulina y cartón) | ISO 12647-2 · FOGRA39 / FOGRA51 · PDF/X-1a |
   | Sintético / plástico | Impresión Offset (Sintéticos · Polipropileno y acetato) | ISO 12647-2 · perfil según la tinta · PDF/X-1a |
 
-  Tarjeta, pestaña, título de especificaciones, norma aplicada, alertas, catálogo, portada, ficha y JSON usan ese nombre. La descripción cita el ámbito de la clase, el acabado, la lineatura y el CTP. El gráfico instructivo se rotula como ejemplo fijo de empaque en cartulina a 175 lpi.
+  Tarjeta, pestaña, título de especificaciones, norma aplicada, alertas, catálogo, portada, ficha y JSON usan ese nombre. La descripción cita el ámbito de la clase, el acabado, la lineatura y el CTP.
+- **Gráfico instructivo:** se dibuja con los valores de la clase — título, norma y perfil al pie, línea del límite de tinta en su porcentaje, lineatura y rango de resolución, resolución del CTP y cuerpo mínimo de texto. El interior del TrimBox muestra el troquel con solapas en cartulina y sintéticos, la mancha de la página en estucado y no estucado, y la mancha sin troquel en papel prensa. La roseta de trama es esquemática y así se indica.
+- **Tabla de especificaciones de la pestaña:** se genera desde la clase, de modo que no puede contradecir al panel.
+- **Reglas que no son iguales en todas las clases:**
+  - **Páginas:** un archivo por diseño en cartulina y sintéticos; en estucado, no estucado y papel prensa el documento paginado es normal y sólo se informa.
+  - **Cuerpo mínimo de texto:** 6 pt, y 7 pt en papel prensa por su ganancia tonal.
+  - **Troquel:** obligatorio en cartulina y sintéticos, opcional en estucado y no estucado, y no se comprueba en papel prensa.
+- **Checklist de producción:** la resolución mínima, el rango del CTP y la norma de la curva de linealización salen de la clase.
 - **Checklist obligatorio:** resolución mínima y rango de la clase, y el perfil de conversión de la clase en los consejos de modo de color y en el perfil esperado.
 - **Especificaciones:** límite de tinta del perfil de la clase (330 % FOGRA39, 300 % con FOGRA51 o en no estucados, 240 % en papel prensa; en sintéticos, 330 % por defecto a confirmar), sangrado de 3–5 mm, lineatura en el consejo de cuerpo mínimo y consejo de TAC con el perfil de la clase.
 - **Verificación manual:** OutputIntent con el perfil de la clase; troquel en todas menos papel prensa; curva tonal previa en no estucados, ganancia ISO 12647-3 en prensa y tinta de oxidación o UV en sintéticos.
@@ -240,7 +247,7 @@ En PCB, **LPI** significa *Liquid Photo-Imageable*, no líneas por pulgada: la i
 ## Referencia incluida
 
 - **6 tablas de especificaciones técnicas** —offset, gran formato, DTG, DTF, sublimación y serigrafía— que indican cómo se comprueba cada parámetro.
-- **17 sustratos en el catálogo** con perfil ICC, límite de tinta, lineatura, ganancia de punto y preajuste PDF, filtrados por el proceso activo. Al seleccionar uno, el motor de preflight y el mapa de tinta adoptan sus valores.
+- **16 sustratos en el catálogo** con perfil ICC, límite de tinta, lineatura, ganancia de punto y preajuste PDF, filtrados por el proceso activo. Aplicar uno de offset adopta además su lineatura, si cabe en el rango de la clase. Al seleccionar uno, el motor de preflight y el mapa de tinta adoptan sus valores.
 - **5 clases de sustrato offset** con acabados, entrada, CTP, lineatura y perfil, y un **checklist de producción** de 17 puntos.
 - **6 sustratos de gran formato** con entrada, salida y efectiva por uso, y la **tabla de distancia de visión** de 5 filas.
 - **4 preajustes PDF**: PDF/X-1a:2001, PDF/X-4:2010, PDF/X-3:2003 y ráster de alta densidad.
@@ -302,7 +309,7 @@ El logotipo institucional va embebido como PNG en base64, de modo que `index.htm
 
 ## Estructura del archivo
 
-`index.html` — 10121 líneas, ~708 KB. Organizado en 36 bloques numerados:
+`index.html` — 10182 líneas, ~716 KB. Organizado en 36 bloques numerados:
 
 ```
  0  Utilidades              11  Interfaz y eventos        22  Arranque de formatos

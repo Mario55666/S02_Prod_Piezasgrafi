@@ -1,0 +1,269 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Flujo de producción · Gigantografía (gran formato)",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "external": {
+          "label": "Encargo y emplazamiento"
+        },
+        "frontend": {
+          "label": "Arte del diseñador"
+        },
+        "backend": {
+          "label": "Decisión técnica y RIP"
+        },
+        "cloud": {
+          "label": "Equipo de salida"
+        },
+        "messagebus": {
+          "label": "Confección y montaje"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "proyecto",
+      "label": "Proyecto y emplazamiento"
+    },
+    {
+      "id": "arte",
+      "label": "Arte y preprensa"
+    },
+    {
+      "id": "taller",
+      "label": "Impresión digital"
+    },
+    {
+      "id": "montaje",
+      "label": "Confección e instalación"
+    },
+    {
+      "id": "dooh",
+      "label": "Soporte digital · DOOH"
+    }
+  ],
+  "phases": [
+    {
+      "id": "gf-entrada",
+      "label": "Emplazamiento",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "gf-arte",
+      "label": "Arte a escala",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "gf-salida",
+      "label": "Salida y montaje",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "brief",
+    "sustrato",
+    "arte",
+    "preflight",
+    "rip",
+    "plotter"
+  ],
+  "semanticChecks": {
+    "allowedRoots": [
+      "brief"
+    ],
+    "allowedTerminals": [
+      "montaje",
+      "pantalla"
+    ],
+    "requiredEdges": [
+      {
+        "from": "sustrato",
+        "to": "doohart"
+      },
+      {
+        "from": "plotter",
+        "to": "montaje"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "brief",
+      "lane": "proyecto",
+      "col": 0,
+      "type": "external",
+      "label": "Emplazamiento",
+      "sublabel": "distancia de visión",
+      "width": 132
+    },
+    {
+      "id": "sustrato",
+      "lane": "proyecto",
+      "col": 1,
+      "type": "backend",
+      "label": "Sustrato y uso",
+      "sublabel": "lona · vinilo · rígido",
+      "width": 132
+    },
+    {
+      "id": "arte",
+      "lane": "arte",
+      "col": 2,
+      "type": "frontend",
+      "label": "Arte a escala",
+      "sublabel": "1:1 a 72–150 ppp",
+      "tag": "1:10 a 300 ppp",
+      "width": 132
+    },
+    {
+      "id": "preflight",
+      "lane": "arte",
+      "col": 3,
+      "type": "backend",
+      "label": "Preflight",
+      "sublabel": "sangrado 3–5 mm",
+      "tag": "TAC ≤ 320 %",
+      "width": 132
+    },
+    {
+      "id": "rip",
+      "lane": "taller",
+      "col": 4,
+      "type": "backend",
+      "label": "RIP de gran formato",
+      "sublabel": "perfil del sustrato",
+      "width": 132
+    },
+    {
+      "id": "plotter",
+      "lane": "taller",
+      "col": 5,
+      "type": "cloud",
+      "label": "Impresión",
+      "sublabel": "ecosolvente · látex · UV",
+      "width": 132
+    },
+    {
+      "id": "montaje",
+      "lane": "montaje",
+      "col": 5,
+      "type": "messagebus",
+      "label": "Confección",
+      "sublabel": "vainas de 7 cm · ojales",
+      "width": 132
+    },
+    {
+      "id": "doohart",
+      "lane": "dooh",
+      "col": 2,
+      "type": "frontend",
+      "label": "Arte DOOH",
+      "sublabel": "RGB en píxeles",
+      "width": 132
+    },
+    {
+      "id": "pantalla",
+      "lane": "dooh",
+      "col": 4,
+      "type": "cloud",
+      "label": "Pantalla LED",
+      "sublabel": "pitch 2,5 – 16 mm",
+      "width": 132
+    }
+  ],
+  "edges": [
+    {
+      "id": "g-brief-sustrato",
+      "from": "brief",
+      "to": "sustrato",
+      "label": "distancia y montaje",
+      "variant": "default"
+    },
+    {
+      "id": "g-sustrato-arte",
+      "from": "sustrato",
+      "to": "arte",
+      "label": "resolución exigida",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-arte-preflight",
+      "from": "arte",
+      "to": "preflight",
+      "label": "CMYK FOGRA39",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-preflight-arte",
+      "from": "preflight",
+      "to": "arte",
+      "label": "efectiva insuficiente",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "g-preflight-rip",
+      "from": "preflight",
+      "to": "rip",
+      "label": "PDF/X-1a o TIFF",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-rip-plotter",
+      "from": "rip",
+      "to": "plotter",
+      "label": "linealización",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-plotter-montaje",
+      "from": "plotter",
+      "to": "montaje",
+      "label": "corte y soldadura",
+      "variant": "default"
+    },
+    {
+      "id": "g-sustrato-dooh",
+      "from": "sustrato",
+      "to": "doohart",
+      "label": "soporte digital",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "g-dooh-pantalla",
+      "from": "doohart",
+      "to": "pantalla",
+      "label": "sin impresión física",
+      "variant": "dashed",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "La distancia de visión fija la resolución",
+      "items": [
+        "1,00 – 1,20 m: 64 – 76 ppp efectivos · mupis, marquesinas y vinilos de escaparate",
+        "10 – 16 m o más: 5 – 8 ppp · vallas de carretera y lona mesh en andamios"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Lo que se decide antes de diseñar",
+      "items": [
+        "Escala de trabajo: a 1:10 el documento va a 300 ppp y a tamaño real queda en 30 ppp",
+        "Las vainas de 7 cm se doblan hacia atrás: ningún elemento clave puede caer en ese borde"
+      ]
+    }
+  ]
+}

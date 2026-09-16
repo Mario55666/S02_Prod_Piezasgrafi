@@ -150,6 +150,70 @@
     #ficha { display:block !important; position:absolute; left:0; top:0; width:100%; }
     @page { size: A4 portrait; margin: 12mm; }
   }
+
+  /* ----- Diagramas de flujo de produccion (modal Flujo de produccion) -----
+     Paleta y clases semanticas del SVG generado con Archify, acotadas a .afx
+     para que no alcancen al resto de la interfaz. */
+  .afx {
+    --grid: #1e293b;
+    --text: #ffffff;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --lane-fill: rgba(15, 23, 42, .22);
+    --lane-stroke: #334155;
+    --mask: #0f172a;
+    --arrow: #64748b;
+    --arrow-emphasis: #34d399;
+    --frontend-fill: rgba(8, 51, 68, .4);      --frontend-stroke: #22d3ee;
+    --backend-fill: rgba(6, 78, 59, .4);       --backend-stroke: #34d399;
+    --database-fill: rgba(76, 29, 149, .4);    --database-stroke: #a78bfa;
+    --cloud-fill: rgba(120, 53, 15, .3);       --cloud-stroke: #fbbf24;
+    --security-fill: rgba(136, 19, 55, .4);    --security-stroke: #fb7185;
+    --messagebus-fill: rgba(251, 146, 60, .3); --messagebus-stroke: #fb923c;
+    --external-fill: rgba(30, 41, 59, .5);     --external-stroke: #94a3b8;
+  }
+  .afx .c-grid       { stroke: var(--grid); fill: none; }
+  .afx .c-mask       { fill: var(--mask); stroke: none; }
+  .afx .c-frontend   { fill: var(--frontend-fill);   stroke: var(--frontend-stroke); }
+  .afx .c-backend    { fill: var(--backend-fill);    stroke: var(--backend-stroke); }
+  .afx .c-database   { fill: var(--database-fill);   stroke: var(--database-stroke); }
+  .afx .c-cloud      { fill: var(--cloud-fill);      stroke: var(--cloud-stroke); }
+  .afx .c-security   { fill: var(--security-fill);   stroke: var(--security-stroke); }
+  .afx .c-messagebus { fill: var(--messagebus-fill); stroke: var(--messagebus-stroke); }
+  .afx .c-external   { fill: var(--external-fill);   stroke: var(--external-stroke); }
+  .afx .c-security-group { fill: transparent; stroke: var(--security-stroke); stroke-dasharray: 4,4; }
+  .afx .c-lane       { fill: var(--lane-fill); stroke: var(--lane-stroke); stroke-dasharray: 6,6; }
+  .afx .t-primary    { fill: var(--text); }
+  .afx .t-muted      { fill: var(--text-muted); }
+  .afx .t-dim        { fill: var(--text-dim); }
+  .afx .t-frontend   { fill: var(--frontend-stroke); }
+  .afx .t-backend    { fill: var(--backend-stroke); }
+  .afx .t-database   { fill: var(--database-stroke); }
+  .afx .t-security   { fill: var(--security-stroke); }
+  .afx .t-messagebus { fill: var(--messagebus-stroke); }
+  .afx .a-default    { stroke: var(--arrow); fill: none; }
+  .afx .a-emphasis   { stroke: var(--arrow-emphasis); fill: none; }
+  .afx .a-security   { stroke: var(--security-stroke); fill: none; stroke-dasharray: 5,5; }
+  .afx .a-dashed     { stroke: var(--database-stroke); fill: none; stroke-dasharray: 4,4; }
+  .afx .m-default    { fill: var(--arrow); }
+  .afx .m-emphasis   { fill: var(--arrow-emphasis); }
+  .afx .m-security   { fill: var(--security-stroke); }
+  .afx .m-dashed     { fill: var(--database-stroke); }
+  .afx svg .semantic-sigil {
+    fill: none; stroke: currentColor; stroke-width: 1.35;
+    stroke-linecap: round; stroke-linejoin: round; opacity: .76; pointer-events: none;
+  }
+  .afx svg .semantic-sigil > * { vector-effect: non-scaling-stroke; }
+  .afx svg .semantic-sigil .sigil-fill { fill: currentColor; stroke: none; }
+  .afx svg .s-frontend   { color: var(--frontend-stroke); }
+  .afx svg .s-backend    { color: var(--backend-stroke); }
+  .afx svg .s-database   { color: var(--database-stroke); }
+  .afx svg .s-cloud      { color: var(--cloud-stroke); }
+  .afx svg .s-security   { color: var(--security-stroke); }
+  .afx svg .s-messagebus { color: var(--messagebus-stroke); }
+  .afx svg .s-external   { color: var(--external-stroke); }
+  /* Por debajo de este ancho el trazado deja de leerse: el panel desplaza. */
+  .afx svg { min-width: 760px; }
 </style>
 </head>
 <body class="bg-zinc-950 text-zinc-300 antialiased">
@@ -261,6 +325,20 @@
       </button>
       <input id="fileInput" type="file" class="hidden" accept=".pdf,.tif,.tiff,.jpg,.jpeg,.png,.webp,.gif,.bmp,.svg,.psd,.heic,.heif,.avif,.cr2,.nef,.arw,.dng,image/*,application/pdf">
     </div>
+  </section>
+
+  <!-- ===================== FLUJO DE PRODUCCIÓN DEL DESTINO ACTIVO ===================== -->
+  <section id="flowPanel" class="fb-card border border-zinc-800 bg-zinc-900/40 mb-5">
+    <h2 class="px-4 py-2.5 border-b border-zinc-800 text-[11px] uppercase tracking-widest text-zinc-400 font-bold flex items-center gap-3 flex-wrap">
+      <svg class="h-4 w-4 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h4.5v4.5h-4.5v-4.5Zm0 9h4.5v4.5h-4.5v-4.5Zm12-9h4.5v4.5h-4.5v-4.5Zm-7.5 2.25h7.5M8.25 18h4.5a3 3 0 0 0 3-3v-3.75"/></svg>
+      <span class="shrink-0">Flujo de producción</span>
+      <span id="flowPanelTarget" class="normal-case tracking-normal text-[12.5px] text-sky-300 font-semibold mr-auto"></span>
+      <button id="flowToggle" type="button"
+        class="shrink-0 border border-zinc-700 px-2 py-0.5 text-[10px] text-zinc-300 hover:bg-zinc-800 hover:border-sky-600 transition normal-case tracking-normal">
+        Contraer
+      </button>
+    </h2>
+    <div id="flowPanelBody" class="p-4"></div>
   </section>
 
   <div id="errBar" class="hidden mb-5 border border-red-800 bg-red-950/50 text-red-200 px-4 py-3 text-[13px]"></div>
@@ -1096,12 +1174,12 @@ const GLOSSARY = {
     '<p>Los píxeles de un archivo no tienen tamaño físico por sí solos. La <b>resolución efectiva</b> es la densidad real a la que se reproducirá el archivo:</p>' +
     '<p class="font-mono bg-zinc-900 border border-zinc-800 p-2 text-sky-300">PPI = Píxeles de ancho &divide; (Ancho físico en cm &divide; 2,54)</p>' +
     '<p>Un archivo de 3000 px reproducido a 25 cm de ancho da 305 ppi (apto para offset). El mismo archivo a 50 cm cae a 152 ppi (insuficiente).</p>' +
-    '<p class="text-zinc-500">Regla clásica: ppi &asymp; 2 &times; lineatura (lpi). Para trama de 175 lpi &rArr; 350 ppi ideal, 300 ppi aceptado por norma.</p>'],
+    '<p class="text-zinc-500">Regla clásica: la resolución vale entre <b>1,5 y 2 veces</b> la lineatura. Para 175 lpi &rArr; 263–350 ppi, con 300 ppi como mínimo normativo; para los 100 lpi del papel prensa &rArr; 150–200 ppi.</p>'],
 
   tac: ['TAC — Total Area Coverage',
     '<p>Suma de los porcentajes de las cuatro tintas de proceso en un mismo punto: <b>C + M + Y + K</b>. Un negro saturado sin control puede llegar a 400 %.</p>' +
     '<p>Superar el límite del sustrato provoca <b>repinte</b> (set-off), secado deficiente, pegado de pliegos y ganancia de punto excesiva.</p>' +
-    '<ul class="list-disc pl-5 text-zinc-400"><li>ISO Coated v2 / FOGRA39: <b>330 %</b></li><li>Cartón / empaque recubierto: 300 %</li><li>Papel prensa (ISO 26v4): 240 %</li></ul>' +
+    '<ul class="list-disc pl-5 text-zinc-400"><li>Estucado y cartulina — Coated FOGRA39: <b>330 %</b></li><li>Estucado con PSO Coated v3 (FOGRA51) o variante de tinta limitada: 300 %</li><li>No estucado — PSO Uncoated (FOGRA47 / FOGRA52): 300 %</li><li>Papel prensa — ISOnewspaper26v4 (ISO 12647-3): 240 %</li><li>Gran formato sobre soportes no porosos: 320 %</li></ul>' +
     '<p class="text-amber-300/80">El mapa TAC de esta app es una <b>estimación heurística</b> sobre datos RGB con un modelo GCR ligero: orienta, no certifica. La separación real depende del perfil ICC y del motor del RIP.</p>'],
 
   fogra: ['FOGRA39 / ISO Coated v2',
@@ -2534,8 +2612,13 @@ function targetChecks(t, m, ppi, an) {
         out.push(chk('bleed', 'Sangrado (BleedBox − TrimBox)', 'warn', 'no legible', '3 – 5 mm por lado',
           'No se pudieron leer los cuadros de página (posible compresión de objetos). Verifica en Acrobat > Producción de impresión > Definir cuadros de página.', 'bleed'));
       }
-      out.push(chk('pages', 'Página única', m.pages === 1 ? 'pass' : 'fail', m.pages + ' página(s)', '1 página',
-        m.pages === 1 ? null : 'El flujo offset en PDF/X-1a exige un archivo por diseño. Divide el documento en archivos independientes.', 'pdfx'));
+      // Un empaque es un archivo por diseño; una revista o un periódico son documentos paginados
+      const unaPag = offRegla().unaPagina;
+      out.push(chk('pages', unaPag ? 'Página única' : 'Páginas del documento',
+        m.pages === 1 ? 'pass' : (unaPag ? 'fail' : 'info'), m.pages + ' página(s)', offPaginasText(),
+        m.pages === 1 ? null : (unaPag
+          ? 'En este soporte cada diseño va en su propio archivo: divide el documento en archivos independientes.'
+          : 'Documento paginado: confirma con la imprenta la imposición, el orden de páginas y las páginas en blanco.'), 'pdfx'));
       out.push(chk('fonts', 'Fuentes incrustadas', m.fontFiles > 0 ? 'pass' : (m.fonts.length ? 'fail' : 'info'),
         m.fontFiles > 0 ? m.fontFiles + ' fuente(s) incrustada(s)' : (m.fonts.length ? m.fonts.length + ' fuente(s) referenciada(s), 0 incrustada(s)' : 'sin texto vivo detectado'),
         'Todas incrustadas o convertidas a curvas',
@@ -2545,10 +2628,11 @@ function targetChecks(t, m, ppi, an) {
         'Aplanadas (PDF/X-1a)',
         m.transparency ? 'PDF/X-1a no admite transparencia viva. Exporta con compatibilidad Acrobat 4 (PDF 1.3) para forzar el aplanado, con el preajuste de alta resolución.' : null, 'pdfx'));
       if (m.minTextPt !== null && m.minTextPt !== undefined) {
-        out.push(m.minTextPt >= t.minTextPt
-          ? chk('text', 'Cuerpo mínimo de texto', 'pass', fmt(m.minTextPt, 2) + ' pt', '>= 6 pt', null, 'black')
-          : chk('text', 'Cuerpo mínimo de texto', 'fail', fmt(m.minTextPt, 2) + ' pt', '>= 6 pt',
-              'Texto por debajo de 6 pt: con trama de ' + state.off.lpi + ' lpi el filo se rompe y, si va en negro compuesto, se ve doble por falta de registro.', 'black'));
+        const minPt = offMinText();
+        out.push(m.minTextPt >= minPt
+          ? chk('text', 'Cuerpo mínimo de texto', 'pass', fmt(m.minTextPt, 2) + ' pt', '>= ' + minPt + ' pt', null, 'black')
+          : chk('text', 'Cuerpo mínimo de texto', 'fail', fmt(m.minTextPt, 2) + ' pt', '>= ' + minPt + ' pt',
+              'Texto por debajo de ' + offMinText() + ' pt: con trama de ' + state.off.lpi + ' lpi el filo se rompe y, si va en negro compuesto, se ve doble por falta de registro.', 'black'));
       }
       if (m.placedMasks) {
         const okMask = m.minMaskPPI >= 600;
@@ -3062,6 +3146,10 @@ function renderTargetCards() {
     }
     return html;
   }).join('');
+  // El panel de flujo sigue al destino y a la clase de sustrato activos.
+  // Se protege porque FLOWS se declara más abajo: si las tarjetas se pintan
+  // antes de esa declaración, el panel lo rellena initDidactica().
+  try { renderFlujo(); } catch (e) { /* el panel aún no está disponible */ }
 }
 
 function syncSegments() {
@@ -3482,7 +3570,7 @@ const SUBSTRATES = [
     note: 'Sustrato con blanco más bajo y mayor ganancia. Evita negros ricos por encima de 280 % y textos invertidos menores de 8 pt.' },
   { id: 'fogra51', off: 'estucado', group: 'Offset · estucado',
     name: 'Estucado moderno con blanqueadores (OBA)', icc: 'PSOcoated_v3 (FOGRA51)', file: 'PSOcoated_v3.icc',
-    tac: 300, lpi: 175, gain: '13 % en el 40 % (M1)', preset: 'x4', target: 'offset',
+    tac: 300, lpi: 175, gain: '13 % en el 40 % (M1)', preset: 'x1a', target: 'offset',
     note: 'Sucesor de FOGRA39, medido con iluminación M1. Úsalo si la imprenta trabaja con papel con abrillantadores ópticos.' },
   { id: 'gracol', off: 'estucado', group: 'Offset · estucado',
     name: 'Estucado GRACoL (América del Norte)', icc: 'Coated GRACoL 2006', file: 'CoatedGRACoL2006.icc',
@@ -3499,11 +3587,7 @@ const SUBSTRATES = [
   { id: 'news', off: 'prensa', group: 'Offset · prensa',
     name: 'Papel prensa (coldset)', icc: 'ISOnewspaper 26v4', file: 'ISOnewspaper26v4.icc',
     tac: 240, lpi: 100, gain: '26 % en el 40 %', preset: 'x1a', target: 'offset',
-    note: 'Límite de tinta muy bajo. Nada de negros ricos; el texto siempre en 100 % K y cuerpo mínimo 7 pt.' },
-  { id: 'flexo', group: 'Flexografía',
-    name: 'Flexo sobre corrugado', icc: 'Perfil del proveedor (no hay estándar único)', file: '—',
-    tac: 240, lpi: 85, gain: '25–30 % con curva de compensación', preset: 'x4', target: 'offset',
-    note: 'Exige punto mínimo del 3–5 %, engorde (trapping) explícito y líneas de al menos 0,5 pt. Pide siempre la curva del fotopolímero.' },
+    note: 'Límite de tinta muy bajo: el negro rico C60 M40 Y40 K100 (240 %) queda justo en el límite y el texto va siempre en 100 % K. Con la alta ganancia tonal, cuerpo mínimo 7 pt.' },
   { id: 'dtg', group: 'Textil',
     name: 'DTG sobre algodón', icc: 'Perfil calibrado del equipo', file: 'Epson IJ Printer 07.icc · CN_IJPrinter_Profile2015.icc',
     tac: 260, lpi: null, gain: '—', preset: 'raster', target: 'textil',
@@ -3569,6 +3653,7 @@ function applySubstrate(id, quiet) {
       if (gfSetSustrato(s.giga)) state.physical.touched = false;
     }
     if (s.off && state.off.sustrato !== s.off) offSetSustrato(s.off);
+    if (s.off) offSyncLpi(s.lpi);
     if (!quiet && state.target !== s.target) setTarget(s.target);
   }
   offSyncTac();
@@ -5915,21 +6000,25 @@ function appendGeometryChecks(checks) {
     checks.target.push(max <= 0.3
       ? chk('demasia', 'Demasías fuera del sangrado', 'pass', 'sin arte fuera del BleedBox', 'nada fuera del BleedBox', null, 'bleed')
       : chk('demasia', 'Demasías fuera del sangrado', 'warn', txt + ' fuera del BleedBox', 'nada fuera del BleedBox',
-          'Hay arte más allá del área de sangrado: en el troquelado se recorta sin control y puede ensuciar la cuchilla ' +
+          'Hay arte más allá del área de sangrado: en el corte o el troquelado se recorta sin control y puede ensuciar la cuchilla ' +
           'o invadir piezas contiguas en el pliego de montaje. Recorta el excedente al BleedBox.', 'bleed'));
   }
 
+  const troquel = typeof offRegla === 'function' ? offRegla().troquel : 'si';
+  if (troquel === 'no') return;          // un periódico no se troquela
   if (m.dieline) {
-    checks.target.push(chk('die', 'Contorno de troquel detectado', 'info',
+    checks.target.push(chk('die', troquel === 'si' ? 'Contorno de troquel detectado' : 'Contorno dominante del documento', 'info',
       fmt(ptToMM(m.dieline.bbox[2] - m.dieline.bbox[0]), 1) + ' × ' +
       fmt(ptToMM(m.dieline.bbox[3] - m.dieline.bbox[1]), 1) + ' mm · ' + m.dieline.n + ' vértices',
       'Tinta plana en sobreimpresión, no imprimible',
-      'Contorno trazado de mayor extensión del documento. Verifica que esté en su propia separación ' +
-      '(CutContour / Die) y marcado como no imprimible.', 'overprint'));
+      'Contorno trazado de mayor extensión del documento. ' + (troquel === 'si'
+        ? 'Verifica que esté en su propia separación (CutContour / Die) y marcado como no imprimible.'
+        : 'En este soporte el troquel es opcional: si es un marco o una caja de texto, ignóralo; si es un troquel, debe ir en su propia tinta plana.'), 'overprint'));
   } else if (m.vectorPaths && m.vectorPaths.length) {
-    checks.target.push(chk('die', 'Contorno de troquel', 'warn', m.vectorPaths.length + ' contorno(s) trazado(s), ninguno dominante',
-      'Un contorno de troquel identificable',
-      'No se aisló un contorno que actúe como troquel. Si la caja lleva troquel, debe ir en una tinta plana propia.', 'overprint'));
+    checks.target.push(chk('die', 'Contorno de troquel', troquel === 'si' ? 'warn' : 'info',
+      m.vectorPaths.length + ' contorno(s) trazado(s), ninguno dominante',
+      troquel === 'si' ? 'Un contorno de troquel identificable' : 'Troquel opcional en este soporte',
+      'No se aisló un contorno que actúe como troquel. Si la pieza lleva troquel, debe ir en una tinta plana propia.', 'overprint'));
   }
 }
 
@@ -6135,30 +6224,68 @@ function openGlosario() {
    29. GRÁFICO INSTRUCTIVO DEL DESTINO OFFSET
    ===================================================================== */
 
-const DIAGRAMS = {
-  offset: {
-    title: 'Gráfico instructivo · Ejemplo de empaque en cartulina a 175 lpi',
-    sub: 'Cómo se relacionan las cajas de página, la carga de tinta, la trama y el negro de texto en un pliego de empaque. Es un ejemplo fijo: los valores de la clase de sustrato elegida están en la norma aplicada.',
+/**
+ * Gráfico instructivo. Todo lo que muestra sale de la clase de sustrato activa:
+ * norma, perfil, límite de tinta, lineatura, resolución, CTP, troquel y cuerpo de texto.
+ */
+function offDiagData() {
+  const s = offSus(), o = state.off, n = offNorma(), r = offRegla(), tac = TARGETS.offset.tacMax;
+  const lo = Math.ceil(1.5 * o.lpi), hi = 2 * o.lpi, ppiMin = s.ppi[0];
+  return {
+    title: 'Gráfico instructivo · ' + s.label + ' · ' + offAcabado() + ' a ' + o.lpi + ' lpi',
+    sub: 'Cómo se relacionan las cajas de página, la carga de tinta, la trama y el negro de texto en ' +
+      (r.unaPagina ? 'un pliego de empaque' : 'un pliego impreso') + '. Los valores siguen a la clase elegida: ' +
+      n.norma + (s.perfil.indexOf(n.norma) === 0 ? '' : ' · ' + s.perfil.replace(' (' + n.norma + ')', '')) + ' · TAC ' + tac + ' % · ' + o.lpi + ' lpi · CTP ' + o.ctp + ' dpi.',
     notes: [
-      ['1', 'MediaBox — el soporte', 'Es el pliego completo tal como sale de la máquina. Aloja las marcas de corte, de registro y la tira de control de color. Nunca es el formato del producto.'],
-      ['2', 'BleedBox — el sangrado', 'TrimBox más 3 mm por lado. El arte se extiende hasta aquí para que la tolerancia del troquel (±1,5 mm o más) no deje filos blancos en la caja terminada.'],
-      ['3', 'TrimBox — el corte final', 'El formato real del producto una vez cortado. Es lo que el RIP usa para posicionar la pieza en el montaje. Sin TrimBox declarado, el flujo no sabe dónde cortar.'],
-      ['4', 'Zona de seguridad', '3 a 5 mm hacia dentro del corte. Textos, códigos de barras, logotipos y cualquier elemento crítico viven dentro de esta línea; fuera de ella pueden quedar mutilados.'],
-      ['5', 'TAC — límite de tinta', 'La suma de las cuatro tintas en un mismo punto. Un negro rico de C60 M40 Y40 K100 suma 240 % y se imprime bien. El negro de registro (400 %) no seca, repinta el pliego siguiente y pega la pila.'],
-      ['6', 'Trama de 175 lpi', 'La lineatura define cuántas filas de puntos entran en una pulgada. La regla de oro es ppi ≈ 2 × lpi: para 175 lpi, 350 ppi es lo ideal y 300 ppi el mínimo normativo. Menos resolución no aporta más detalle del que la trama puede resolver.'],
-      ['7', 'Negro de texto en 100 % K', 'Un texto de 6 pt en negro compuesto necesita que las cuatro planchas coincidan exactamente. Cualquier desvío de registro deja filos de color y el texto se ve sucio. En 100 % K sólo interviene una plancha: no hay registro que fallar.']
+      ['1', 'MediaBox — el soporte',
+       'Es el pliego completo tal como sale de la máquina. Aloja las marcas de corte, de registro y la tira de control de color. Nunca es el formato del producto.'],
+      ['2', 'BleedBox — el sangrado',
+       'TrimBox más 3 a 5 mm por lado. El arte se extiende hasta aquí para que la tolerancia de corte' +
+       (r.troquel === 'si' ? ' y de troquel (±1,5 mm o más)' : '') + ' no deje filos blancos en la pieza terminada.'],
+      ['3', 'TrimBox — el corte final',
+       'El formato real del producto una vez cortado. Es lo que el RIP usa para posicionar la pieza en el montaje. Sin TrimBox declarado, el flujo no sabe dónde cortar.'],
+      ['4', 'Zona de seguridad',
+       '3 a 5 mm hacia dentro del corte. Textos, códigos de barras, logotipos y cualquier elemento crítico viven dentro de esta línea; fuera de ella pueden quedar mutilados.'],
+      ['5', 'TAC — límite de tinta',
+       'La suma de las cuatro tintas en un mismo punto. En ' + s.label.toLowerCase() + ' el límite es ' + tac + ' % (' + n.tacText + '). ' +
+       'Un negro rico de C60 M40 Y40 K100 suma 240 %' + (tac <= 240 ? ', justo en el límite de este soporte' : ' y se imprime bien') +
+       '. El negro de registro (400 %) no seca, repinta el pliego siguiente y pega la pila.'],
+      ['6', 'Trama de ' + o.lpi + ' lpi',
+       'La lineatura la marca la porosidad del soporte: ' + offRange(s.lpi, 'lpi') + ' en esta clase. La resolución de la imagen vale entre 1,5 y 2 veces la lineatura, ' +
+       lo + '–' + hi + ' ppi, con ' + ppiMin + ' ppi como mínimo. El CTP graba a ' + o.ctp + ' dpi y necesita 16 × lpi = ' + (16 * o.lpi) + ' dpi para 256 niveles de gris por canal.'],
+      ['7', 'Negro de texto en 100 % K',
+       'Un texto de ' + offMinText() + ' pt en negro compuesto necesita que las cuatro planchas coincidan exactamente. Cualquier desvío de registro deja filos de color y el texto se ve sucio. ' +
+       'En 100 % K sólo interviene una plancha: no hay registro que fallar.']
     ]
-  }
-};
+  };
+}
 
 function diagramSVG() {
+  const s = offSus(), o = state.off, n = offNorma(), r = offRegla(), tac = TARGETS.offset.tacMax;
+  const lo = Math.ceil(1.5 * o.lpi), hi = 2 * o.lpi;
+  // Escala de la carga de tinta: 0 % en x=610 y 0,9 px por punto porcentual
+  const X = p => 610 + p * 0.9;
+  const rico = 240, limX = fmt(X(tac), 1);
+  const ricoTxt = tac > rico ? '240 % · correcto' : tac === rico ? '240 % · justo en el límite' : '240 % · supera el límite';
+  const ricoCol = tac > rico ? '#22c55e' : tac === rico ? '#f59e0b' : '#ef4444';
+
+  /* El interior del TrimBox cambia con el soporte: troquel de caja, mancha de página o rotativa */
+  const interior = r.troquel === 'si'
+    ? '<path d="M150 150h250v170H150z M150 150l-26 26v118l26 26 M400 150l26 26v118l-26 26" fill="none" stroke="#22d3ee" stroke-width="1.8"/>' +
+      '<path d="M124 176h302M124 294h302" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4 4"/>' +
+      '<text x="150" y="342" fill="#22d3ee" font-size="10.5" font-family="ui-monospace,monospace">Troquel · tinta plana en sobreimpresión</text>' +
+      '<text x="150" y="200" fill="#52525b" font-size="11">solapa</text>' +
+      '<text x="252" y="245" fill="#71717a" font-size="12" font-weight="700">FRENTE</text>'
+    : '<rect x="150" y="150" width="250" height="170" fill="none" stroke="#22d3ee" stroke-width="1.6" stroke-dasharray="6 4"/>' +
+      '<text x="150" y="342" fill="#22d3ee" font-size="10.5" font-family="ui-monospace,monospace">' +
+        (r.troquel === 'no' ? 'Mancha de la página · sin troquel, corte en rotativa' : 'Mancha de la página · troquel opcional') + '</text>' +
+      '<text x="238" y="245" fill="#71717a" font-size="12" font-weight="700">MANCHA</text>';
+
   return '' +
 '<svg viewBox="0 0 1120 700" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">' +
 '<defs>' +
   '<pattern id="dgrid" width="14" height="14" patternUnits="userSpaceOnUse">' +
     '<path d="M14 0H0v14" fill="none" stroke="#27272a" stroke-width="1"/></pattern>' +
-  '<marker id="dot" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5">' +
-    '<circle cx="3.5" cy="3.5" r="2.6" fill="#0ea5e9"/></marker>' +
 '</defs>' +
 '<rect width="1120" height="700" fill="#09090b"/>' +
 
@@ -6167,85 +6294,65 @@ function diagramSVG() {
 '<rect x="30" y="52" width="520" height="380" fill="url(#dgrid)" stroke="#3f3f46" stroke-width="1.5"/>' +
 '<text x="40" y="70" fill="#a1a1aa" font-size="11" font-family="ui-monospace,monospace">MediaBox</text>' +
 '<circle cx="546" cy="56" r="11" fill="#0ea5e9"/><text x="546" y="60" fill="#04121c" font-size="12" font-weight="700" text-anchor="middle">1</text>' +
-
-/* marcas de corte */
 '<g stroke="#71717a" stroke-width="1">' +
   '<path d="M92 74v-14M78 88h-14M458 74v-14M472 88h14M92 388v14M78 374h-14M458 388v14M472 374h14"/></g>' +
-
 '<rect x="78" y="74" width="394" height="314" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="7 5"/>' +
-'<text x="84" y="88" fill="#ef4444" font-size="10.5" font-family="ui-monospace,monospace">BleedBox +3 mm</text>' +
+'<text x="84" y="88" fill="#ef4444" font-size="10.5" font-family="ui-monospace,monospace">BleedBox +3 a 5 mm</text>' +
 '<circle cx="468" cy="74" r="11" fill="#ef4444"/><text x="468" y="78" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">2</text>' +
-
 '<rect x="94" y="90" width="362" height="282" fill="rgba(14,165,233,.07)" stroke="#38bdf8" stroke-width="2"/>' +
 '<text x="100" y="104" fill="#38bdf8" font-size="10.5" font-family="ui-monospace,monospace">TrimBox</text>' +
 '<circle cx="452" cy="90" r="11" fill="#38bdf8"/><text x="452" y="94" fill="#04121c" font-size="12" font-weight="700" text-anchor="middle">3</text>' +
-
 '<rect x="112" y="108" width="326" height="246" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 4"/>' +
 '<text x="118" y="122" fill="#f59e0b" font-size="10.5" font-family="ui-monospace,monospace">Seguridad 3–5 mm</text>' +
 '<circle cx="434" cy="108" r="11" fill="#f59e0b"/><text x="434" y="112" fill="#1c1917" font-size="12" font-weight="700" text-anchor="middle">4</text>' +
-
-/* troquel de la caja dentro del trim */
-'<path d="M150 150h250v170H150z M150 150l-26 26v118l26 26 M400 150l26 26v118l-26 26" fill="none" stroke="#22d3ee" stroke-width="1.8"/>' +
-'<path d="M124 176h302M124 294h302" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4 4"/>' +
-'<text x="150" y="342" fill="#22d3ee" font-size="10.5" font-family="ui-monospace,monospace">Troquel · tinta plana en sobreimpresión</text>' +
-'<text x="150" y="200" fill="#52525b" font-size="11">solapa</text>' +
-'<text x="252" y="245" fill="#71717a" font-size="12" font-weight="700">FRENTE</text>' +
-
-/* cota de sangrado */
+interior +
 '<g stroke="#ef4444" stroke-width="1">' +
   '<path d="M78 410h16M78 406v8M94 406v8"/></g>' +
-'<text x="100" y="414" fill="#ef4444" font-size="10" font-family="ui-monospace,monospace">3 mm de sangrado</text>' +
+'<text x="100" y="414" fill="#ef4444" font-size="10" font-family="ui-monospace,monospace">3 a 5 mm de sangrado</text>' +
+'<text x="30" y="452" fill="#52525b" font-size="10.5" font-family="ui-monospace,monospace">' + esc(s.name) + ' · ' + esc(offAcabado()) + '</text>' +
 
 /* ---------- B · Carga de tinta ---------- */
 '<text x="590" y="34" fill="#f59e0b" font-family="ui-monospace,monospace" font-size="12" font-weight="700" letter-spacing="2">B · CARGA DE TINTA (TAC)</text>' +
 '<circle cx="1084" cy="30" r="11" fill="#f59e0b"/><text x="1084" y="34" fill="#1c1917" font-size="12" font-weight="700" text-anchor="middle">5</text>' +
 '<rect x="590" y="52" width="500" height="196" fill="#101013" stroke="#27272a"/>' +
-
-/* escala */
 '<g font-family="ui-monospace,monospace" font-size="9" fill="#52525b">' +
-  '<text x="700" y="70">100%</text><text x="790" y="70">200%</text><text x="880" y="70">300%</text><text x="970" y="70">400%</text></g>' +
-'<line x1="898" y1="60" x2="898" y2="238" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3"/>' +
-'<text x="902" y="236" fill="#f59e0b" font-size="10" font-family="ui-monospace,monospace" font-weight="700">límite 330 %</text>' +
+  '<text x="604" y="70">0%</text><text x="690" y="70">100%</text><text x="780" y="70">200%</text><text x="870" y="70">300%</text><text x="960" y="70">400%</text></g>' +
+'<line x1="' + limX + '" y1="74" x2="' + limX + '" y2="238" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3"/>' +
+'<text x="' + fmt(X(tac) + 4, 1) + '" y="236" fill="#f59e0b" font-size="10" font-family="ui-monospace,monospace" font-weight="700">límite ' + tac + ' %</text>' +
 
-/* barra 1: negro rico 240% */
-'<text x="606" y="100" fill="#a1a1aa" font-size="11">Negro rico</text>' +
-'<text x="606" y="114" fill="#52525b" font-size="9.5" font-family="ui-monospace,monospace">C60 M40 Y40 K100</text>' +
+'<text x="606" y="92" fill="#a1a1aa" font-size="11">Negro rico <tspan fill="#52525b" font-size="9.5" font-family="ui-monospace,monospace">C60 M40 Y40 K100</tspan></text>' +
 '<g>' +
-  '<rect x="700" y="88" width="54" height="26" fill="#00aeef"/>' +
-  '<rect x="754" y="88" width="36" height="26" fill="#ec008c"/>' +
-  '<rect x="790" y="88" width="36" height="26" fill="#fff100"/>' +
-  '<rect x="826" y="88" width="90" height="26" fill="#231f20" stroke="#3f3f46"/></g>' +
-'<text x="924" y="106" fill="#22c55e" font-size="11" font-weight="700">240 % · correcto</text>' +
+  '<rect x="' + fmt(X(0), 1) + '" y="98" width="54" height="22" fill="#00aeef"/>' +
+  '<rect x="' + fmt(X(60), 1) + '" y="98" width="36" height="22" fill="#ec008c"/>' +
+  '<rect x="' + fmt(X(100), 1) + '" y="98" width="36" height="22" fill="#fff100"/>' +
+  '<rect x="' + fmt(X(140), 1) + '" y="98" width="90" height="22" fill="#231f20" stroke="#3f3f46"/></g>' +
+'<text x="' + fmt(X(rico) + 8, 1) + '" y="114" fill="' + ricoCol + '" font-size="11" font-weight="700">' + ricoTxt + '</text>' +
 
-/* barra 2: registro 400% */
-'<text x="606" y="150" fill="#a1a1aa" font-size="11">Negro de registro</text>' +
-'<text x="606" y="164" fill="#52525b" font-size="9.5" font-family="ui-monospace,monospace">C100 M100 Y100 K100</text>' +
+'<text x="606" y="146" fill="#a1a1aa" font-size="11">Negro de registro <tspan fill="#52525b" font-size="9.5" font-family="ui-monospace,monospace">C100 M100 Y100 K100</tspan></text>' +
 '<g>' +
-  '<rect x="700" y="138" width="90" height="26" fill="#00aeef"/>' +
-  '<rect x="790" y="138" width="90" height="26" fill="#ec008c"/>' +
-  '<rect x="880" y="138" width="90" height="26" fill="#fff100"/>' +
-  '<rect x="970" y="138" width="90" height="26" fill="#231f20" stroke="#3f3f46"/></g>' +
-'<text x="700" y="184" fill="#ef4444" font-size="11" font-weight="700">400 % · no seca · repinta · pega la pila</text>' +
+  '<rect x="' + fmt(X(0), 1) + '" y="152" width="90" height="22" fill="#00aeef"/>' +
+  '<rect x="' + fmt(X(100), 1) + '" y="152" width="90" height="22" fill="#ec008c"/>' +
+  '<rect x="' + fmt(X(200), 1) + '" y="152" width="90" height="22" fill="#fff100"/>' +
+  '<rect x="' + fmt(X(300), 1) + '" y="152" width="90" height="22" fill="#231f20" stroke="#3f3f46"/></g>' +
+'<text x="610" y="192" fill="#ef4444" font-size="11" font-weight="700">400 % · no seca · repinta · pega la pila</text>' +
 
-/* barra 3: texto 100K */
-'<text x="606" y="216" fill="#a1a1aa" font-size="11">Texto en K</text>' +
-'<text x="606" y="230" fill="#52525b" font-size="9.5" font-family="ui-monospace,monospace">C0 M0 Y0 K100</text>' +
-'<rect x="700" y="204" width="90" height="26" fill="#231f20" stroke="#3f3f46"/>' +
-'<text x="800" y="222" fill="#22c55e" font-size="11" font-weight="700">100 % · una sola plancha</text>' +
+'<text x="606" y="206" fill="#a1a1aa" font-size="11">Texto en K <tspan fill="#52525b" font-size="9.5" font-family="ui-monospace,monospace">C0 M0 Y0 K100</tspan></text>' +
+'<rect x="' + fmt(X(0), 1) + '" y="212" width="90" height="22" fill="#231f20" stroke="#3f3f46"/>' +
+'<text x="' + fmt(X(100) + 8, 1) + '" y="228" fill="#22c55e" font-size="11" font-weight="700">100 % · una sola plancha</text>' +
 
 /* ---------- C · Trama ---------- */
-'<text x="590" y="286" fill="#a78bfa" font-family="ui-monospace,monospace" font-size="12" font-weight="700" letter-spacing="2">C · TRAMA DE 175 LPI</text>' +
+'<text x="590" y="286" fill="#a78bfa" font-family="ui-monospace,monospace" font-size="12" font-weight="700" letter-spacing="2">C · TRAMA DE ' + o.lpi + ' LPI</text>' +
 '<circle cx="828" cy="282" r="11" fill="#a78bfa"/><text x="828" y="286" fill="#1e1b4b" font-size="12" font-weight="700" text-anchor="middle">6</text>' +
 '<rect x="590" y="302" width="250" height="170" fill="#101013" stroke="#27272a"/>' +
 DIAG_DOTS +
-'<text x="606" y="446" fill="#a1a1aa" font-size="11" font-family="ui-monospace,monospace">ppi ≈ 2 × lpi</text>' +
-'<text x="606" y="462" fill="#71717a" font-size="10.5" font-family="ui-monospace,monospace">175 lpi → 350 ppi ideal · 300 ppi mínimo</text>' +
+'<text x="606" y="446" fill="#a1a1aa" font-size="11" font-family="ui-monospace,monospace">ppi = 1,5 – 2 × lpi</text>' +
+'<text x="606" y="462" fill="#71717a" font-size="10.5" font-family="ui-monospace,monospace">' + o.lpi + ' lpi → ' + lo + '–' + hi + ' ppi · mínimo ' + s.ppi[0] + ' ppi · CTP ' + o.ctp + ' dpi</text>' +
 
 /* ---------- D · Negro de texto ---------- */
 '<text x="866" y="286" fill="#22c55e" font-family="ui-monospace,monospace" font-size="12" font-weight="700" letter-spacing="2">D · REGISTRO DEL NEGRO</text>' +
 '<circle cx="1084" cy="282" r="11" fill="#22c55e"/><text x="1084" y="286" fill="#052e16" font-size="12" font-weight="700" text-anchor="middle">7</text>' +
 '<rect x="866" y="302" width="224" height="170" fill="#101013" stroke="#27272a"/>' +
-'<text x="880" y="326" fill="#52525b" font-size="10" font-family="ui-monospace,monospace">100 % K</text>' +
+'<text x="880" y="326" fill="#52525b" font-size="10" font-family="ui-monospace,monospace">100 % K · ' + offMinText() + ' pt mínimo</text>' +
 '<text x="880" y="360" fill="#e4e4e7" font-size="26" font-weight="700" font-family="Georgia,serif">Aa</text>' +
 '<text x="930" y="356" fill="#22c55e" font-size="10.5">nítido · 1 plancha</text>' +
 '<line x1="880" y1="376" x2="1076" y2="376" stroke="#27272a"/>' +
@@ -6260,11 +6367,12 @@ DIAG_DOTS +
 /* ---------- pie ---------- */
 '<line x1="30" y1="500" x2="1090" y2="500" stroke="#27272a"/>' +
 '<text x="30" y="524" fill="#52525b" font-size="10.5" font-family="ui-monospace,monospace">' +
-  'ISO 12647-2 · FOGRA39 · PDF/X-1a:2001 — Instituto de Educación Superior Pública «Diseño y Comunicación»</text>' +
+  esc(n.norma + ' · ' + offNombre().perfilTag + ' · PDF/X-1a:2001') + ' — Instituto de Educación Superior Pública «Diseño y Comunicación»</text>' +
 '</svg>';
 }
 
-/* Roseta de trama generada por código para no depender de una imagen */
+/* Roseta de trama generada por código para no depender de una imagen. Es esquemática:
+   ilustra la retícula de puntos, no la lineatura exacta de la clase. */
 var DIAG_DOTS = (function () {
   let s = '<g>';
   const cx0 = 715, cy0 = 385;
@@ -6282,7 +6390,7 @@ var DIAG_DOTS = (function () {
 })();
 
 function openDiagrama() {
-  const d = DIAGRAMS.offset;
+  const d = offDiagData();
   $('#diagTitle').textContent = d.title;
   $('#diagSub').textContent = d.sub;
   $('#diagBody').innerHTML =
@@ -6294,7 +6402,7 @@ function openDiagrama() {
         '<p class="text-[12px] text-zinc-400 mt-1 leading-relaxed">' + esc(n[2]) + '</p></div></div>').join('') +
     '</div>' +
     '<p class="mt-5 text-[11.5px] text-zinc-600 leading-relaxed border-t border-zinc-800 pt-3">' +
-      'Instituto de Educación Superior Pública «Diseño y Comunicación» · Docente: Mg. Mario Quiroz · ' +
+      'La roseta de trama es esquemática. Instituto de Educación Superior Pública «Diseño y Comunicación» · Docente: Mg. Mario Quiroz · ' +
       'Unidad didáctica de Producción y publicación de piezas gráficas · 2026 · Semana 1</p>';
   $('#diagModal').classList.remove('hidden');
 }
@@ -6325,6 +6433,91 @@ function toggleEdges3D() {
 }
 
 /* =====================================================================
+   30 bis. DIAGRAMAS DE FLUJO DEL PROCESO DE PRODUCCIÓN
+   Un diagrama por destino: offset, textil y gigantografía. El trazado se
+   generó con Archify — carriles por responsable, fases y rutas validadas —
+   y va incrustado como SVG. Las clases semánticas del dibujo viven bajo
+   .afx en la hoja de estilo de la cabecera.
+   ===================================================================== */
+
+const FLOWS = {
+  offset: {
+    tab: "Offset",
+    title: "Flujo de producción · Impresión offset (empaques)",
+    sub: "Del brief a la tirada: quién toca el archivo en cada fase, dónde se certifica el PDF/X-1a y en qué punto un pliego vuelve al diseño.",
+    notes: [["Lo que decide la clase de sustrato", ["Lineatura: 150–200 lpi en estucado · 120–150 en no estucado · 85–100 en papel prensa.", "La resolución de imagen vale entre 1,5 y 2 veces la lineatura, con 300 ppi como mínimo a tamaño real.", "TAC del perfil: 330 % con Coated FOGRA39 · 300 % con PSO Coated v3 (FOGRA51)."]], ["Dónde se detiene un pliego", ["Sin TrimBox declarado o sin sangrado de 3 a 5 mm, el RIP no sabe dónde cortar.", "Texto y códigos de barras fuera del 100 % K se ensucian en cuanto el registro se desvía.", "El negro de registro al 400 % no seca, repinta el pliego siguiente y pega la pila."]]],
+    svg: "<svg class=\"w-full h-auto\" viewBox=\"0 0 1200 668\" role=\"img\" lang=\"en\" aria-labelledby=\"afx-offset-archify-diagram-title afx-offset-archify-diagram-description\" data-preset=\"classic\" data-quality-profile=\"showcase\"><title id=\"afx-offset-archify-diagram-title\">Flujo de producción · Impresión offset (empaques)</title><desc id=\"afx-offset-archify-diagram-description\">A workflow diagram generated by Archify.</desc><!-- Definitions --><defs><marker id=\"afx-offset-arrowhead\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-default\" /></marker><marker id=\"afx-offset-arrowhead-emphasis\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-emphasis\" /></marker><marker id=\"afx-offset-arrowhead-security\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-security\" /></marker><marker id=\"afx-offset-arrowhead-dashed\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-dashed\" /></marker><pattern id=\"afx-offset-grid\" width=\"40\" height=\"40\" patternUnits=\"userSpaceOnUse\"><path d=\"M 40 0 L 0 0 0 40\" class=\"c-grid\" stroke-width=\"0.5\"/></pattern></defs><!-- Background Grid --><rect width=\"100%\" height=\"100%\" fill=\"url(#afx-offset-grid)\" /><!-- Swimlanes --><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-0\" x=\"40\" y=\"52\" width=\"1132\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"74\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">01 / Diseño y cliente</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-1\" x=\"40\" y=\"178\" width=\"1132\" height=\"114\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"200\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">02 / Preprensa y normalización</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-2\" x=\"40\" y=\"312\" width=\"1132\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"334\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">03 / Sala de máquinas</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-3\" x=\"40\" y=\"438\" width=\"1132\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"exception-lane\" data-composition-frame-id=\"lane-3-exception\" x=\"46\" y=\"444\" width=\"1120\" height=\"94\" rx=\"8\" class=\"c-security-group\" stroke-width=\"1\"/><text x=\"54\" y=\"460\" class=\"t-security\" font-size=\"10\" font-weight=\"600\">EX / No conformidad</text><!-- Phase headers --><line x1=\"68\" y1=\"35\" x2=\"377.2\" y2=\"35\" class=\"a-default\" stroke-width=\"1.1\"/><rect x=\"68\" y=\"27\" width=\"309.2\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"222.6\" y=\"39\" class=\"t-muted\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Entrada del arte</text><line x1=\"405.19999999999993\" y1=\"35\" x2=\"685.5999999999999\" y2=\"35\" class=\"a-emphasis\" stroke-width=\"1.1\"/><rect x=\"405.19999999999993\" y=\"27\" width=\"280.40000000000003\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"545.4\" y=\"39\" class=\"t-backend\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Normalización PDF/X</text><line x1=\"806\" y1=\"35\" x2=\"1144\" y2=\"35\" class=\"a-dashed\" stroke-width=\"1.1\"/><rect x=\"806\" y=\"27\" width=\"338\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"975\" y=\"39\" class=\"t-messagebus\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Planchas y tirada</text><!-- Workflow groups --><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"group\" data-composition-frame-id=\"group-0\" x=\"381.2\" y=\"216\" width=\"328.40000000000003\" height=\"72\" rx=\"9\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"391.2\" y=\"214\" class=\"t-backend\" font-size=\"7\" font-weight=\"600\">Control de preprensa</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"group\" data-composition-frame-id=\"group-1\" x=\"381.2\" y=\"476\" width=\"328.40000000000003\" height=\"64\" rx=\"9\" class=\"c-security-group\" stroke-width=\"1\"/><text x=\"391.2\" y=\"474\" class=\"t-security\" font-size=\"7\" font-weight=\"600\">Devolución al diseño</text><!-- Edge paths --><path data-edge-from=\"arte\" data-edge-to=\"preflight\" data-edge-label=\"PDF 1:1 con sangrado\" data-edge-key=\"0\" data-edge-id=\"e-arte-preflight\" data-composition-points=\"331.2,146;331.2,308;451.2,308;451.2,287\" d=\"M 331.2 146 L 331.2 308 L 451.2 308 L 451.2 287\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-offset-arrowhead-emphasis)\"/><path data-edge-from=\"brief\" data-edge-to=\"arte\" data-edge-label=\"especificación\" data-edge-key=\"1\" data-edge-id=\"e-brief-arte\" data-composition-points=\"180,120;265.2,120\" d=\"M 180 120 L 265.2 120\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-offset-arrowhead)\"/><path data-edge-from=\"ctp\" data-edge-to=\"tirada\" data-edge-label=\"planchas de aluminio\" data-edge-key=\"2\" data-edge-id=\"e-ctp-tirada\" data-composition-points=\"918,380;1032,380\" d=\"M 918 380 L 1032 380\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-offset-arrowhead-emphasis)\"/><path data-edge-from=\"pdfx\" data-edge-to=\"ctp\" data-edge-label=\"PDF al RIP\" data-edge-key=\"3\" data-edge-id=\"e-pdfx-ctp\" data-composition-points=\"639.6,279;639.6,380;786,380\" d=\"M 639.6 279 L 639.6 380 L 786 380\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-offset-arrowhead-emphasis)\"/><path data-edge-from=\"pdfx\" data-edge-to=\"prueba\" data-edge-label=\"validar color\" data-edge-key=\"4\" data-edge-id=\"e-pdfx-prueba\" data-composition-points=\"705.6,253;786,253\" d=\"M 705.6 253 L 786 253\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-offset-arrowhead)\"/><path data-edge-from=\"preflight\" data-edge-to=\"pdfx\" data-edge-label=\"conforme\" data-edge-key=\"5\" data-edge-id=\"e-preflight-pdfx\" data-composition-points=\"517.2,253;573.6,253\" d=\"M 517.2 253 L 573.6 253\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-offset-arrowhead-emphasis)\"/><path data-edge-from=\"preflight\" data-edge-to=\"rechazo\" data-edge-label=\"falla la norma\" data-edge-key=\"6\" data-edge-id=\"e-preflight-rechazo\" data-composition-points=\"385.2,260;20,260;20,506;385.2,506\" d=\"M 385.2 260 L 20 260 L 20 506 L 385.2 506\" class=\"a-security\" stroke-width=\"1.4\" marker-end=\"url(#afx-offset-arrowhead-security)\"/><path data-edge-from=\"prueba\" data-edge-to=\"ctp\" data-edge-label=\"prueba aprobada\" data-edge-key=\"7\" data-edge-id=\"e-prueba-ctp\" data-composition-points=\"852,279;852,302;770,302;770,380;786,380\" d=\"M 852 279 L 852 302 L 770 302 L 770 380 L 786 380\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-offset-arrowhead)\"/><path data-edge-from=\"rechazo\" data-edge-to=\"retorno\" data-edge-key=\"8\" data-edge-id=\"e-rechazo-retorno\" data-composition-points=\"517.2,506;573.6,506\" d=\"M 517.2 506 L 573.6 506\" class=\"a-dashed\" stroke-width=\"1.4\" marker-end=\"url(#afx-offset-arrowhead-dashed)\"/><path data-edge-from=\"retorno\" data-edge-to=\"arte\" data-edge-label=\"corregir y reenviar\" data-edge-key=\"9\" data-edge-id=\"e-retorno-arte\" data-composition-points=\"705.6,506;1184,506;1184,78;331.2,78;331.2,94\" d=\"M 705.6 506 L 1184 506 L 1184 78 L 331.2 78 L 331.2 94\" class=\"a-dashed\" stroke-width=\"1.4\" marker-end=\"url(#afx-offset-arrowhead-dashed)\"/><path data-edge-from=\"tirada\" data-edge-to=\"entrega\" data-edge-key=\"10\" data-edge-id=\"e-tirada-entrega\" data-composition-points=\"1098,354;1098,146\" d=\"M 1098 354 L 1098 146\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-offset-arrowhead)\"/><!-- Nodes --><g id=\"afx-offset-node-brief\" data-node-id=\"brief\" data-node-label=\"Brief y OT\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Brief y OT, formato y sustrato, Diseño y cliente › Entrada del arte\" aria-pressed=\"false\" data-node-kind=\"external\" data-node-sublabel=\"formato y sustrato\" data-node-context=\"Diseño y cliente › Entrada del arte\"><title>Brief y OT · formato y sustrato · Diseño y cliente › Entrada del arte</title><rect x=\"48\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"48\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-external\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"external\" class=\"semantic-sigil s-external\" transform=\"translate(54 100) scale(0.6875)\"><rect x=\"2.5\" y=\"5\" width=\"8.5\" height=\"8\" rx=\"1.5\"/><path d=\"M8 2.5h5.5V8M13.5 2.5 7.5 8.5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"114\" y=\"115\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Brief y OT</text><text data-detail=\"context\" x=\"114\" y=\"132\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">formato y sustrato</text></g><g id=\"afx-offset-node-arte\" data-node-id=\"arte\" data-node-label=\"Arte final\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Arte final, CMYK · 300 ppi a 1:1, Diseño y cliente › Entrada del arte\" aria-pressed=\"false\" data-node-kind=\"frontend\" data-node-sublabel=\"CMYK · 300 ppi a 1:1\" data-node-context=\"Diseño y cliente › Entrada del arte\"><title>Arte final · CMYK · 300 ppi a 1:1 · Diseño y cliente › Entrada del arte</title><rect x=\"265.2\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"265.2\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-frontend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"frontend\" class=\"semantic-sigil s-frontend\" transform=\"translate(271.2 100) scale(0.6875)\"><rect x=\"2\" y=\"3\" width=\"12\" height=\"10\" rx=\"2\"/><path d=\"M2 6.5h12\"/><circle cx=\"4.1\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/><circle cx=\"6.3\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"331.2\" y=\"115\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Arte final</text><text data-detail=\"context\" x=\"331.2\" y=\"132\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">CMYK · 300 ppi a 1:1</text></g><g id=\"afx-offset-node-entrega\" data-node-id=\"entrega\" data-node-label=\"Entrega al cliente\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Entrega al cliente, pliegos y ficha técnica, Diseño y cliente › Planchas y tirada\" aria-pressed=\"false\" data-node-kind=\"external\" data-node-sublabel=\"pliegos y ficha técnica\" data-node-context=\"Diseño y cliente › Planchas y tirada\"><title>Entrega al cliente · pliegos y ficha técnica · Diseño y cliente › Planchas y tirada</title><rect x=\"1032\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"1032\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-external\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"external\" class=\"semantic-sigil s-external\" transform=\"translate(1038 100) scale(0.6875)\"><rect x=\"2.5\" y=\"5\" width=\"8.5\" height=\"8\" rx=\"1.5\"/><path d=\"M8 2.5h5.5V8M13.5 2.5 7.5 8.5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"1098\" y=\"115\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Entrega al cliente</text><text data-detail=\"context\" x=\"1098\" y=\"132\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">pliegos y ficha técnica</text></g><g id=\"afx-offset-node-preflight\" data-node-id=\"preflight\" data-node-label=\"Preflight QC\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Preflight QC, cajas · sangrado · negro, Preprensa y normalización › Control de preprensa › Normalización PDF/X\" aria-pressed=\"false\" data-node-kind=\"backend\" data-node-sublabel=\"cajas · sangrado · negro\" data-node-tag=\"TAC ≤ 330 %\" data-node-context=\"Preprensa y normalización › Control de preprensa › Normalización PDF/X\"><title>Preflight QC · cajas · sangrado · negro · Preprensa y normalización › Control de preprensa › Normalización PDF/X · TAC ≤ 330 %</title><rect x=\"385.2\" y=\"219\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-mask\"/><rect x=\"385.2\" y=\"219\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-backend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"backend\" class=\"semantic-sigil s-backend\" transform=\"translate(391.2 225) scale(0.6875)\"><path d=\"M6 3 3 8l3 5M10 3l3 5-3 5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"451.2\" y=\"240\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Preflight QC</text><text data-detail=\"context\" x=\"451.2\" y=\"257\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">cajas · sangrado · negro</text><text data-detail=\"fine\" x=\"451.2\" y=\"275\" class=\"t-backend\" font-size=\"7\" text-anchor=\"middle\">TAC ≤ 330 %</text></g><g id=\"afx-offset-node-pdfx\" data-node-id=\"pdfx\" data-node-label=\"PDF/X-1a:2001\" tabindex=\"0\" role=\"button\" aria-label=\"Focus PDF/X-1a:2001, OutputIntent FOGRA39, Preprensa y normalización › Control de preprensa › Normalización PDF/X\" aria-pressed=\"false\" data-node-kind=\"backend\" data-node-sublabel=\"OutputIntent FOGRA39\" data-node-context=\"Preprensa y normalización › Control de preprensa › Normalización PDF/X\"><title>PDF/X-1a:2001 · OutputIntent FOGRA39 · Preprensa y normalización › Control de preprensa › Normalización PDF/X</title><rect x=\"573.6\" y=\"227\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"573.6\" y=\"227\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-backend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"backend\" class=\"semantic-sigil s-backend\" transform=\"translate(579.6 233) scale(0.6875)\"><path d=\"M6 3 3 8l3 5M10 3l3 5-3 5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"639.6\" y=\"248\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">PDF/X-1a:2001</text><text data-detail=\"context\" x=\"639.6\" y=\"265\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">OutputIntent FOGRA39</text></g><g id=\"afx-offset-node-prueba\" data-node-id=\"prueba\" data-node-label=\"Prueba de contrato\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Prueba de contrato, certificada a D50, Preprensa y normalización › Planchas y tirada\" aria-pressed=\"false\" data-node-kind=\"database\" data-node-sublabel=\"certificada a D50\" data-node-context=\"Preprensa y normalización › Planchas y tirada\"><title>Prueba de contrato · certificada a D50 · Preprensa y normalización › Planchas y tirada</title><rect x=\"786\" y=\"227\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"786\" y=\"227\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-database\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"database\" class=\"semantic-sigil s-database\" transform=\"translate(792 233) scale(0.6875)\"><ellipse cx=\"8\" cy=\"4\" rx=\"5\" ry=\"2\"/><path d=\"M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"852\" y=\"248\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Prueba de contrato</text><text data-detail=\"context\" x=\"852\" y=\"265\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">certificada a D50</text></g><g id=\"afx-offset-node-ctp\" data-node-id=\"ctp\" data-node-label=\"RIP y CTP\" tabindex=\"0\" role=\"button\" aria-label=\"Focus RIP y CTP, 175 lpi · 2540 dpi, Sala de máquinas › Planchas y tirada\" aria-pressed=\"false\" data-node-kind=\"backend\" data-node-sublabel=\"175 lpi · 2540 dpi\" data-node-tag=\"curva de linealización\" data-node-context=\"Sala de máquinas › Planchas y tirada\"><title>RIP y CTP · 175 lpi · 2540 dpi · Sala de máquinas › Planchas y tirada · curva de linealización</title><rect x=\"786\" y=\"346\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-mask\"/><rect x=\"786\" y=\"346\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-backend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"backend\" class=\"semantic-sigil s-backend\" transform=\"translate(792 352) scale(0.6875)\"><path d=\"M6 3 3 8l3 5M10 3l3 5-3 5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"852\" y=\"367\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">RIP y CTP</text><text data-detail=\"context\" x=\"852\" y=\"384\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">175 lpi · 2540 dpi</text><text data-detail=\"fine\" x=\"852\" y=\"402\" class=\"t-backend\" font-size=\"7\" text-anchor=\"middle\">curva de linealización</text></g><g id=\"afx-offset-node-tirada\" data-node-id=\"tirada\" data-node-label=\"Tirada y acabado\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Tirada y acabado, registro y densidad, Sala de máquinas › Planchas y tirada\" aria-pressed=\"false\" data-node-kind=\"messagebus\" data-node-sublabel=\"registro y densidad\" data-node-context=\"Sala de máquinas › Planchas y tirada\"><title>Tirada y acabado · registro y densidad · Sala de máquinas › Planchas y tirada</title><rect x=\"1032\" y=\"354\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"1032\" y=\"354\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-messagebus\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"messagebus\" class=\"semantic-sigil s-messagebus\" transform=\"translate(1038 360) scale(0.6875)\"><path d=\"M2.5 4.5h11M2.5 8h11M2.5 11.5h11\"/><circle cx=\"5\" cy=\"4.5\" r=\"1\" class=\"sigil-fill\"/><circle cx=\"10.5\" cy=\"8\" r=\"1\" class=\"sigil-fill\"/><circle cx=\"7\" cy=\"11.5\" r=\"1\" class=\"sigil-fill\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"1098\" y=\"375\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Tirada y acabado</text><text data-detail=\"context\" x=\"1098\" y=\"392\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">registro y densidad</text></g><g id=\"afx-offset-node-rechazo\" data-node-id=\"rechazo\" data-node-label=\"No conforme\" tabindex=\"0\" role=\"button\" aria-label=\"Focus No conforme, RGB · TAC alto · sin caja, No conformidad › Devolución al diseño › Normalización PDF/X\" aria-pressed=\"false\" data-node-kind=\"security\" data-node-sublabel=\"RGB · TAC alto · sin caja\" data-node-context=\"No conformidad › Devolución al diseño › Normalización PDF/X\"><title>No conforme · RGB · TAC alto · sin caja · No conformidad › Devolución al diseño › Normalización PDF/X</title><rect x=\"385.2\" y=\"480\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"385.2\" y=\"480\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-security\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"security\" class=\"semantic-sigil s-security\" transform=\"translate(391.2 486) scale(0.6875)\"><path d=\"M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z\"/><path d=\"m5.8 8 1.5 1.5 3-3\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"451.2\" y=\"501\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">No conforme</text><text data-detail=\"context\" x=\"451.2\" y=\"518\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">RGB · TAC alto · sin caja</text></g><g id=\"afx-offset-node-retorno\" data-node-id=\"retorno\" data-node-label=\"Informe de rechazo\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Informe de rechazo, hallazgos del preflight, No conformidad › Devolución al diseño › Normalización PDF/X\" aria-pressed=\"false\" data-node-kind=\"messagebus\" data-node-sublabel=\"hallazgos del preflight\" data-node-context=\"No conformidad › Devolución al diseño › Normalización PDF/X\"><title>Informe de rechazo · hallazgos del preflight · No conformidad › Devolución al diseño › Normalización PDF/X</title><rect x=\"573.6\" y=\"480\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"573.6\" y=\"480\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-messagebus\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"messagebus\" class=\"semantic-sigil s-messagebus\" transform=\"translate(579.6 486) scale(0.6875)\"><path d=\"M2.5 4.5h11M2.5 8h11M2.5 11.5h11\"/><circle cx=\"5\" cy=\"4.5\" r=\"1\" class=\"sigil-fill\"/><circle cx=\"10.5\" cy=\"8\" r=\"1\" class=\"sigil-fill\"/><circle cx=\"7\" cy=\"11.5\" r=\"1\" class=\"sigil-fill\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"639.6\" y=\"501\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Informe de rechazo</text><text data-detail=\"context\" x=\"639.6\" y=\"518\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">hallazgos del preflight</text></g><!-- Edge labels --><g data-detail=\"context\" data-edge-from=\"arte\" data-edge-to=\"preflight\" data-edge-label=\"PDF 1:1 con sangrado\" data-edge-key=\"0\" data-edge-id=\"e-arte-preflight\"><rect x=\"338.2\" y=\"288\" width=\"106\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"391.2\" y=\"298\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">PDF 1:1 con sangrado</text></g><g data-detail=\"context\" data-edge-from=\"brief\" data-edge-to=\"arte\" data-edge-label=\"especificación\" data-edge-key=\"1\" data-edge-id=\"e-brief-arte\"><rect x=\"184\" y=\"100\" width=\"77.2\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"222.6\" y=\"110\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">especificación</text></g><g data-detail=\"context\" data-edge-from=\"ctp\" data-edge-to=\"tirada\" data-edge-label=\"planchas de aluminio\" data-edge-key=\"2\" data-edge-id=\"e-ctp-tirada\"><rect x=\"922\" y=\"360\" width=\"106\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"975\" y=\"370\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">planchas de aluminio</text></g><g data-detail=\"context\" data-edge-from=\"pdfx\" data-edge-to=\"ctp\" data-edge-label=\"PDF al RIP\" data-edge-key=\"3\" data-edge-id=\"e-pdfx-ctp\"><rect x=\"683.8\" y=\"360\" width=\"58\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"712.8\" y=\"370\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">PDF al RIP</text></g><g data-detail=\"context\" data-edge-from=\"pdfx\" data-edge-to=\"prueba\" data-edge-label=\"validar color\" data-edge-key=\"4\" data-edge-id=\"e-pdfx-prueba\"><rect x=\"709.5999999999999\" y=\"233\" width=\"72.4\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"745.8\" y=\"243\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">validar color</text></g><g data-detail=\"context\" data-edge-from=\"preflight\" data-edge-to=\"pdfx\" data-edge-label=\"conforme\" data-edge-key=\"5\" data-edge-id=\"e-preflight-pdfx\"><rect x=\"521.2\" y=\"233\" width=\"48.4\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"545.4000000000001\" y=\"243\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">conforme</text></g><g data-detail=\"context\" data-edge-from=\"preflight\" data-edge-to=\"rechazo\" data-edge-label=\"falla la norma\" data-edge-key=\"6\" data-edge-id=\"e-preflight-rechazo\"><rect x=\"164\" y=\"240\" width=\"77.2\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"202.6\" y=\"250\" class=\"t-security\" font-size=\"8\" text-anchor=\"middle\">falla la norma</text></g><g data-detail=\"context\" data-edge-from=\"prueba\" data-edge-to=\"ctp\" data-edge-label=\"prueba aprobada\" data-edge-key=\"7\" data-edge-id=\"e-prueba-ctp\"><rect x=\"770\" y=\"282\" width=\"82\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"811\" y=\"292\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">prueba aprobada</text></g><g data-detail=\"context\" data-edge-from=\"retorno\" data-edge-to=\"arte\" data-edge-label=\"corregir y reenviar\" data-edge-key=\"9\" data-edge-id=\"e-retorno-arte\"><rect x=\"707\" y=\"58\" width=\"101.2\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"757.6\" y=\"68\" class=\"t-database\" font-size=\"8\" text-anchor=\"middle\">corregir y reenviar</text></g><!-- Legend --><g data-legend=\"\" data-legend-bridge=\"\"><text x=\"20\" y=\"568\" class=\"t-primary\" font-size=\"12\" font-weight=\"650\">Legend</text><g data-legend-semantic-kind=\"frontend\" data-legend-kind=\"frontend\" data-legend-label=\"Arte del diseñador\" data-legend-x=\"20\" data-legend-baseline=\"588\" data-legend-width=\"122\"><rect x=\"20\" y=\"580\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-frontend\" stroke-width=\"1\"/><text x=\"42\" y=\"588\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Arte del diseñador</text></g><g data-legend-semantic-kind=\"backend\" data-legend-kind=\"backend\" data-legend-label=\"Proceso de preprensa\" data-legend-x=\"149\" data-legend-baseline=\"588\" data-legend-width=\"130\"><rect x=\"149\" y=\"580\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-backend\" stroke-width=\"1\"/><text x=\"171\" y=\"588\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Proceso de preprensa</text></g><g data-legend-semantic-kind=\"security\" data-legend-kind=\"security\" data-legend-label=\"No conformidad\" data-legend-x=\"286\" data-legend-baseline=\"588\" data-legend-width=\"104\"><rect x=\"286\" y=\"580\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-security\" stroke-width=\"1\"/><text x=\"308\" y=\"588\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">No conformidad</text></g><g data-legend-semantic-kind=\"messagebus\" data-legend-kind=\"messagebus\" data-legend-label=\"Traspaso a producción\" data-legend-x=\"397\" data-legend-baseline=\"588\" data-legend-width=\"135\"><rect x=\"397\" y=\"580\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-messagebus\" stroke-width=\"1\"/><text x=\"419\" y=\"588\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Traspaso a producción</text></g><g data-legend-semantic-kind=\"database\" data-legend-kind=\"database\" data-legend-label=\"Prueba y control de color\" data-legend-x=\"539\" data-legend-baseline=\"588\" data-legend-width=\"152\"><rect x=\"539\" y=\"580\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-database\" stroke-width=\"1\"/><text x=\"561\" y=\"588\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Prueba y control de color</text></g><g data-legend-semantic-kind=\"external\" data-legend-kind=\"external\" data-legend-label=\"Cliente y entrega\" data-legend-x=\"698\" data-legend-baseline=\"588\" data-legend-width=\"117\"><rect x=\"698\" y=\"580\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-external\" stroke-width=\"1\"/><text x=\"720\" y=\"588\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Cliente y entrega</text></g></g></svg>"
+  },
+  textil: {
+    tab: "Textil",
+    title: "Flujo de producción · Personalización textil (estampados)",
+    sub: "Un solo preflight y cuatro rutas de taller. La tecnología no se elige al final: la fijan el tejido y el color de la prenda.",
+    notes: [["Lo que cambia con la tecnología", ["DTG, sublimación y serigrafía se entregan en CMYK o Pantone+ Solid Coated.", "DTF se entrega en sRGB IEC61966-2.1 y el RIP del taller lo convierte a CMYK más tinta blanca.", "La sublimación no tiene tinta blanca: el blanco del diseño es el color del tejido."]], ["Lo que devuelve un arte al diseño", ["Fondo blanco en lugar de canal alfa: se imprime como una planta de tinta blanca.", "Bordes difuminados o píxeles semitransparentes: dejan halo blanco sobre la prenda.", "Menos de 150 ppi a tamaño real — 1476 × 1771 px sobre el área base de 25 × 30 cm."]]],
+    svg: "<svg class=\"w-full h-auto\" viewBox=\"0 0 1240 534\" role=\"img\" lang=\"en\" aria-labelledby=\"afx-textil-archify-diagram-title afx-textil-archify-diagram-description\" data-preset=\"classic\" data-quality-profile=\"showcase\"><title id=\"afx-textil-archify-diagram-title\">Flujo de producción · Personalización textil</title><desc id=\"afx-textil-archify-diagram-description\">A workflow diagram generated by Archify.</desc><!-- Definitions --><defs><marker id=\"afx-textil-arrowhead\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-default\" /></marker><marker id=\"afx-textil-arrowhead-emphasis\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-emphasis\" /></marker><marker id=\"afx-textil-arrowhead-security\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-security\" /></marker><marker id=\"afx-textil-arrowhead-dashed\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-dashed\" /></marker><pattern id=\"afx-textil-grid\" width=\"40\" height=\"40\" patternUnits=\"userSpaceOnUse\"><path d=\"M 40 0 L 0 0 0 40\" class=\"c-grid\" stroke-width=\"0.5\"/></pattern></defs><!-- Background Grid --><rect width=\"100%\" height=\"100%\" fill=\"url(#afx-textil-grid)\" /><!-- Swimlanes --><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-0\" x=\"40\" y=\"52\" width=\"1014\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"74\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">01 / Pedido y arte final</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-1\" x=\"40\" y=\"178\" width=\"1014\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"200\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">02 / Preprensa textil</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-2\" x=\"40\" y=\"304\" width=\"1014\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"326\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">03 / Taller de estampado</text><!-- Phase headers --><line x1=\"78\" y1=\"35\" x2=\"532\" y2=\"35\" class=\"a-default\" stroke-width=\"1.1\"/><rect x=\"78\" y=\"27\" width=\"454\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"305\" y=\"39\" class=\"t-muted\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Entrada y preflight</text><line x1=\"600\" y1=\"35\" x2=\"1012\" y2=\"35\" class=\"a-dashed\" stroke-width=\"1.1\"/><rect x=\"600\" y=\"27\" width=\"412\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"806\" y=\"39\" class=\"t-messagebus\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Rutas de estampado</text><!-- Workflow groups --><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"group\" data-composition-frame-id=\"group-0\" x=\"406\" y=\"342\" width=\"640\" height=\"64\" rx=\"9\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"416\" y=\"340\" class=\"t-messagebus\" font-size=\"7\" font-weight=\"600\">Rutas alternativas · se elige una según el tejido y el color de la prenda</text><!-- Edge paths --><path data-edge-from=\"arte\" data-edge-to=\"qc\" data-edge-label=\"vector o PNG-32\" data-edge-key=\"0\" data-edge-id=\"t-arte-qc\" data-composition-points=\"366,146;366,168;486,168;486,212\" d=\"M 366 146 L 366 168 L 486 168 L 486 212\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-textil-arrowhead-emphasis)\"/><path data-edge-from=\"pedido\" data-edge-to=\"arte\" data-edge-label=\"ficha de prenda\" data-edge-key=\"1\" data-edge-id=\"t-pedido-arte\" data-composition-points=\"200,120;290,120\" d=\"M 200 120 L 290 120\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-textil-arrowhead)\"/><path data-edge-from=\"qc\" data-edge-to=\"arte\" data-edge-label=\"halo o RGB: corregir\" data-edge-key=\"2\" data-edge-id=\"t-qc-arte\" data-composition-points=\"486,280;486,300;366,300;366,146\" d=\"M 486 280 L 486 300 L 366 300 L 366 146\" class=\"a-security\" stroke-width=\"1.4\" marker-end=\"url(#afx-textil-arrowhead-security)\"/><path data-edge-from=\"qc\" data-edge-to=\"dtf\" data-edge-label=\"tejido mixto\" data-edge-key=\"3\" data-edge-id=\"t-qc-dtf\" data-composition-points=\"493,280;493,296;1066,296;1066,414;646,414;646,398\" d=\"M 493 280 L 493 296 L 1066 296 L 1066 414 L 646 414 L 646 398\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-textil-arrowhead)\"/><path data-edge-from=\"qc\" data-edge-to=\"dtg\" data-edge-label=\"algodón perchado\" data-edge-key=\"4\" data-edge-id=\"t-qc-dtg\" data-composition-points=\"486,280;486,296;1223.4,296;1223.4,414;486,414;486,398\" d=\"M 486 280 L 486 296 L 1223.4 296 L 1223.4 414 L 486 414 L 486 398\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-textil-arrowhead-emphasis)\"/><path data-edge-from=\"qc\" data-edge-to=\"seri\" data-edge-label=\"tiraje alto\" data-edge-key=\"5\" data-edge-id=\"t-qc-seri\" data-composition-points=\"570,246;966,246;966,346\" d=\"M 570 246 L 966 246 L 966 346\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-textil-arrowhead)\"/><path data-edge-from=\"qc\" data-edge-to=\"subl\" data-edge-label=\"poliéster ≥ 80 %\" data-edge-key=\"6\" data-edge-id=\"t-qc-subl\" data-composition-points=\"486,212;486,196;1066,196;1066,414;806,414;806,398\" d=\"M 486 212 L 486 196 L 1066 196 L 1066 414 L 806 414 L 806 398\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-textil-arrowhead)\"/><!-- Nodes --><g id=\"afx-textil-node-pedido\" data-node-id=\"pedido\" data-node-label=\"Pedido y prenda\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Pedido y prenda, tejido · color · talla, Pedido y arte final › Entrada y preflight\" aria-pressed=\"false\" data-node-kind=\"external\" data-node-sublabel=\"tejido · color · talla\" data-node-context=\"Pedido y arte final › Entrada y preflight\"><title>Pedido y prenda · tejido · color · talla · Pedido y arte final › Entrada y preflight</title><rect x=\"48\" y=\"94\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"48\" y=\"94\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-external\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"external\" class=\"semantic-sigil s-external\" transform=\"translate(54 100) scale(0.6875)\"><rect x=\"2.5\" y=\"5\" width=\"8.5\" height=\"8\" rx=\"1.5\"/><path d=\"M8 2.5h5.5V8M13.5 2.5 7.5 8.5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"124\" y=\"115\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Pedido y prenda</text><text data-detail=\"context\" x=\"124\" y=\"132\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">tejido · color · talla</text></g><g id=\"afx-textil-node-arte\" data-node-id=\"arte\" data-node-label=\"Arte final\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Arte final, 25 × 30 cm · fondo alfa, Pedido y arte final › Entrada y preflight\" aria-pressed=\"false\" data-node-kind=\"frontend\" data-node-sublabel=\"25 × 30 cm · fondo alfa\" data-node-context=\"Pedido y arte final › Entrada y preflight\"><title>Arte final · 25 × 30 cm · fondo alfa · Pedido y arte final › Entrada y preflight</title><rect x=\"290\" y=\"94\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"290\" y=\"94\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-frontend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"frontend\" class=\"semantic-sigil s-frontend\" transform=\"translate(296 100) scale(0.6875)\"><rect x=\"2\" y=\"3\" width=\"12\" height=\"10\" rx=\"2\"/><path d=\"M2 6.5h12\"/><circle cx=\"4.1\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/><circle cx=\"6.3\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"366\" y=\"115\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Arte final</text><text data-detail=\"context\" x=\"366\" y=\"132\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">25 × 30 cm · fondo alfa</text></g><g id=\"afx-textil-node-qc\" data-node-id=\"qc\" data-node-label=\"Preflight y ruta técnica\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Preflight y ruta técnica, alfa · ppi · Pantone, Preprensa textil › Entrada y preflight\" aria-pressed=\"false\" data-node-kind=\"backend\" data-node-sublabel=\"alfa · ppi · Pantone\" data-node-tag=\"150 ppi mínimo a 1:1\" data-node-context=\"Preprensa textil › Entrada y preflight\"><title>Preflight y ruta técnica · alfa · ppi · Pantone · Preprensa textil › Entrada y preflight · 150 ppi mínimo a 1:1</title><rect x=\"402\" y=\"212\" width=\"168\" height=\"68\" rx=\"6\" class=\"c-mask\"/><rect x=\"402\" y=\"212\" width=\"168\" height=\"68\" rx=\"6\" class=\"c-backend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"backend\" class=\"semantic-sigil s-backend\" transform=\"translate(408 218) scale(0.6875)\"><path d=\"M6 3 3 8l3 5M10 3l3 5-3 5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"486\" y=\"233\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Preflight y ruta técnica</text><text data-detail=\"context\" x=\"486\" y=\"250\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">alfa · ppi · Pantone</text><text data-detail=\"fine\" x=\"486\" y=\"268\" class=\"t-backend\" font-size=\"7\" text-anchor=\"middle\">150 ppi mínimo a 1:1</text></g><g id=\"afx-textil-node-dtg\" data-node-id=\"dtg\" data-node-label=\"DTG\" tabindex=\"0\" role=\"button\" aria-label=\"Focus DTG, pretratar · base TiO₂, Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Entrada y preflight\" aria-pressed=\"false\" data-node-kind=\"cloud\" data-node-sublabel=\"pretratar · base TiO₂\" data-node-context=\"Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Entrada y preflight\"><title>DTG · pretratar · base TiO₂ · Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Entrada y preflight</title><rect x=\"410\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"410\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-cloud\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"cloud\" class=\"semantic-sigil s-cloud\" transform=\"translate(416 352) scale(0.6875)\"><path d=\"M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"486\" y=\"367\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">DTG</text><text data-detail=\"context\" x=\"486\" y=\"384\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">pretratar · base TiO₂</text></g><g id=\"afx-textil-node-dtf\" data-node-id=\"dtf\" data-node-label=\"DTF\" tabindex=\"0\" role=\"button\" aria-label=\"Focus DTF, PET · polvo · plancha, Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado\" aria-pressed=\"false\" data-node-kind=\"cloud\" data-node-sublabel=\"PET · polvo · plancha\" data-node-context=\"Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado\"><title>DTF · PET · polvo · plancha · Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado</title><rect x=\"570\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"570\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-cloud\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"cloud\" class=\"semantic-sigil s-cloud\" transform=\"translate(576 352) scale(0.6875)\"><path d=\"M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"646\" y=\"367\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">DTF</text><text data-detail=\"context\" x=\"646\" y=\"384\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">PET · polvo · plancha</text></g><g id=\"afx-textil-node-subl\" data-node-id=\"subl\" data-node-label=\"Sublimación\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Sublimación, prensa térmica, Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado\" aria-pressed=\"false\" data-node-kind=\"cloud\" data-node-sublabel=\"prensa térmica\" data-node-context=\"Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado\"><title>Sublimación · prensa térmica · Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado</title><rect x=\"730\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"730\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-cloud\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"cloud\" class=\"semantic-sigil s-cloud\" transform=\"translate(736 352) scale(0.6875)\"><path d=\"M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"806\" y=\"367\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Sublimación</text><text data-detail=\"context\" x=\"806\" y=\"384\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">prensa térmica</text></g><g id=\"afx-textil-node-seri\" data-node-id=\"seri\" data-node-label=\"Serigrafía\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Serigrafía, una pantalla por tinta, Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado\" aria-pressed=\"false\" data-node-kind=\"cloud\" data-node-sublabel=\"una pantalla por tinta\" data-node-context=\"Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado\"><title>Serigrafía · una pantalla por tinta · Taller de estampado › Rutas alternativas · se elige una según el tejido y el color de la prenda › Rutas de estampado</title><rect x=\"890\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"890\" y=\"346\" width=\"152\" height=\"52\" rx=\"6\" class=\"c-cloud\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"cloud\" class=\"semantic-sigil s-cloud\" transform=\"translate(896 352) scale(0.6875)\"><path d=\"M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"966\" y=\"367\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Serigrafía</text><text data-detail=\"context\" x=\"966\" y=\"384\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">una pantalla por tinta</text></g><!-- Edge labels --><g data-detail=\"context\" data-edge-from=\"arte\" data-edge-to=\"qc\" data-edge-label=\"vector o PNG-32\" data-edge-key=\"0\" data-edge-id=\"t-arte-qc\"><rect x=\"385\" y=\"148\" width=\"82\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"426\" y=\"158\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">vector o PNG-32</text></g><g data-detail=\"context\" data-edge-from=\"pedido\" data-edge-to=\"arte\" data-edge-label=\"ficha de prenda\" data-edge-key=\"1\" data-edge-id=\"t-pedido-arte\"><rect x=\"204\" y=\"100\" width=\"82\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"245\" y=\"110\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">ficha de prenda</text></g><g data-detail=\"context\" data-edge-from=\"qc\" data-edge-to=\"arte\" data-edge-label=\"halo o RGB: corregir\" data-edge-key=\"2\" data-edge-id=\"t-qc-arte\"><rect x=\"373\" y=\"280\" width=\"106\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"426\" y=\"290\" class=\"t-security\" font-size=\"8\" text-anchor=\"middle\">halo o RGB: corregir</text></g><g data-detail=\"context\" data-edge-from=\"qc\" data-edge-to=\"dtf\" data-edge-label=\"tejido mixto\" data-edge-key=\"3\" data-edge-id=\"t-qc-dtf\"><rect x=\"745.7\" y=\"276\" width=\"67.6\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"779.5\" y=\"286\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">tejido mixto</text></g><g data-detail=\"context\" data-edge-from=\"qc\" data-edge-to=\"dtg\" data-edge-label=\"algodón perchado\" data-edge-key=\"4\" data-edge-id=\"t-qc-dtg\"><rect x=\"811.3000000000001\" y=\"276\" width=\"86.8\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"854.7\" y=\"286\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">algodón perchado</text></g><g data-detail=\"context\" data-edge-from=\"qc\" data-edge-to=\"seri\" data-edge-label=\"tiraje alto\" data-edge-key=\"5\" data-edge-id=\"t-qc-seri\"><rect x=\"736.6\" y=\"226\" width=\"62.8\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"768\" y=\"236\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">tiraje alto</text></g><g data-detail=\"context\" data-edge-from=\"qc\" data-edge-to=\"subl\" data-edge-label=\"poliéster ≥ 80 %\" data-edge-key=\"6\" data-edge-id=\"t-qc-subl\"><rect x=\"732.6\" y=\"176\" width=\"86.8\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"776\" y=\"186\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">poliéster ≥ 80 %</text></g><!-- Legend --><g data-legend=\"\" data-legend-bridge=\"\"><text x=\"20\" y=\"434\" class=\"t-primary\" font-size=\"12\" font-weight=\"650\">Legend</text><g data-legend-semantic-kind=\"frontend\" data-legend-kind=\"frontend\" data-legend-label=\"Arte del diseñador\" data-legend-x=\"20\" data-legend-baseline=\"454\" data-legend-width=\"122\"><rect x=\"20\" y=\"446\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-frontend\" stroke-width=\"1\"/><text x=\"42\" y=\"454\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Arte del diseñador</text></g><g data-legend-semantic-kind=\"backend\" data-legend-kind=\"backend\" data-legend-label=\"Preprensa textil\" data-legend-x=\"149\" data-legend-baseline=\"454\" data-legend-width=\"113\"><rect x=\"149\" y=\"446\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-backend\" stroke-width=\"1\"/><text x=\"171\" y=\"454\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Preprensa textil</text></g><g data-legend-semantic-kind=\"cloud\" data-legend-kind=\"cloud\" data-legend-label=\"Tecnología de estampado\" data-legend-x=\"269\" data-legend-baseline=\"454\" data-legend-width=\"143\"><rect x=\"269\" y=\"446\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-cloud\" stroke-width=\"1\"/><text x=\"291\" y=\"454\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Tecnología de estampado</text></g><g data-legend-semantic-kind=\"external\" data-legend-kind=\"external\" data-legend-label=\"Pedido del cliente\" data-legend-x=\"419\" data-legend-baseline=\"454\" data-legend-width=\"122\"><rect x=\"419\" y=\"446\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-external\" stroke-width=\"1\"/><text x=\"441\" y=\"454\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Pedido del cliente</text></g></g></svg>"
+  },
+  granformato: {
+    tab: "Gigantografía",
+    title: "Flujo de producción · Gigantografía (gran formato)",
+    sub: "El emplazamiento manda: la distancia de visión y el sustrato fijan la resolución exigida antes de que se abra el archivo.",
+    notes: [["La distancia de visión fija la resolución", ["0,25–0,50 m: 150–305 ppp efectivos · vinilos de mostrador, folletos y etiquetas.", "1,00–1,20 m: 64–76 ppp · mupis, marquesinas y vinilos de escaparate.", "10–16 m o más: 5–8 ppp · vallas de carretera, monopostes y lona mesh en andamios."]], ["Lo que se decide antes de diseñar", ["Escala de trabajo: a 1:10 el documento va a 300 ppp y a tamaño real queda en 30 ppp.", "La lona mesh pierde saturación y detalle fino: tipografía grande y alto contraste.", "Las vainas de 7 cm se doblan hacia atrás: ningún elemento clave puede caer en ese borde."]]],
+    svg: "<svg class=\"w-full h-auto\" viewBox=\"0 0 1230 786\" role=\"img\" lang=\"en\" aria-labelledby=\"afx-granformato-archify-diagram-title afx-granformato-archify-diagram-description\" data-preset=\"classic\" data-quality-profile=\"showcase\"><title id=\"afx-granformato-archify-diagram-title\">Flujo de producción · Gigantografía (gran formato)</title><desc id=\"afx-granformato-archify-diagram-description\">A workflow diagram generated by Archify.</desc><!-- Definitions --><defs><marker id=\"afx-granformato-arrowhead\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-default\" /></marker><marker id=\"afx-granformato-arrowhead-emphasis\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-emphasis\" /></marker><marker id=\"afx-granformato-arrowhead-security\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-security\" /></marker><marker id=\"afx-granformato-arrowhead-dashed\" markerWidth=\"10\" markerHeight=\"7\" refX=\"9\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" class=\"m-dashed\" /></marker><pattern id=\"afx-granformato-grid\" width=\"40\" height=\"40\" patternUnits=\"userSpaceOnUse\"><path d=\"M 40 0 L 0 0 0 40\" class=\"c-grid\" stroke-width=\"0.5\"/></pattern></defs><!-- Background Grid --><rect width=\"100%\" height=\"100%\" fill=\"url(#afx-granformato-grid)\" /><!-- Swimlanes --><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-0\" x=\"40\" y=\"52\" width=\"1093\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"74\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">01 / Proyecto y emplazamiento</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-1\" x=\"40\" y=\"178\" width=\"1093\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"200\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">02 / Arte y preprensa</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-2\" x=\"40\" y=\"304\" width=\"1093\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"326\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">03 / Impresión digital</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-3\" x=\"40\" y=\"430\" width=\"1093\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"452\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">04 / Confección e instalación</text><rect data-graph-role=\"structural-frame\" data-composition-frame-kind=\"lane\" data-composition-frame-id=\"lane-4\" x=\"40\" y=\"556\" width=\"1093\" height=\"106\" rx=\"10\" class=\"c-lane\" stroke-width=\"1\"/><text x=\"54\" y=\"578\" class=\"t-dim\" font-size=\"10\" font-weight=\"600\">05 / Soporte digital · DOOH</text><!-- Phase headers --><line x1=\"68\" y1=\"35\" x2=\"401.2\" y2=\"35\" class=\"a-default\" stroke-width=\"1.1\"/><rect x=\"68\" y=\"27\" width=\"333.2\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"234.6\" y=\"39\" class=\"t-muted\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Emplazamiento</text><line x1=\"429.20000000000005\" y1=\"35\" x2=\"772\" y2=\"35\" class=\"a-emphasis\" stroke-width=\"1.1\"/><rect x=\"429.20000000000005\" y=\"27\" width=\"342.8\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"600.6\" y=\"39\" class=\"t-backend\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Arte a escala</text><line x1=\"800\" y1=\"35\" x2=\"1104.4\" y2=\"35\" class=\"a-dashed\" stroke-width=\"1.1\"/><rect x=\"800\" y=\"27\" width=\"304.4000000000001\" height=\"16\" rx=\"4\" class=\"c-mask\"/><text x=\"952.2\" y=\"39\" class=\"t-messagebus\" font-size=\"8\" font-weight=\"600\" text-anchor=\"middle\">Salida y montaje</text><!-- Workflow groups --><!-- Edge paths --><path data-edge-from=\"arte\" data-edge-to=\"preflight\" data-edge-label=\"CMYK FOGRA39\" data-edge-key=\"0\" data-edge-id=\"g-arte-preflight\" data-composition-points=\"541.2,239;660,239\" d=\"M 541.2 239 L 660 239\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-granformato-arrowhead-emphasis)\"/><path data-edge-from=\"brief\" data-edge-to=\"sustrato\" data-edge-label=\"distancia y montaje\" data-edge-key=\"1\" data-edge-id=\"g-brief-sustrato\" data-composition-points=\"180,120;289.2,120\" d=\"M 180 120 L 289.2 120\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-granformato-arrowhead)\"/><path data-edge-from=\"doohart\" data-edge-to=\"pantalla\" data-edge-label=\"sin impresión física\" data-edge-key=\"2\" data-edge-id=\"g-dooh-pantalla\" data-composition-points=\"541.2,624;780,624\" d=\"M 541.2 624 L 780 624\" class=\"a-dashed\" stroke-width=\"1.4\" marker-end=\"url(#afx-granformato-arrowhead-dashed)\"/><path data-edge-from=\"plotter\" data-edge-to=\"montaje\" data-edge-label=\"corte y soldadura\" data-edge-key=\"3\" data-edge-id=\"g-plotter-montaje\" data-composition-points=\"1124.4,372;1212,372;1212,498;1124.4,498\" d=\"M 1124.4 372 L 1212 372 L 1212 498 L 1124.4 498\" class=\"a-default\" stroke-width=\"1.4\" marker-end=\"url(#afx-granformato-arrowhead)\"/><path data-edge-from=\"preflight\" data-edge-to=\"arte\" data-edge-label=\"efectiva insuficiente\" data-edge-key=\"4\" data-edge-id=\"g-preflight-arte\" data-composition-points=\"726,280;726,296;475.2,296;475.2,280\" d=\"M 726 280 L 726 296 L 475.2 296 L 475.2 280\" class=\"a-security\" stroke-width=\"1.4\" marker-end=\"url(#afx-granformato-arrowhead-security)\"/><path data-edge-from=\"preflight\" data-edge-to=\"rip\" data-edge-label=\"PDF/X-1a o TIFF\" data-edge-key=\"5\" data-edge-id=\"g-preflight-rip\" data-composition-points=\"726,280;726,426;846,426;846,398\" d=\"M 726 280 L 726 426 L 846 426 L 846 398\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-granformato-arrowhead-emphasis)\"/><path data-edge-from=\"rip\" data-edge-to=\"plotter\" data-edge-label=\"linealización\" data-edge-key=\"6\" data-edge-id=\"g-rip-plotter\" data-composition-points=\"912,372;992.4000000000001,372\" d=\"M 912 372 L 992.4000000000001 372\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-granformato-arrowhead-emphasis)\"/><path data-edge-from=\"sustrato\" data-edge-to=\"arte\" data-edge-label=\"resolución exigida\" data-edge-key=\"7\" data-edge-id=\"g-sustrato-arte\" data-composition-points=\"355.2,146;355.2,168;475.2,168;475.2,212\" d=\"M 355.2 146 L 355.2 168 L 475.2 168 L 475.2 212\" class=\"a-emphasis\" stroke-width=\"1.8\" marker-end=\"url(#afx-granformato-arrowhead-emphasis)\"/><path data-edge-from=\"sustrato\" data-edge-to=\"doohart\" data-edge-label=\"soporte digital\" data-edge-key=\"8\" data-edge-id=\"g-sustrato-dooh\" data-composition-points=\"355.2,146;355.2,357;475.2,357;475.2,598\" d=\"M 355.2 146 L 355.2 357 L 475.2 357 L 475.2 598\" class=\"a-dashed\" stroke-width=\"1.4\" marker-end=\"url(#afx-granformato-arrowhead-dashed)\"/><!-- Nodes --><g id=\"afx-granformato-node-brief\" data-node-id=\"brief\" data-node-label=\"Emplazamiento\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Emplazamiento, distancia de visión, Proyecto y emplazamiento › Emplazamiento\" aria-pressed=\"false\" data-node-kind=\"external\" data-node-sublabel=\"distancia de visión\" data-node-context=\"Proyecto y emplazamiento › Emplazamiento\"><title>Emplazamiento · distancia de visión · Proyecto y emplazamiento › Emplazamiento</title><rect x=\"48\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"48\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-external\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"external\" class=\"semantic-sigil s-external\" transform=\"translate(54 100) scale(0.6875)\"><rect x=\"2.5\" y=\"5\" width=\"8.5\" height=\"8\" rx=\"1.5\"/><path d=\"M8 2.5h5.5V8M13.5 2.5 7.5 8.5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"114\" y=\"115\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Emplazamiento</text><text data-detail=\"context\" x=\"114\" y=\"132\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">distancia de visión</text></g><g id=\"afx-granformato-node-sustrato\" data-node-id=\"sustrato\" data-node-label=\"Sustrato y uso\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Sustrato y uso, lona · vinilo · rígido, Proyecto y emplazamiento › Emplazamiento\" aria-pressed=\"false\" data-node-kind=\"backend\" data-node-sublabel=\"lona · vinilo · rígido\" data-node-context=\"Proyecto y emplazamiento › Emplazamiento\"><title>Sustrato y uso · lona · vinilo · rígido · Proyecto y emplazamiento › Emplazamiento</title><rect x=\"289.2\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"289.2\" y=\"94\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-backend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"backend\" class=\"semantic-sigil s-backend\" transform=\"translate(295.2 100) scale(0.6875)\"><path d=\"M6 3 3 8l3 5M10 3l3 5-3 5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"355.2\" y=\"115\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Sustrato y uso</text><text data-detail=\"context\" x=\"355.2\" y=\"132\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">lona · vinilo · rígido</text></g><g id=\"afx-granformato-node-arte\" data-node-id=\"arte\" data-node-label=\"Arte a escala\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Arte a escala, 1:1 a 72–150 ppp, Arte y preprensa › Arte a escala\" aria-pressed=\"false\" data-node-kind=\"frontend\" data-node-sublabel=\"1:1 a 72–150 ppp\" data-node-tag=\"1:10 a 300 ppp\" data-node-context=\"Arte y preprensa › Arte a escala\"><title>Arte a escala · 1:1 a 72–150 ppp · Arte y preprensa › Arte a escala · 1:10 a 300 ppp</title><rect x=\"409.2\" y=\"212\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-mask\"/><rect x=\"409.2\" y=\"212\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-frontend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"frontend\" class=\"semantic-sigil s-frontend\" transform=\"translate(415.2 218) scale(0.6875)\"><rect x=\"2\" y=\"3\" width=\"12\" height=\"10\" rx=\"2\"/><path d=\"M2 6.5h12\"/><circle cx=\"4.1\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/><circle cx=\"6.3\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"475.2\" y=\"233\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Arte a escala</text><text data-detail=\"context\" x=\"475.2\" y=\"250\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">1:1 a 72–150 ppp</text><text data-detail=\"fine\" x=\"475.2\" y=\"268\" class=\"t-frontend\" font-size=\"7\" text-anchor=\"middle\">1:10 a 300 ppp</text></g><g id=\"afx-granformato-node-preflight\" data-node-id=\"preflight\" data-node-label=\"Preflight\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Preflight, sangrado 3–5 mm, Arte y preprensa › Arte a escala\" aria-pressed=\"false\" data-node-kind=\"backend\" data-node-sublabel=\"sangrado 3–5 mm\" data-node-tag=\"TAC ≤ 320 %\" data-node-context=\"Arte y preprensa › Arte a escala\"><title>Preflight · sangrado 3–5 mm · Arte y preprensa › Arte a escala · TAC ≤ 320 %</title><rect x=\"660\" y=\"212\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-mask\"/><rect x=\"660\" y=\"212\" width=\"132\" height=\"68\" rx=\"6\" class=\"c-backend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"backend\" class=\"semantic-sigil s-backend\" transform=\"translate(666 218) scale(0.6875)\"><path d=\"M6 3 3 8l3 5M10 3l3 5-3 5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"726\" y=\"233\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Preflight</text><text data-detail=\"context\" x=\"726\" y=\"250\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">sangrado 3–5 mm</text><text data-detail=\"fine\" x=\"726\" y=\"268\" class=\"t-backend\" font-size=\"7\" text-anchor=\"middle\">TAC ≤ 320 %</text></g><g id=\"afx-granformato-node-rip\" data-node-id=\"rip\" data-node-label=\"RIP de gran formato\" tabindex=\"0\" role=\"button\" aria-label=\"Focus RIP de gran formato, perfil del sustrato, Impresión digital › Salida y montaje\" aria-pressed=\"false\" data-node-kind=\"backend\" data-node-sublabel=\"perfil del sustrato\" data-node-context=\"Impresión digital › Salida y montaje\"><title>RIP de gran formato · perfil del sustrato · Impresión digital › Salida y montaje</title><rect x=\"780\" y=\"346\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"780\" y=\"346\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-backend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"backend\" class=\"semantic-sigil s-backend\" transform=\"translate(786 352) scale(0.6875)\"><path d=\"M6 3 3 8l3 5M10 3l3 5-3 5\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"846\" y=\"367\" class=\"t-primary\" font-size=\"10.8\" font-weight=\"600\" text-anchor=\"middle\">RIP de gran formato</text><text data-detail=\"context\" x=\"846\" y=\"384\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">perfil del sustrato</text></g><g id=\"afx-granformato-node-plotter\" data-node-id=\"plotter\" data-node-label=\"Impresión\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Impresión, ecosolvente · látex · UV, Impresión digital › Salida y montaje\" aria-pressed=\"false\" data-node-kind=\"cloud\" data-node-sublabel=\"ecosolvente · látex · UV\" data-node-context=\"Impresión digital › Salida y montaje\"><title>Impresión · ecosolvente · látex · UV · Impresión digital › Salida y montaje</title><rect x=\"992.4000000000001\" y=\"346\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"992.4000000000001\" y=\"346\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-cloud\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"cloud\" class=\"semantic-sigil s-cloud\" transform=\"translate(998.4000000000001 352) scale(0.6875)\"><path d=\"M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"1058.4\" y=\"367\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Impresión</text><text data-detail=\"context\" x=\"1058.4\" y=\"384\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">ecosolvente · látex · UV</text></g><g id=\"afx-granformato-node-montaje\" data-node-id=\"montaje\" data-node-label=\"Confección\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Confección, vainas de 7 cm · ojales, Confección e instalación › Salida y montaje\" aria-pressed=\"false\" data-node-kind=\"messagebus\" data-node-sublabel=\"vainas de 7 cm · ojales\" data-node-context=\"Confección e instalación › Salida y montaje\"><title>Confección · vainas de 7 cm · ojales · Confección e instalación › Salida y montaje</title><rect x=\"992.4000000000001\" y=\"472\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"992.4000000000001\" y=\"472\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-messagebus\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"messagebus\" class=\"semantic-sigil s-messagebus\" transform=\"translate(998.4000000000001 478) scale(0.6875)\"><path d=\"M2.5 4.5h11M2.5 8h11M2.5 11.5h11\"/><circle cx=\"5\" cy=\"4.5\" r=\"1\" class=\"sigil-fill\"/><circle cx=\"10.5\" cy=\"8\" r=\"1\" class=\"sigil-fill\"/><circle cx=\"7\" cy=\"11.5\" r=\"1\" class=\"sigil-fill\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"1058.4\" y=\"493\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Confección</text><text data-detail=\"context\" x=\"1058.4\" y=\"510\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">vainas de 7 cm · ojales</text></g><g id=\"afx-granformato-node-doohart\" data-node-id=\"doohart\" data-node-label=\"Arte DOOH\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Arte DOOH, RGB en píxeles, Soporte digital · DOOH › Arte a escala\" aria-pressed=\"false\" data-node-kind=\"frontend\" data-node-sublabel=\"RGB en píxeles\" data-node-context=\"Soporte digital · DOOH › Arte a escala\"><title>Arte DOOH · RGB en píxeles · Soporte digital · DOOH › Arte a escala</title><rect x=\"409.2\" y=\"598\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"409.2\" y=\"598\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-frontend\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"frontend\" class=\"semantic-sigil s-frontend\" transform=\"translate(415.2 604) scale(0.6875)\"><rect x=\"2\" y=\"3\" width=\"12\" height=\"10\" rx=\"2\"/><path d=\"M2 6.5h12\"/><circle cx=\"4.1\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/><circle cx=\"6.3\" cy=\"4.8\" r=\".7\" class=\"sigil-fill\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"475.2\" y=\"619\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Arte DOOH</text><text data-detail=\"context\" x=\"475.2\" y=\"636\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">RGB en píxeles</text></g><g id=\"afx-granformato-node-pantalla\" data-node-id=\"pantalla\" data-node-label=\"Pantalla LED\" tabindex=\"0\" role=\"button\" aria-label=\"Focus Pantalla LED, pitch 2,5 – 16 mm, Soporte digital · DOOH › Salida y montaje\" aria-pressed=\"false\" data-node-kind=\"cloud\" data-node-sublabel=\"pitch 2,5 – 16 mm\" data-node-context=\"Soporte digital · DOOH › Salida y montaje\"><title>Pantalla LED · pitch 2,5 – 16 mm · Soporte digital · DOOH › Salida y montaje</title><rect x=\"780\" y=\"598\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-mask\"/><rect x=\"780\" y=\"598\" width=\"132\" height=\"52\" rx=\"6\" class=\"c-cloud\" stroke-width=\"1.5\"/><g aria-hidden=\"true\" data-semantic-sigil=\"cloud\" class=\"semantic-sigil s-cloud\" transform=\"translate(786 604) scale(0.6875)\"><path d=\"M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z\"/></g><text data-node-label=\"\" data-detail-anchor=\"\" x=\"846\" y=\"619\" class=\"t-primary\" font-size=\"11\" font-weight=\"600\" text-anchor=\"middle\">Pantalla LED</text><text data-detail=\"context\" x=\"846\" y=\"636\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">pitch 2,5 – 16 mm</text></g><!-- Edge labels --><g data-detail=\"context\" data-edge-from=\"arte\" data-edge-to=\"preflight\" data-edge-label=\"CMYK FOGRA39\" data-edge-key=\"0\" data-edge-id=\"g-arte-preflight\"><rect x=\"566.8000000000001\" y=\"219\" width=\"67.6\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"600.6\" y=\"229\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">CMYK FOGRA39</text></g><g data-detail=\"context\" data-edge-from=\"brief\" data-edge-to=\"sustrato\" data-edge-label=\"distancia y montaje\" data-edge-key=\"1\" data-edge-id=\"g-brief-sustrato\"><rect x=\"184\" y=\"100\" width=\"101.2\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"234.6\" y=\"110\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">distancia y montaje</text></g><g data-detail=\"context\" data-edge-from=\"doohart\" data-edge-to=\"pantalla\" data-edge-label=\"sin impresión física\" data-edge-key=\"2\" data-edge-id=\"g-dooh-pantalla\"><rect x=\"607.6\" y=\"604\" width=\"106\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"660.6\" y=\"614\" class=\"t-database\" font-size=\"8\" text-anchor=\"middle\">sin impresión física</text></g><g data-detail=\"context\" data-edge-from=\"plotter\" data-edge-to=\"montaje\" data-edge-label=\"corte y soldadura\" data-edge-key=\"3\" data-edge-id=\"g-plotter-montaje\"><rect x=\"1122.4\" y=\"352\" width=\"91.6\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"1168.2\" y=\"362\" class=\"t-muted\" font-size=\"8\" text-anchor=\"middle\">corte y soldadura</text></g><g data-detail=\"context\" data-edge-from=\"preflight\" data-edge-to=\"arte\" data-edge-label=\"efectiva insuficiente\" data-edge-key=\"4\" data-edge-id=\"g-preflight-arte\"><rect x=\"545.2\" y=\"276\" width=\"110.8\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"600.6\" y=\"286\" class=\"t-security\" font-size=\"8\" text-anchor=\"middle\">efectiva insuficiente</text></g><g data-detail=\"context\" data-edge-from=\"preflight\" data-edge-to=\"rip\" data-edge-label=\"PDF/X-1a o TIFF\" data-edge-key=\"5\" data-edge-id=\"g-preflight-rip\"><rect x=\"745\" y=\"406\" width=\"82\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"786\" y=\"416\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">PDF/X-1a o TIFF</text></g><g data-detail=\"context\" data-edge-from=\"rip\" data-edge-to=\"plotter\" data-edge-label=\"linealización\" data-edge-key=\"6\" data-edge-id=\"g-rip-plotter\"><rect x=\"916\" y=\"352\" width=\"72.4\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"952.2\" y=\"362\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">linealización</text></g><g data-detail=\"context\" data-edge-from=\"sustrato\" data-edge-to=\"arte\" data-edge-label=\"resolución exigida\" data-edge-key=\"7\" data-edge-id=\"g-sustrato-arte\"><rect x=\"367\" y=\"148\" width=\"96.39999999999999\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"415.2\" y=\"158\" class=\"t-backend\" font-size=\"8\" text-anchor=\"middle\">resolución exigida</text></g><g data-detail=\"context\" data-edge-from=\"sustrato\" data-edge-to=\"doohart\" data-edge-label=\"soporte digital\" data-edge-key=\"8\" data-edge-id=\"g-sustrato-dooh\"><rect x=\"374.2\" y=\"337\" width=\"82\" height=\"14\" rx=\"3\" class=\"c-mask\"/><text x=\"415.2\" y=\"347\" class=\"t-database\" font-size=\"8\" text-anchor=\"middle\">soporte digital</text></g><!-- Legend --><g data-legend=\"\" data-legend-bridge=\"\"><text x=\"20\" y=\"686\" class=\"t-primary\" font-size=\"12\" font-weight=\"650\">Legend</text><g data-legend-semantic-kind=\"frontend\" data-legend-kind=\"frontend\" data-legend-label=\"Arte del diseñador\" data-legend-x=\"20\" data-legend-baseline=\"706\" data-legend-width=\"122\"><rect x=\"20\" y=\"698\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-frontend\" stroke-width=\"1\"/><text x=\"42\" y=\"706\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Arte del diseñador</text></g><g data-legend-semantic-kind=\"backend\" data-legend-kind=\"backend\" data-legend-label=\"Decisión técnica y RIP\" data-legend-x=\"149\" data-legend-baseline=\"706\" data-legend-width=\"139\"><rect x=\"149\" y=\"698\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-backend\" stroke-width=\"1\"/><text x=\"171\" y=\"706\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Decisión técnica y RIP</text></g><g data-legend-semantic-kind=\"messagebus\" data-legend-kind=\"messagebus\" data-legend-label=\"Confección y montaje\" data-legend-x=\"295\" data-legend-baseline=\"706\" data-legend-width=\"130\"><rect x=\"295\" y=\"698\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-messagebus\" stroke-width=\"1\"/><text x=\"317\" y=\"706\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Confección y montaje</text></g><g data-legend-semantic-kind=\"cloud\" data-legend-kind=\"cloud\" data-legend-label=\"Equipo de salida\" data-legend-x=\"432\" data-legend-baseline=\"706\" data-legend-width=\"113\"><rect x=\"432\" y=\"698\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-cloud\" stroke-width=\"1\"/><text x=\"454\" y=\"706\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Equipo de salida</text></g><g data-legend-semantic-kind=\"external\" data-legend-kind=\"external\" data-legend-label=\"Encargo y emplazamiento\" data-legend-x=\"552\" data-legend-baseline=\"706\" data-legend-width=\"143\"><rect x=\"552\" y=\"698\" width=\"14\" height=\"9\" rx=\"2\" class=\"c-external\" stroke-width=\"1\"/><text x=\"574\" y=\"706\" class=\"t-muted\" font-size=\"7.5\" font-weight=\"500\">Encargo y emplazamiento</text></g></g></svg>"
+  }
+};
+
+const FLOW_ORDER = ['offset', 'textil', 'granformato'];
+
+/** Destino con diagrama: el activo, o el de offset como respaldo. */
+function flowDefault() {
+  return FLOWS[state.target] ? state.target : 'offset';
+}
+
+/**
+ * Nombre completo del destino tal como aparece en la ficha: el proceso más la
+ * clase de sustrato, la tecnología textil o el soporte de gran formato activos.
+ */
+function flowTargetLabel(k) {
+  const t = TARGETS[k];
+  if (!t) return '';
+  // En offset el nombre ya es dinámico y nombra la clase de sustrato: no se repite
+  const nombre = t.name;
+  let sufijo = '';
+  if (k === 'textil' && TEXTIL_TECS[state.textilTec]) sufijo = TEXTIL_TECS[state.textilTec].label;
+  else if (k === 'granformato' && typeof gfSus === 'function') sufijo = gfSus().label;
+  return sufijo ? nombre + ' · ' + sufijo : nombre;
+}
+
+/** Dibuja el flujo del destino indicado, o el activo si no se pasa ninguno. */
+function renderFlujo(k) {
+  const host = $('#flowPanelBody');
+  if (!host) return;
+  const key = FLOWS[k] ? k : flowDefault();
+  const f = FLOWS[key];
+
+  const lbl = $('#flowPanelTarget');
+  if (lbl) lbl.textContent = flowTargetLabel(key);
+
+  host.innerHTML =
+    '<p class="text-[12.5px] text-zinc-400 leading-relaxed mb-3">' + esc(f.sub) + '</p>' +
+    '<div class="afx border border-zinc-800 bg-[#020617] p-2 mb-5 overflow-x-auto">' + f.svg + '</div>' +
+    '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">' + f.notes.map(n =>
+      '<div class="border border-zinc-800 bg-zinc-900/40 px-4 py-3">' +
+        '<p class="text-[12.5px] font-bold text-zinc-100">' + esc(n[0]) + '</p>' +
+        '<ul class="mt-2 space-y-1.5">' + n[1].map(t =>
+          '<li class="text-[12px] text-zinc-400 leading-relaxed pl-3 border-l border-zinc-800">' + esc(t) + '</li>').join('') +
+        '</ul></div>').join('') +
+    '</div>' +
+    '<p class="mt-5 text-[11.5px] text-zinc-600 leading-relaxed border-t border-zinc-800 pt-3">' + "Los carriles marcan de quién es cada paso; las flechas continuas son el camino conforme y las discontinuas, la devolución al diseño. Instituto de Educación Superior Pública «Diseño y Comunicación» · Docente: Mg. Mario Quiroz · Unidad didáctica de Producción y publicación de piezas gráficas · 2026" + '</p>';
+}
+
+/** Contrae o despliega el panel sin perder el diagrama ya dibujado. */
+function toggleFlujo() {
+  const body = $('#flowPanelBody'), btn = $('#flowToggle');
+  if (!body || !btn) return;
+  const oculto = body.classList.toggle('hidden');
+  btn.textContent = oculto ? 'Desplegar' : 'Contraer';
+}
+
+/* =====================================================================
    31. ARRANQUE DE ESTE BLOQUE
    ===================================================================== */
 function initDidactica() {
@@ -6339,6 +6532,9 @@ function initDidactica() {
   $('#btnDiagrama').addEventListener('click', openDiagrama);
   $('#diagClose').addEventListener('click', () => $('#diagModal').classList.add('hidden'));
   $('#diagModal').addEventListener('click', e => { if (e.target.id === 'diagModal') e.currentTarget.classList.add('hidden'); });
+
+  $('#flowToggle').addEventListener('click', toggleFlujo);
+  renderFlujo();
 
   $('#view3dEdges').addEventListener('click', toggleEdges3D);
 
@@ -7559,49 +7755,6 @@ const HOW = {
 };
 
 const PROC_SPECS = {
-  offset: {
-    groups: [
-      { name: 'Resolución y trama', rows: [
-        ['Resolución de imagen', 'Mínimo 300 ppi a escala 1:1 (150–200 ppi en papel prensa)', 'auto'],
-        ['Relación imagen / trama', 'Entre 1,5 y 2 veces la lineatura (LPI)', 'auto'],
-        ['Lineatura', 'Según la porosidad: 150–200 lpi estucados · 120–150 no estucados · 85–100 papel prensa · 150–175 cartulina · 133–150 sintéticos', 'ref'],
-        ['Salida CTP', '2400 – 2540 dpi (1200 – 2400 en papel prensa) · 256 niveles de gris con DPI ≥ LPI × 16', 'ref'],
-        ['Imágenes de línea (1 bit)', '600 – 1200 ppi', 'auto'],
-        ['Metadatos de resolución (JPEG)', 'En Photoshop / 8BIM o JFIF con unidades: el RIP prioriza 8BIM > JFIF y, sin ellos, colapsa la imagen a 72 ppi', 'auto']
-      ]},
-      { name: 'Color', rows: [
-        ['Modo de color', 'CMYK y/o tintas planas Pantone; sin RGB ni Lab', 'auto'],
-        ['Perfil / estándar', 'FOGRA39 / FOGRA51 en estucados y cartulinas · FOGRA47 / FOGRA52 en no estucados · ISO 12647-3 en papel prensa', 'auto'],
-        ['Límite de tinta (TAC)', '300 % – 330 %', 'est'],
-        ['Curva de compensación tonal', 'Linealización en el RIP según la ganancia de punto esperada (ISO 12647-2)', 'manual']
-      ]},
-      { name: 'Formato de exportación', rows: [
-        ['Norma', 'PDF/X-1a:2001 (ISO 15930-1)', 'auto'],
-        ['Fuentes', 'Incrustadas o convertidas a curvas', 'auto'],
-        ['Transparencias', 'Aplanadas', 'auto'],
-        ['Páginas', 'Una por archivo de diseño', 'auto']
-      ]},
-      { name: 'Geometría', rows: [
-        ['Sangrado', '3 – 5 mm por lado, medido también sobre la tinta real', 'auto'],
-        ['Zona de seguridad', 'Textos dentro del margen de seguridad, 3 – 5 mm hacia dentro del TrimBox', 'manual'],
-        ['Troquel', 'Tinta plana propia, en sobreimpresión y no imprimible', 'est'],
-        ['Trapping', 'Trampas o solapamientos ligeros entre colores adyacentes contra filetes blancos por desregistro', 'manual']
-      ]},
-      { name: 'Negros, texto y trazos', rows: [
-        ['Texto y códigos de barras', 'C0 M0 Y0 K100', 'manual'],
-        ['Masas negras', 'Negro rico C60 M40 Y40 K100', 'manual'],
-        ['Cuerpo mínimo de texto', '6 pt', 'auto'],
-        ['Grosor mínimo de línea', '0,25 pt', 'manual']
-      ]},
-      { name: 'Prensa y tirada', rows: [
-        ['Prueba de contrato', 'Certificada y validada bajo iluminante D50 antes de bajar planchas', 'manual'],
-        ['Reología de la tinta', '+5 °C reducen la viscosidad cerca de un 30 % (5–6 % por °C)', 'ref'],
-        ['Emulsificación', 'Hasta ~25 % de agua', 'manual'],
-        ['Densidad, TVI y registro', 'Controlados a lo ancho del pliego y durante toda la tirada', 'manual']
-      ]}
-    ]
-  },
-
   granformato: {
     groups: [
       { name: 'Resolución', rows: [
@@ -7851,7 +8004,7 @@ function renderProcesos() {
   if (!$('#procesos')) return;
   renderProcTabs();
   ['offset', 'textil', 'granformato'].forEach(k => { const h = $('#procHead-' + k); if (h) h.innerHTML = procHead(k); });
-  $('#procSpec-offset').innerHTML = procSpecTable(PROC_SPECS.offset) + procLegend();
+  $('#procSpec-offset').innerHTML = procSpecTable(offSpecs()) + procLegend();
   $('#procSpec-granformato').innerHTML = procSpecTable(PROC_SPECS.granformato) + procLegend();
   renderTexTabs();
   Object.keys(TEXTIL_TECS).forEach(k => {
@@ -8962,16 +9115,16 @@ const OFF_SUSTRATOS = {
 const OFF_CHECKLIST = [
   { fase: '1 · Preimpresión y preparación de archivos (entrada)', items: [
     ['Modo de color: elementos y fotografías convertidos de RGB a CMYK, o tintas planas Pantone si el trabajo lo requiere', 'color'],
-    ['Resolución de imágenes: mínimo 300 ppi a tamaño real (1:1) en offset comercial de alta calidad', 'ppi'],
+    ['Resolución de imágenes: mínimo {ppi} a tamaño real (1:1), entre 1,5 y 2 veces la lineatura', 'ppi'],
     ['Metadatos de resolución JPEG incrustados en Photoshop / 8BIM o JFIF, no sólo en EXIF', 'ometa'],
     ['Sangrado de 3 a 5 mm por lado y textos dentro del margen de seguridad', 'bleed'],
     ['Tipografías convertidas a curvas o incrustadas por completo', 'fonts'],
     ['Trapping: trampas o solapamientos ligeros entre colores adyacentes contra filetes blancos por desregistro', null]
   ]},
   { fase: '2 · Procesamiento RIP y grabado de planchas (salida)', items: [
-    ['CTP térmico o láser ajustado a 2400 o 2540 dpi sobre planchas de aluminio fotosensibles', 'octp'],
+    ['CTP térmico o láser ajustado a {ctp} sobre planchas de aluminio fotosensibles', 'octp'],
     ['Lineatura seleccionada según la porosidad del soporte', 'olin'],
-    ['Curva de linealización aplicada en el RIP para compensar la ganancia de punto (ISO 12647-2)', null],
+    ['Curva de linealización aplicada en el RIP para compensar la ganancia de punto ({norma})', null],
     ['Prueba de contrato certificada validada bajo iluminante D50 antes de bajar planchas', null]
   ]},
   { fase: '3 · Reología de tinta y acondicionamiento en prensa', items: [
@@ -9037,6 +9190,35 @@ const OFF_NOMBRE = {
                 ambito: null }
 };
 function offNombre() { return OFF_NOMBRE[state.off.sustrato] || OFF_NOMBRE.cartulina; }
+
+/**
+ * Reglas que no son iguales en todas las clases y que antes estaban fijas:
+ * troquel, documento de una sola página y cuerpo mínimo de texto.
+ */
+const OFF_REGLA = {
+  estucado:   { troquel: 'opcional', unaPagina: false, textoMin: 6 },
+  noestucado: { troquel: 'opcional', unaPagina: false, textoMin: 6 },
+  prensa:     { troquel: 'no',       unaPagina: false, textoMin: 7 },
+  cartulina:  { troquel: 'si',       unaPagina: true,  textoMin: 6 },
+  sintetico:  { troquel: 'si',       unaPagina: true,  textoMin: 6 }
+};
+function offRegla() { return OFF_REGLA[state.off.sustrato] || OFF_REGLA.cartulina; }
+
+/** Resuelve los valores de la clase en los textos del checklist de producción. */
+function offChkText(txt) {
+  return txt.replace('{ppi}', offSus().ppiText.replace(/\s*\(.*\)/, '')).replace('{ctp}', offRange(offSus().ctp, 'dpi')).replace('{norma}', offNorma().norma);
+}
+function offMinText() { return offRegla().textoMin; }
+function offPaginasText() {
+  return offRegla().unaPagina ? 'Una página por archivo de diseño'
+    : 'Una página por diseño, o documento paginado con la imposición acordada con la imprenta';
+}
+
+/** La lineatura del sustrato del catálogo sólo se adopta si cabe en el rango de la clase. */
+function offSyncLpi(l) {
+  const s2 = offSus();
+  if (l && l >= s2.lpi[0] && l <= s2.lpi[1]) state.off.lpi = l;
+}
 
 Object.defineProperty(TARGETS.offset, 'name', {
   configurable: true, enumerable: true,
@@ -9193,6 +9375,54 @@ function offTargetChecks(t, m, ppi, an) {
 }
 
 /** Norma aplicada del panel 3 y de la ficha técnica. */
+/** La tabla de especificaciones de la pestaña Offset se genera desde la clase activa. */
+function offSpecs() {
+  const s = offSus(), o = state.off, n = offNorma(), r = offRegla(), tac = TARGETS.offset.tacMax;
+  return { groups: [
+    { name: 'Resolución y trama', rows: [
+      ['Resolución de imagen', 'Mínimo ' + s.ppiText + ' a escala 1:1', 'auto'],
+      ['Relación imagen / trama', 'Entre 1,5 y 2 veces la lineatura: ' + Math.ceil(1.5 * o.lpi) + '–' + 2 * o.lpi + ' ppi a ' + o.lpi + ' lpi', 'auto'],
+      ['Lineatura', o.lpi + ' lpi · rango de la clase ' + offRange(s.lpi, 'lpi'), 'auto'],
+      ['Salida CTP', o.ctp + ' dpi · rango ' + offRange(s.ctp, 'dpi') + ' · 256 niveles con >= 16 × lpi = ' + 16 * o.lpi + ' dpi', 'ref'],
+      ['Imágenes de línea (1 bit)', '600 – 1200 ppi', 'auto'],
+      ['Metadatos de resolución (JPEG)', 'En Photoshop / 8BIM o JFIF con unidades: el RIP prioriza 8BIM > JFIF y, sin ellos, colapsa la imagen a 72 ppi', 'auto']
+    ]},
+    { name: 'Color', rows: [
+      ['Modo de color', 'CMYK y/o tintas planas Pantone; sin RGB ni Lab', 'auto'],
+      ['Perfil / estándar', s.perfil, 'auto'],
+      ['Convertir con', n.conv, 'manual'],
+      ['Límite de tinta (TAC)', '<= ' + tac + ' % · ' + n.tacText, 'est'],
+      ['Curva de compensación tonal', 'Linealización en el RIP según la ganancia de punto esperada (' + n.norma + ')', 'manual']
+    ]},
+    { name: 'Formato de exportación', rows: [
+      ['Norma', 'PDF/X-1a:2001 (ISO 15930-1)', 'auto'],
+      ['Fuentes', 'Incrustadas o convertidas a curvas', 'auto'],
+      ['Transparencias', 'Aplanadas', 'auto'],
+      ['Páginas', offPaginasText(), 'auto']
+    ]},
+    { name: 'Geometría', rows: [
+      ['Sangrado', '3 – 5 mm por lado, medido también sobre la tinta real', 'auto'],
+      ['Zona de seguridad', 'Textos dentro del margen de seguridad, 3 – 5 mm hacia dentro del TrimBox', 'manual'],
+      ['Troquel', r.troquel === 'si' ? 'Tinta plana propia, en sobreimpresión y no imprimible'
+        : r.troquel === 'opcional' ? 'Opcional en este soporte; si lo lleva, en tinta plana propia y en sobreimpresión'
+        : 'No aplica: el papel prensa se corta en la rotativa', r.troquel === 'no' ? 'ref' : 'est'],
+      ['Trapping', 'Trampas o solapamientos ligeros entre colores adyacentes contra filetes blancos por desregistro', 'manual']
+    ]},
+    { name: 'Negros, texto y trazos', rows: [
+      ['Texto y códigos de barras', 'C0 M0 Y0 K100', 'manual'],
+      ['Masas negras', 'Negro rico C60 M40 Y40 K100 (240 %)' + (tac <= 240 ? ': justo en el límite de este soporte' : ''), 'manual'],
+      ['Cuerpo mínimo de texto', offMinText() + ' pt' + (offMinText() > 6 ? ' · la alta ganancia tonal del papel prensa cierra el filo' : ''), 'auto'],
+      ['Grosor mínimo de línea', '0,25 pt', 'manual']
+    ]},
+    { name: 'Prensa y tirada', rows: [
+      ['Prueba de contrato', 'Certificada y validada bajo iluminante D50 antes de bajar planchas', 'manual'],
+      ['Reología de la tinta', '+5 °C reducen la viscosidad cerca de un 30 % (5–6 % por °C)', 'ref'],
+      ['Emulsificación', 'Hasta ~25 % de agua', 'manual'],
+      ['Densidad, TVI y registro', 'Controlados a lo ancho del pliego y durante toda la tirada', 'manual']
+    ]}
+  ] };
+}
+
 function offSheet() {
   const s = offSus(), o = state.off, t = TARGETS.offset;
   return [
@@ -9204,10 +9434,11 @@ function offSheet() {
     ['Modo de color', 'CMYK y/o tintas planas — sin RGB, sin Lab'],
     ['Límite de tinta (TAC)', '<= ' + t.tacMax + ' %' + (activeSubstrate() && activeSubstrate().target === 'offset'
       ? ' · sustrato del catálogo: ' + activeSubstrate().name : ' · ' + offNorma().tacText)],
-    ['Formato', 'PDF/X-1a:2001 · fuentes incrustadas o a curvas · transparencias aplanadas · página única'],
+    ['Formato', 'PDF/X-1a:2001 · fuentes incrustadas o a curvas · transparencias aplanadas · ' + offPaginasText().toLowerCase()],
     ['Geometría', 'Sangrado de 3 – 5 mm por lado · textos dentro del margen de seguridad'],
-    ['Negros', 'Texto y código de barras C0 M0 Y0 K100 · masas C60 M40 Y40 K100'],
-    ['Tipografía y trazos', 'Texto >= 6 pt · grosor de línea >= 0,25 pt']
+    ['Negros', 'Texto y código de barras C0 M0 Y0 K100 · masas C60 M40 Y40 K100 (240 %)' +
+      (t.tacMax <= 240 ? ': justo en el límite de este soporte' : '')],
+    ['Tipografía y trazos', 'Texto >= ' + offMinText() + ' pt · grosor de línea >= 0,25 pt']
   ];
 }
 
@@ -9422,7 +9653,7 @@ function offProduccionHTML() {
       total++; if (on) done++;
       return '<label class="flex items-start gap-2.5 px-4 py-2.5 border-t border-zinc-800/70 cursor-pointer hover:bg-zinc-900/50">' +
         '<input type="checkbox" data-offman="' + i + '"' + (on ? ' checked' : '') + ' class="mt-0.5 accent-emerald-500">' +
-        '<span class="text-[12px] leading-snug flex-1 ' + (on ? 'text-zinc-300' : 'text-zinc-400') + '">' + esc(it[0]) + '</span>' +
+        '<span class="text-[12px] leading-snug flex-1 ' + (on ? 'text-zinc-300' : 'text-zinc-400') + '">' + esc(offChkText(it[0])) + '</span>' +
         (c ? '<span class="chip whitespace-nowrap ' + tag[c.status][1] + '">' + tag[c.status][0] + '</span>' : '') + '</label>';
     }).join('') + '</div>').join('');
   const s = offSus();
@@ -9478,7 +9709,7 @@ function offFichaHTML(n) {
   let idx = 0;
   const lista = OFF_CHECKLIST.map(f => f.items.map(it => {
     const on = !!o.manual[idx++];
-    return '<tr><th>' + esc(f.fase.split(' · ')[0] + ' · ' + it[0]) + '</th><td><b class="' + (on ? 'ok' : 'nf') + '">' + (on ? 'VERIFICADO' : 'PENDIENTE') + '</b></td></tr>';
+    return '<tr><th>' + esc(f.fase.split(' · ')[0] + ' · ' + offChkText(it[0])) + '</th><td><b class="' + (on ? 'ok' : 'nf') + '">' + (on ? 'VERIFICADO' : 'PENDIENTE') + '</b></td></tr>';
   }).join('')).join('');
   return '<h2>' + n + ' · Offset: clasificación del sustrato y normalización de la salida</h2><table>' + kv([
     ['Tipo de sustrato y acabado', s.name + ' · ' + offAcabado()],
@@ -9502,7 +9733,7 @@ function offExport() {
     perfil: s.perfil,
     archivoPpi: fp, relacionPpiLpi: fp != null ? fp / o.lpi : null,
     metadatosJPEG: m && m.container === 'JPEG' ? offRipRead(m) : null,
-    checklistProduccion: OFF_CHECKLIST.map(f => ({ fase: f.fase, items: f.items.map(it => ({ item: it[0], verificado: !!o.manual[idx++] })) })),
+    checklistProduccion: OFF_CHECKLIST.map(f => ({ fase: f.fase, items: f.items.map(it => ({ item: offChkText(it[0]), verificado: !!o.manual[idx++] })) })),
     incluidaEnFicha: o.enFicha
   };
 }
